@@ -1,0 +1,59 @@
+{
+	"name": "nativescript-okhttp-threaded",
+	"version": "1.0.0",
+	"description": "A threaded okhttp client for NativeScript.",
+	"main": "okhttp-threaded",
+	"typings": "index.d.ts",
+	"nativescript": {
+		"platforms": {
+			"android": "6.5.0",
+			"ios": "6.5.0"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/klippa-app/nativescript-okhttp-threaded.git"
+	},
+	"scripts": {
+		"tsc": "npm i && tsc",
+		"build": "npm run tsc && npm run build.native",
+		"build.native": "node scripts/build-native.js",
+		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
+		"ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude '**/platforms/**'",
+		"prepack": "npm run build.native",
+		"demo.ios": "npm i && cd ../demo && tns run ios",
+		"demo.android": "npm i && cd ../demo && tns run android",
+		"demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
+		"demo-angular.ios": "npm i && cd ../demo-angular && tns run ios",
+		"demo-angular.android": "npm i && cd ../demo-angular && tns run android",
+		"demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
+		"plugin.prepare": "npm run build && cd ../demo && tns plugin remove nativescript-okhttp-threaded && tns plugin add ../src && cd ../demo-angular && tns plugin remove nativescript-okhttp-threaded && tns plugin add ../src",
+		"clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm i"
+	},
+	"keywords": [
+		"NativeScript",
+		"JavaScript",
+		"Android",
+		"iOS"
+	],
+	"author": {
+		"name": "Jeroen Bobbeldijk",
+		"email": "jeroen@klippa.com"
+	},
+	"bugs": {
+		"url": "https://github.com/klippa-app/nativescript-okhttp-threaded/issues"
+	},
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/klippa-app/nativescript-okhttp-threaded",
+	"devDependencies": {
+		"tns-core-modules": "^6.5.0",
+		"tns-platform-declarations": "^6.5.0",
+		"typescript": "~3.4.5",
+		"prompt": "^1.0.0",
+		"rimraf": "^2.6.3",
+		"tslint": "^5.12.1",
+		"semver": "^5.6.0"
+	},
+	"dependencies": {},
+	"bootstrapper": "nativescript-plugin-seed"
+}
