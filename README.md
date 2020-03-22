@@ -87,6 +87,7 @@ request({
 | @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation |
 | nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown |
 | nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation |
+| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation |
 | @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | Yes | Yes | Yes, shared okhttp3 client |
 
 ## Implementation differences with NativeScript Core HTTP
