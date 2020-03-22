@@ -5,6 +5,9 @@
 *.js
 *.js.map
 *.log
+*.ngsummary.json
+*.metadata.json
+*.ngfactory.d.ts
 src/*.d.ts
 !src/index.d.ts
 !src/references.d.ts

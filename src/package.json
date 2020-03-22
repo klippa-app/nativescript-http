@@ -1,6 +1,6 @@
 {
 	"name": "@klippa/nativescript-http",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A drop-in replacement for the core HTTP with important improvements.",
 	"main": "http",
 	"typings": "index.d.ts",
@@ -16,7 +16,7 @@
 	},
 	"scripts": {
 		"tsc": "npm i && tsc",
-		"build": "npm run tsc && npm run build.native",
+		"build": "npm run ngc && npm run build.native",
 		"build.native": "node scripts/build-native.js",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\" --exclude \"**/typings/**\"",
 		"ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude '**/platforms/**' --exclude '**/typings/**'",
@@ -28,7 +28,8 @@
 		"demo-angular.android": "npm i && cd ../demo-angular && tns run android",
 		"demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
 		"plugin.prepare": "npm run build && cd ../demo && tns plugin remove @klippa/nativescript-http && tns plugin add ../src && cd ../demo-angular && tns plugin remove @klippa/nativescript-http && tns plugin add ../src",
-		"clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm i"
+		"clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm i",
+		"ngc": "node --max-old-space-size=8192 ./node_modules/.bin/ngc"
 	},
 	"keywords": [
 		"NativeScript",
@@ -55,6 +56,8 @@
 		"semver": "^5.6.0",
 		"@angular/common": "~8.2.0",
 		"@angular/core": "~8.2.0",
+		"@angular/compiler": "~8.0.1",
+		"@angular/compiler-cli": "~8.0.1",
 		"nativescript-angular": "^8.21.0",
 		"rxjs": "^6.4.0"
 	},
