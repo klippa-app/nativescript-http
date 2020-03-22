@@ -6,6 +6,7 @@ A drop-in replacement for the core HTTP with important improvements like proper 
 
 ## Warning
 The iOS implementation has not been created yet. The Android implementation is finished.
+For iOS we fall back to the default NativeScript Core Request.
 
 ## Installation
 
