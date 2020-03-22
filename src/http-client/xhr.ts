@@ -4,7 +4,7 @@ import * as types from "@nativescript/core/utils/types";
 import { request } from "..";
 import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http/http";
 
-module XMLHttpRequestResponseType {
+namespace XMLHttpRequestResponseType {
     export const empty = "";
     export const text = "text";
     export const json = "json";
@@ -248,9 +248,9 @@ export class NSHTTPXMLHttpRequest {
         }
 
         if (types.isString(data) && this._options.method !== "GET") {
-            //The Android Java HTTP lib throws an exception if we provide a
-            //a request body for GET requests, so we avoid doing that.
-            //Browser implementations silently ignore it as well.
+            // The Android Java HTTP lib throws an exception if we provide a
+            // a request body for GET requests, so we avoid doing that.
+            // Browser implementations silently ignore it as well.
             this._options.content = data;
         } else if (data instanceof FormData) {
             this._options.content = (<FormData>data).toString();
