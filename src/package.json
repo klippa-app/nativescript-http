@@ -1,6 +1,6 @@
 {
 	"name": "@klippa/nativescript-http",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "A drop-in replacement for the core HTTP with important improvements.",
 	"main": "http",
 	"typings": "index.d.ts",
