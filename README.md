@@ -39,7 +39,7 @@ We also provide a drop-in replacement `NativeScriptHttpClientModule` from the `n
 In order to make Angular use our HTTP implementation, import our module like this:
 
 ```typescript
-import { NativeScriptHttpClientModule } from "@klippa/nativescript-http/http-client";
+import { NativeScriptHttpClientModule } from "@klippa/nativescript-http/angular";
 
 @NgModule({
     imports: [
