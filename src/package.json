@@ -1,6 +1,6 @@
 {
 	"name": "@klippa/nativescript-http",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "A drop-in replacement for the core HTTP with important improvements.",
 	"main": "http",
 	"typings": "index.d.ts",
@@ -16,7 +16,7 @@
 	},
 	"scripts": {
 		"tsc": "npm i && tsc",
-		"build": "npm run ngc && npm run build.native",
+		"build": "npm i && npm run ngc && npm run build.native",
 		"build.native": "node scripts/build-native.js",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\" --exclude \"**/typings/**\"",
 		"ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude '**/platforms/**' --exclude '**/typings/**'",

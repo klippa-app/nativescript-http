@@ -49,7 +49,7 @@ import { NativeScriptHttpClientModule } from "@klippa/nativescript-http/http-cli
 
 From now on you can make requests using Angular's HttpClient service like explained [here](https://docs.nativescript.org/angular/ng-framework-modules/http).
 
-Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (like HTTP core).
+Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (core HTTP does the same).
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
 ## Form data
