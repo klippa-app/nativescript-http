@@ -4,6 +4,9 @@
 
 A drop-in replacement for the core HTTP with important improvements like proper connection pooling and form data support.
 
+## Warning
+The iOS implementation has not been created yet. The Android implementation is finished.
+
 ## Installation
 
 ```javascript
@@ -44,6 +47,9 @@ import { NativeScriptHttpClientModule } from "@klippa/nativescript-http/http-cli
 ```
 
 From now on you can make requests using Angular's HttpClient service like explained [here](https://docs.nativescript.org/angular/ng-framework-modules/http).
+
+Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (like HTTP core).
+This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
 ## Form data
 You can create form data requests like this:

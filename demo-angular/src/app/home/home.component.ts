@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
             this.isLoading = false;
         }).catch((e) => {
             this.contentType = "text";
-            this.contentText = "Error while loading text: " + e;
+            this.contentText = "Error while loading json: " + e;
             this.hasContent = true;
             this.isLoading = false;
         });
@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
             });
         }).catch((e) => {
             this.contentType = "text";
-            this.contentText = "Error while loading text: " + e;
+            this.contentText = "Error while loading image: " + e;
             this.hasContent = true;
             this.isLoading = false;
         });
