@@ -1,14 +1,15 @@
-import { HttpResponseEncoding, HttpRequestOptions } from "@nativescript/core/http";
+import { HttpResponseEncoding, HttpRequestOptions, HttpResponse } from "@nativescript/core/http";
+import { addHeader } from "@nativescript/core/http/http-request";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
-import HttpResponse = org.apache.http.HttpResponse;
 import {
     getFilenameFromUrl,
-    HTTPFormDataCommon,
-    HTTPFormDataEntryCommon
+    HTTPFormData,
+    HTTPFormDataEntry,
 } from "./http.common";
 import * as fs from "tns-core-modules/file-system";
 import { screen } from "tns-core-modules/platform";
 import { NetworkAgent } from "tns-core-modules/debugger";
+export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
 
 declare var global: any;
 
@@ -177,12 +178,22 @@ function buildJavaOptions(options: HttpRequestOptions) {
             if (typeof(value) === "string") {
                 builder.addFormDataPart(key, value);
             } else if (value != null && typeof (value) !== "undefined" && !(value instanceof HTTPFormDataEntry)) {
-                // Note: this should handle Blob/File items, but it does not. We need to convert the Blob to something native.
-                // So far no good results with that in a sync way.
                 const MEDIA_TYPE = okhttp3.MediaType.parse(value.type);
-                builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(value, MEDIA_TYPE));
+
+                // Stolen from core xhr.
+                // @ts-ignore
+                const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value) as ArrayBuffer);
+                const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
+                builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer, MEDIA_TYPE));
             } else if (value instanceof HTTPFormDataEntry) {
                 const MEDIA_TYPE = okhttp3.MediaType.parse(value.contentType);
+
+                if (value.data instanceof ArrayBuffer) {
+                    const typedArray = new Uint8Array(value.data as ArrayBuffer);
+                    const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
+                    value.data = okhttp3.RequestBody.create(nativeBuffer, mediaType);
+                }
+
                 builder.addFormDataPart(key, value.fileName, okhttp3.RequestBody.create(value.data, MEDIA_TYPE));
             }
         }));
@@ -267,19 +278,73 @@ function decodeResponse(raw: any, encoding?: HttpResponseEncoding) {
     return raw.toString(charsetName);
 }
 
-export function addHeader(headers: Headers, key: string, value: string): void {
-    if (!headers[key]) {
-        headers[key] = value;
-    } else if (Array.isArray(headers[key])) {
-        (<string[]>headers[key]).push(value);
-    } else {
-        const values: string[] = [<string>headers[key]];
-        values.push(value);
-        headers[key] = values;
-    }
+export function getString(arg: any): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        request(typeof arg === "string" ? { url: arg, method: "GET" } : arg)
+            .then(r => {
+                try {
+                    const str = r.content.toString();
+                    resolve(str);
+                } catch (e) {
+                    reject(e);
+                }
+            }, e => reject(e));
+    });
 }
 
-export class HTTPFormDataEntry extends HTTPFormDataEntryCommon {}
-export class HTTPFormData extends HTTPFormDataCommon {}
+export function getJSON<T>(arg: any): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        request(typeof arg === "string" ? { url: arg, method: "GET" } : arg)
+            .then(r => {
+                try {
+                    const json = r.content.toJSON();
+                    resolve(json);
+                } catch (e) {
+                    reject(e);
+                }
+            }, e => reject(e));
+    });
+}
 
+export function getImage(arg: any): Promise<ImageSource> {
+    return new Promise<any>((resolve, reject) => {
+        request(typeof arg === "string" ? { url: arg, method: "GET" } : arg)
+            .then(r => {
+                try {
+                    resolve(r.content.toImage());
+                } catch (err) {
+                    reject(err);
+                }
+            }, err => {
+                reject(err);
+            });
+    });
+}
 
+export function getFile(arg: any, destinationFilePath?: string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+        request(typeof arg === "string" ? { url: arg, method: "GET" } : arg)
+            .then(r => {
+                try {
+                    const file = r.content.toFile(destinationFilePath);
+                    resolve(file);
+                } catch (e) {
+                    reject(e);
+                }
+            }, e => reject(e));
+    });
+}
+
+export function getBinary(arg: any): Promise<ArrayBuffer> {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+        request(typeof arg === "string" ? { url: arg, method: "GET" } : arg)
+            .then(r => {
+                try {
+                    const arrayBuffer = r.content.toArrayBuffer();
+                    resolve(arrayBuffer);
+                } catch (e) {
+                    reject(e);
+                }
+            }, e => reject(e));
+    });
+}

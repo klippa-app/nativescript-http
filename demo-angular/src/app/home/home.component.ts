@@ -24,12 +24,11 @@ export class HomeComponent implements OnInit {
     getText() {
         this.isLoading = true;
 
-        request({
-            url: "https://loripsum.net/api",
-            method: "GET",
-        }).then((res) => {
+        this.http.get("https://loripsum.net/api", {
+            responseType: "text",
+        }).toPromise().then((res) => {
             this.contentType = "text";
-            this.contentText = res.content.toString();
+            this.contentText = res;
             this.hasContent = true;
             this.isLoading = false;
         }).catch((e) => {
@@ -43,11 +42,10 @@ export class HomeComponent implements OnInit {
     getJson() {
         this.isLoading = true;
 
-        request({
-            url: "https://api.github.com/repos/klippa-app/nativescript-http",
-            method: "GET",
-        }).then((res) => {
-            const jsonObject = res.content.toJSON();
+        this.http.get("https://api.github.com/repos/klippa-app/nativescript-http", {
+            responseType: "json",
+        }).toPromise().then((res) => {
+            const jsonObject = res;
             this.contentType = "text";
             this.contentText = JSON.stringify(jsonObject, null, 4);
             this.hasContent = true;
@@ -63,6 +61,9 @@ export class HomeComponent implements OnInit {
     getImage() {
         this.isLoading = true;
 
+        // Please don't download images using the Angular HTTP client.
+        // The core HTTP request already decodes the image for you into an ImageSource on the background.
+        // This makes image downloading way more efficient.
         request({
             url: "https://via.placeholder.com/500",
             method: "GET",
