@@ -93,7 +93,7 @@ request({
  
  * We only try to parse the response as Image when the Content-Type starts with `image/`
  * We use a default timeout of 60s for connect/write/read, you can change this using the timeout option
- * While the code of Core HTTP looks like it supports FormData, it only supports key/value and not files, we do support it with our `HTTPFormDataCommon` class.
+ * While the code of Core HTTP looks like it supports FormData, it only supports key/value and not files, we do support it with our `HTTPFormData` class.
  
 ## License
 
