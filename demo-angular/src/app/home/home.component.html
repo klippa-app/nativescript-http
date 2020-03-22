@@ -1,0 +1,19 @@
+<ActionBar>
+    <Label text="Home"></Label>
+</ActionBar>
+
+<GridLayout rows="auto, *" columns="*">
+    <GridLayout row="0" rows="auto" columns="*, *, *">
+        <Button col="0" text="Get text" (tap)="getText()"></Button>
+        <Button col="1" text="Get JSON" (tap)="getJson()"></Button>
+        <Button col="2" text="Get Image" (tap)="getImage()"></Button>
+    </GridLayout>
+
+    <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
+        <Label [visibility]="!hasContent && !isLoading ? 'visible' : 'collapse'" text="Content comes here" horizontalAlignment="center" verticalAlignment="center"></Label>
+        <ActivityIndicator [visibility]="isLoading ? 'visible' : 'collapse'" [busy]="isLoading"></ActivityIndicator>
+        <Label [visibility]="hasContent && !isLoading && contentType == 'text' ? 'visible' : 'collapse'" [text]="contentText" textWrap="true" horizontalAlignment="center" verticalAlignment="center"></Label>
+        <Image [visibility]="hasContent && !isLoading && contentType == 'image' ? 'visible' : 'collapse'" [src]="contentImage" horizontalAlignment="center" verticalAlignment="center" stretch="none" ></Image>
+    </GridLayout>
+</GridLayout>
+

@@ -1,8 +1,8 @@
 {
-	"name": "nativescript-okhttp-threaded",
+	"name": "@klippa/nativescript-http",
 	"version": "1.0.0",
-	"description": "A threaded okhttp client for NativeScript.",
-	"main": "okhttp-threaded",
+	"description": "A drop-in replacement for the core HTTP with important improvements.",
+	"main": "http",
 	"typings": "index.d.ts",
 	"nativescript": {
 		"platforms": {
@@ -12,7 +12,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/klippa-app/nativescript-okhttp-threaded.git"
+		"url": "https://github.com/klippa-app/nativescript-http.git"
 	},
 	"scripts": {
 		"tsc": "npm i && tsc",
@@ -27,7 +27,7 @@
 		"demo-angular.ios": "npm i && cd ../demo-angular && tns run ios",
 		"demo-angular.android": "npm i && cd ../demo-angular && tns run android",
 		"demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
-		"plugin.prepare": "npm run build && cd ../demo && tns plugin remove nativescript-okhttp-threaded && tns plugin add ../src && cd ../demo-angular && tns plugin remove nativescript-okhttp-threaded && tns plugin add ../src",
+		"plugin.prepare": "npm run build && cd ../demo && tns plugin remove @klippa/nativescript-http && tns plugin add ../src && cd ../demo-angular && tns plugin remove @klippa/nativescript-http && tns plugin add ../src",
 		"clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm i"
 	},
 	"keywords": [
@@ -41,10 +41,10 @@
 		"email": "jeroen@klippa.com"
 	},
 	"bugs": {
-		"url": "https://github.com/klippa-app/nativescript-okhttp-threaded/issues"
+		"url": "https://github.com/klippa-app/nativescript-http/issues"
 	},
 	"license": "Apache-2.0",
-	"homepage": "https://github.com/klippa-app/nativescript-okhttp-threaded",
+	"homepage": "https://github.com/klippa-app/nativescript-http",
 	"devDependencies": {
 		"tns-core-modules": "^6.5.0",
 		"tns-platform-declarations": "^6.5.0",

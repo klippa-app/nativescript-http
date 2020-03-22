@@ -2,16 +2,16 @@
 
 declare module com {
 	export module klippa {
-		export module nativescriptokhttpthreaded {
+		export module NativeScriptHTTP {
 			export class Async {
-				public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async>;
+				public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async>;
 				public constructor();
 			}
 			export module Async {
 				export class CompleteCallback {
-					public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.CompleteCallback>;
+					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.CompleteCallback>;
 					/**
-					 * Constructs a new instance of the com.klippa.nativescriptokhttpthreaded.Async$CompleteCallback interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+					 * Constructs a new instance of the com.klippa.NativeScriptHTTP.Async$CompleteCallback interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
 					 */
 					public constructor(implementation: {
 						onComplete(param0: any, param1: any): void;
@@ -22,28 +22,28 @@ declare module com {
 					public onError(param0: string, param1: any): void;
 				}
 				export class Http {
-					public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http>;
+					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http>;
 					public constructor();
-					public static MakeRequest(param0: com.klippa.nativescriptokhttpthreaded.Async.Http.RequestOptions, param1: com.klippa.nativescriptokhttpthreaded.Async.CompleteCallback, param2: any): void;
+					public static MakeRequest(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param2: any): void;
 				}
 				export module Http {
 					export class HttpRequestTask {
-						public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http.HttpRequestTask>;
-						public constructor(param0: com.klippa.nativescriptokhttpthreaded.Async.CompleteCallback, param1: any);
-						public onPostExecute(param0: com.klippa.nativescriptokhttpthreaded.Async.Http.RequestResult): void;
-						public doInBackground(param0: native.Array<com.klippa.nativescriptokhttpthreaded.Async.Http.RequestOptions>): com.klippa.nativescriptokhttpthreaded.Async.Http.RequestResult;
+						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.HttpRequestTask>;
+						public constructor(param0: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param1: any);
+						public onPostExecute(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestResult): void;
+						public doInBackground(param0: native.Array<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>): com.klippa.NativeScriptHTTP.Async.Http.RequestResult;
 					}
 					export class KeyValuePair {
-						public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http.KeyValuePair>;
+						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.KeyValuePair>;
 						public key: string;
 						public value: string;
 						public constructor(param0: string, param1: string);
 					}
 					export class RequestOptions {
-						public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http.RequestOptions>;
+						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>;
 						public url: string;
 						public method: string;
-						public headers: java.util.ArrayList<com.klippa.nativescriptokhttpthreaded.Async.Http.KeyValuePair>;
+						public headers: java.util.ArrayList<com.klippa.NativeScriptHTTP.Async.Http.KeyValuePair>;
 						public content: okhttp3.RequestBody;
 						public timeout: number;
 						public screenWidth: number;
@@ -53,9 +53,9 @@ declare module com {
 						public addHeaders(param0: okhttp3.Request.Builder): void;
 					}
 					export class RequestResult {
-						public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http.RequestResult>;
+						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.RequestResult>;
 						public raw: java.io.ByteArrayOutputStream;
-						public headers: java.util.ArrayList<com.klippa.nativescriptokhttpthreaded.Async.Http.KeyValuePair>;
+						public headers: java.util.ArrayList<com.klippa.NativeScriptHTTP.Async.Http.KeyValuePair>;
 						public statusCode: number;
 						public responseAsString: string;
 						public responseAsImage: globalAndroid.graphics.Bitmap;
@@ -64,11 +64,11 @@ declare module com {
 						public statusText: string;
 						public getHeaders(param0: okhttp3.Response): void;
 						public constructor();
-						public readResponseStream(param0: okhttp3.Response, param1: java.util.Stack<java.io.Closeable>, param2: com.klippa.nativescriptokhttpthreaded.Async.Http.RequestOptions): void;
+						public readResponseStream(param0: okhttp3.Response, param1: java.util.Stack<java.io.Closeable>, param2: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions): void;
 					}
 					export module RequestResult {
 						export class ByteArrayOutputStream2 {
-							public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.Http.RequestResult.ByteArrayOutputStream2>;
+							public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.RequestResult.ByteArrayOutputStream2>;
 							public constructor();
 							public buf(): native.Array<number>;
 							public constructor(param0: number);
@@ -76,7 +76,7 @@ declare module com {
 					}
 				}
 				export class PriorityThreadFactory {
-					public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.Async.PriorityThreadFactory>;
+					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.PriorityThreadFactory>;
 					public newThread(param0: java.lang.Runnable): java.lang.Thread;
 					public constructor(param0: number);
 				}
@@ -87,11 +87,11 @@ declare module com {
 
 declare module com {
 	export module klippa {
-		export module nativescriptokhttpthreaded {
+		export module NativeScriptHTTP {
 			export class CookieCache extends java.lang.Iterable<okhttp3.Cookie> {
-				public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.CookieCache>;
+				public static class: java.lang.Class<com.klippa.NativeScriptHTTP.CookieCache>;
 				/**
-				 * Constructs a new instance of the com.klippa.nativescriptokhttpthreaded.CookieCache interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
+				 * Constructs a new instance of the com.klippa.NativeScriptHTTP.CookieCache interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
 				 */
 				public constructor(implementation: {
 					addAll(param0: java.util.Collection<okhttp3.Cookie>): void;
@@ -107,9 +107,9 @@ declare module com {
 
 declare module com {
 	export module klippa {
-		export module nativescriptokhttpthreaded {
+		export module NativeScriptHTTP {
 			export class IdentifiableCookie {
-				public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.IdentifiableCookie>;
+				public static class: java.lang.Class<com.klippa.NativeScriptHTTP.IdentifiableCookie>;
 				public hashCode(): number;
 				public equals(param0: any): boolean;
 			}
@@ -119,9 +119,9 @@ declare module com {
 
 declare module com {
 	export module klippa {
-		export module nativescriptokhttpthreaded {
+		export module NativeScriptHTTP {
 			export class MemoryCookieJar extends okhttp3.CookieJar {
-				public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.MemoryCookieJar>;
+				public static class: java.lang.Class<com.klippa.NativeScriptHTTP.MemoryCookieJar>;
 				public loadForRequest(param0: okhttp3.HttpUrl): java.util.List<okhttp3.Cookie>;
 				public saveFromResponse(param0: okhttp3.HttpUrl, param1: java.util.List<okhttp3.Cookie>): void;
 				public constructor();
@@ -132,9 +132,9 @@ declare module com {
 
 declare module com {
 	export module klippa {
-		export module nativescriptokhttpthreaded {
-			export class SetCookieCache extends com.klippa.nativescriptokhttpthreaded.CookieCache {
-				public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.SetCookieCache>;
+		export module NativeScriptHTTP {
+			export class SetCookieCache extends com.klippa.NativeScriptHTTP.CookieCache {
+				public static class: java.lang.Class<com.klippa.NativeScriptHTTP.SetCookieCache>;
 				public addAll(param0: java.util.Collection<okhttp3.Cookie>): void;
 				public clear(): void;
 				public iterator(): java.util.Iterator<okhttp3.Cookie>;
@@ -142,9 +142,9 @@ declare module com {
 			}
 			export module SetCookieCache {
 				export class SetCookieCacheIterator extends java.util.Iterator<okhttp3.Cookie> {
-					public static class: java.lang.Class<com.klippa.nativescriptokhttpthreaded.SetCookieCache.SetCookieCacheIterator>;
+					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.SetCookieCache.SetCookieCacheIterator>;
 					public next(): okhttp3.Cookie;
-					public constructor(param0: com.klippa.nativescriptokhttpthreaded.SetCookieCache);
+					public constructor(param0: com.klippa.NativeScriptHTTP.SetCookieCache);
 					public hasNext(): boolean;
 					public remove(): void;
 				}
