@@ -175,7 +175,6 @@ function buildJavaOptions(options: HttpRequestOptions) {
         javaOptions.method = options.method;
     }
 
-
     if (typeof options.content === "string" || options.content instanceof FormData) {
         // Make sure we behave the same as the core http.
         if (!mediaType) {
@@ -211,7 +210,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
 
             // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
             // @ts-ignore
-            const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content) as ArrayBuffer);
+            const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
             javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
 
@@ -248,7 +247,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
 
                     // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                     // @ts-ignore
-                    const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value) as ArrayBuffer);
+                    const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
                     const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
                     builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
                 } else if (value instanceof HTTPFormDataEntry) {
@@ -264,7 +263,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
                     } else if (value.data instanceof Blob) {
                         // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                         // @ts-ignore
-                        const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data) as ArrayBuffer);
+                        const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
                         builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
                     } else {

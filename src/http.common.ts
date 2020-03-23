@@ -102,7 +102,7 @@ export type HTTPFormDataEntryValue = HTTPFormDataEntry | FormDataEntryValue | Ar
 export class HTTPFormData implements FormData {
     private values: Map<string, Array<HTTPFormDataEntryValue>> = new Map<string, Array<HTTPFormDataEntryValue>>();
 
-    append(name: string, value: string | Blob | HTTPFormDataEntry): void {
+    append(name: string, value: HTTPFormDataEntryValue): void {
         if (!this.values.has(name)) {
             this.values.set(name, new Array<HTTPFormDataEntryValue>());
         }
@@ -132,7 +132,7 @@ export class HTTPFormData implements FormData {
     has(name: string): boolean {
         return this.values.has(name);
     }
-    set(name: string, value: string | Blob | HTTPFormDataEntry) {
+    set(name: string, value: HTTPFormDataEntryValue) {
         const values = new Array<HTTPFormDataEntryValue>();
         values.push(value);
         this.values.set(name, values);

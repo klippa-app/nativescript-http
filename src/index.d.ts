@@ -68,20 +68,21 @@ export declare function getBinary(options: HttpRequestOptions): Promise<ArrayBuf
  * @param options An object that specifies various request options.
  */
 export declare function request(options: HttpRequestOptions): Promise<HttpResponse>;
-export declare type HTTPFormDataEntryValue = FormDataEntryValue | any;
+export declare type HTTPFormDataEntryValue = HTTPFormDataEntry | FormDataEntryValue | ArrayBuffer | Blob | File | string | any;
 export declare class HTTPFormDataEntry {
     data: any;
-    fileName?: string;
-    contentType?: string;
+    name?: string;
+    type?: string;
+    constructor(data: any, name?: string, type?: string);
 }
 export declare class HTTPFormData implements FormData {
     private values;
-    append(name: string, value: string | Blob | any, fileName?: string): void;
+    append(name: string, value: HTTPFormDataEntryValue): void;
     delete(name: string): void;
     get(name: string): HTTPFormDataEntryValue | null;
     getAll(name: string): HTTPFormDataEntryValue[];
     has(name: string): boolean;
-    set(name: string, value: string | Blob | any, fileName?: string): void;
+    set(name: string, value: HTTPFormDataEntryValue): void;
     forEach(callbackfn: (value: HTTPFormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void;
 }
 

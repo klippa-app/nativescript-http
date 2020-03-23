@@ -87,6 +87,90 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
             } else if (options.content instanceof ArrayBuffer) {
                 const buffer = options.content as ArrayBuffer;
                 urlRequest.HTTPBody = NSData.dataWithData(buffer as any);
+            } else {
+                let matched = false;
+
+                // We have to do it in this structure to make the ts-ignore work.
+                // Normal HTTP Request structure does not allow these types.
+
+                // This matches both Blob and File.
+                // We ignore the name in the File object so we can ignore that type.
+                // @ts-ignore
+                if (!matched && options.content instanceof Blob) {
+                    // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
+                    // @ts-ignore
+                    const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
+                    urlRequest.HTTPBody = NSData.dataWithData(buffer as any);
+                    matched = true;
+                }
+
+                // @ts-ignore
+                if (!matched && options.content instanceof HTTPFormData) {
+                    matched = true;
+                    const multipartFormData = OMGMultipartFormData.new();
+                    const contentValues = options.content as HTTPFormData;
+                    contentValues.forEach(((value, key) => {
+                        if (typeof value === "string") {
+                            multipartFormData.addTextParameterName(value, key);
+                        } else if (value instanceof ArrayBuffer) {
+                            const buffer = new Uint8Array(value as ArrayBuffer);
+                            multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", "application/octet-stream");
+                        } else if (value instanceof Blob) {
+                            let formDataPartMediaType = "application/octet-stream";
+                            if (value.type) {
+                                formDataPartMediaType = value.type;
+                            }
+
+                            let filename = "";
+                            if (value instanceof File) {
+                                filename = value.name;
+                            }
+
+                            // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
+                            // @ts-ignore
+                            const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
+                            multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, filename, formDataPartMediaType);
+                        } else if (value instanceof HTTPFormDataEntry) {
+                            let formDataPartMediaType = "application/octet-stream";
+                            if (value.type) {
+                                formDataPartMediaType = value.type;
+                            }
+
+                            if (value.data instanceof ArrayBuffer) {
+                                const buffer = new Uint8Array(value.data as ArrayBuffer);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", formDataPartMediaType);
+                            } else if (value.data instanceof Blob) {
+                                // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
+                                // @ts-ignore
+                                const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", formDataPartMediaType);
+                            } else {
+                                // Support for native file objects.
+                                multipartFormData.addFileParameterNameFilenameContentType(value.data, key, value.name, formDataPartMediaType);
+                            }
+                        } else {
+                            // Support for native file objects.
+                            multipartFormData.addFileParameterNameFilenameContentType(value, key, "", "application/octet-stream");
+                        }
+                    }));
+
+                    // This part is copied from OMGHTTPURLRQ. We do this to support multipart for other methods too.
+                    // Set multipart content type and boundary.
+                    // @ts-ignore
+                    const contentType = "multipart/form-data; charset=utf-8; boundary=" + multipartFormData.boundary;
+                    urlRequest.setValueForHTTPHeaderField(contentType, "Content-Type");
+                    // @ts-ignore
+                    const data = multipartFormData.body.mutableCopy();
+                    // @ts-ignore
+                    const lastLine = NSString.alloc().initWithString("\r\n--" + multipartFormData.boundary + "--\r\n");
+                    data.appendData(lastLine.dataUsingEncoding(NSUTF8StringEncoding));
+                    urlRequest.HTTPBody = NSData.dataWithData(data);
+                }
+
+                if (!matched && options.content) {
+                    // Assume options.content is a native object.
+                    urlRequest.HTTPBody = NSData.dataWithData(options.content as any);
+                }
             }
 
             if (types.isNumber(options.timeout)) {
