@@ -87,30 +87,28 @@ export function getFilenameFromUrl(url: string): string {
 
 export class HTTPFormDataEntry {
     data: any;
-    fileName?: string;
-    contentType?: string;
+    name?: string;
+    type?: string;
+
+    constructor(data: any, name?: string, type?: string) {
+        this.data = data;
+        this.name = name;
+        this.type = type;
+    }
 }
 
-export type HTTPFormDataEntryValue = HTTPFormDataEntry | FormDataEntryValue | any;
+export type HTTPFormDataEntryValue = HTTPFormDataEntry | FormDataEntryValue | ArrayBuffer | Blob | File | string | any;
 
 export class HTTPFormData implements FormData {
     private values: Map<string, Array<HTTPFormDataEntryValue>> = new Map<string, Array<HTTPFormDataEntryValue>>();
 
-    append(name: string, value: string | Blob | HTTPFormDataEntry, fileName?: string): void {
+    append(name: string, value: string | Blob | HTTPFormDataEntry): void {
         if (!this.values.has(name)) {
             this.values.set(name, new Array<HTTPFormDataEntryValue>());
         }
 
         const values = this.values.get(name);
-        if (value instanceof Blob) {
-            let b: any = value;
-            b.name = fileName;
-            b.lastModifiedDate = new Date();
-            values.push(<File>b);
-        } else {
-            values.push(value);
-        }
-
+        values.push(value);
         this.values.set(name, values);
     }
 
@@ -134,16 +132,9 @@ export class HTTPFormData implements FormData {
     has(name: string): boolean {
         return this.values.has(name);
     }
-    set(name: string, value: string | Blob | HTTPFormDataEntry, fileName?: string) {
+    set(name: string, value: string | Blob | HTTPFormDataEntry) {
         const values = new Array<HTTPFormDataEntryValue>();
-        if (value instanceof Blob) {
-            let b: any = value;
-            b.name = fileName;
-            b.lastModifiedDate = new Date();
-            values.push(<File>b);
-        } else {
-            values.push(value);
-        }
+        values.push(value);
         this.values.set(name, values);
     }
 

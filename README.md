@@ -11,9 +11,11 @@
 * Everything runs on a native background thread
 * Transparent GZIP
 * HTTP/2 support
-* Multipart form data support
+* Support for directly posting ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects
+* Multipart form data support (for file upload), file upload supports ArrayBuffer, File, Blob and native objects (like java.io.File, NSData.dataWithContentsOfFile)
 * Ability to use without any code change
 * Ability to make all http requests go through this plugin
+* Backwards compatible (behaves the same as core HTTP)
 
 ## Warning
 The iOS implementation has not been created yet. The Android implementation is finished.
@@ -98,6 +100,10 @@ Be aware that this plugin tries to parse your image in the background so you won
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
 ## Form data
+By default this client behaves the same as the Core HTTP for FormData objects, meaning it will just encode it as key=value pairs and it does not support Blob/File objects.
+It will be posted as `application/x-www-form-urlencoded` unless you override it using a custom header.
+
+If you want to create multipart (multipart/form-data) form data requests, you can use the HTTPFormData class from this plugin.
 You can create form data requests like this:
 
 ```typescript
@@ -147,6 +153,7 @@ request({
  * More control over connection pooling and concurrency limits (total and per domain)
  * More image decode control (never, with image content type, always)
  * Websockets
+ * Setting a global user agent
 
 ## License
 
