@@ -34,21 +34,53 @@ function parseJSON(source: string): any {
     return JSON.parse(src);
 }
 
-class NativeScriptHTTPOMGMultipartFormData extends OMGMultipartFormData {
-
-    static new(): NativeScriptHTTPOMGMultipartFormData;
-
-    static alloc(): NativeScriptHTTPOMGMultipartFormData;
-
-    getBody(): NSMutableData {
+const iOSMultipartFormData = (NSObject as any).extend({
+    init: function() {
+        const self = this.super.init();
+        if (self) {
+            self.body = NSMutableData.alloc().init();
+            self.boundary = "------------------------" + (new Date()).getTime() + "-nativescripthttp";
+        }
+        return self;
+    },
+    getBody: function() {
         return this.body;
-
-    }
-
-    getBoundary(): NSString {
+    },
+    getBoundary: function() {
         return this.boundary;
+    },
+    addFileParameterNameFilenameContentType: function(data: NSData, parameterName: string, filename?: string, contentType?: string) {
+        const newLinePlain = "\r\n";
+
+        if (this.body.length) {
+            // if we already added something then we need an additional newline
+            const newLine = NSString.alloc().initWithString(newLinePlain);
+            this.body.appendData(newLine.dataUsingEncoding(NSUTF8StringEncoding));
+        }
+
+        const boundaryObject = NSString.alloc().initWithString(this.boundary + "--" + newLinePlain);
+        let newParam = "Content-Disposition: form-data; name=\"" + parameterName + "\"";
+        if (filename && filename !== "") {
+            newParam += "; filename=\"" + filename + "\"";
+        }
+
+        newParam += newLinePlain;
+
+        if (contentType && contentType !== "") {
+            newParam += "Content-Type: " + contentType + newLinePlain;
+        }
+
+        newParam += newLinePlain;
+        const newParamObject = NSString.alloc().initWithString(newParam);
+        this.body.appendData(boundaryObject.dataUsingEncoding(NSUTF8StringEncoding));
+        this.body.appendData(newParamObject.dataUsingEncoding(NSUTF8StringEncoding));
+        this.body.appendData(data);
+    },
+    addTextParameterName: function(text: string, parameterName: string) {
+        const newData = NSString.alloc().initWithString(text);
+        this.addFileParameterNameFilenameContentType(newData, parameterName);
     }
-}
+});
 
 class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
@@ -136,7 +168,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 // @ts-ignore
                 if (!matched && options.content instanceof HTTPFormData) {
                     matched = true;
-                    const multipartFormData = NativeScriptHTTPOMGMultipartFormData.new();
+                    const multipartFormData = iOSMultipartFormData.new();
                     const contentValues = options.content as HTTPFormData;
                     contentValues.forEach(((value, key) => {
                         if (typeof value === "string") {
