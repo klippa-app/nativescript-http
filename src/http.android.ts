@@ -1,4 +1,4 @@
-import { HttpResponseEncoding, HttpRequestOptions, HttpResponse } from "@nativescript/core/http";
+import { HttpResponseEncoding, HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
 import { addHeader } from "@nativescript/core/http/http-request";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
@@ -53,7 +53,7 @@ function onRequestComplete(requestId: number, result: com.klippa.NativeScriptHTT
     }
 
     // read the headers
-    const headers: any = {};
+    const headers: Headers = {};
     if (result.headers) {
         const jHeaders = result.headers;
         const length = jHeaders.size();

@@ -2,7 +2,18 @@
 
 [![Build Status](https://travis-ci.org/klippa-app/nativescript-http.svg?branch=master)](https://travis-ci.org/klippa-app/nativescript-http)
 
-A drop-in replacement for the core HTTP with important improvements like proper connection pooling and form data support.
+**A drop-in replacement for the core HTTP with important improvements like proper connection pooling and form data support.**
+
+## Features
+* Modern TLS & SSL security features
+* Shared connection pooling reduces request latency
+* Silently recovers from common connection problems
+* Everything runs on a native background thread
+* Transparent GZIP
+* HTTP/2 support
+* Multipart form data support
+* Ability to use without any code change
+* Ability to make all http requests go through this plugin
 
 ## Warning
 The iOS implementation has not been created yet. The Android implementation is finished.
@@ -15,6 +26,40 @@ tns plugin add @klippa/nativescript-http
 ```
 
 ## Usage 
+
+### Automatically use this plugin for all HTTP calls
+
+Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http),
+we can automatically use this plugin for all HTTP calls in NativeScript that use the XHR framework to do HTTP calls, this includes:
+ * Any JavaScript/Angular plugin that was created for the browser
+   * Axios
+   * Angular HTTPClient
+ * Any NativeScript http method
+   * request
+   * fetch
+   * getString, getJSON, getImage, getFile, getBinary
+ * Any NativeScript plugin that uses above methods internally
+
+The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
+
+```js
+// Add on top of page.
+const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack");
+
+// ... code
+
+// Add our plugin on top.
+plugins: [
+            new NativeScriptHTTPPlugin(),
+            // ... other plugins
+]
+
+// ... code
+```
+
+**Note: if you do this, you don't have to do the other integrations.**
+
+### Integration in code
 
 Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http), you can execute the requests in the same way as with the Core HTTP, the only thing different is the import:
 
@@ -33,7 +78,7 @@ request({
 });
 ```
 
-### Angular
+### Integration in Angular
 We also provide a drop-in replacement `NativeScriptHttpClientModule` from the `nativescript-angular` project.
 
 In order to make Angular use our HTTP implementation, import our module like this:
@@ -82,13 +127,14 @@ request({
 
 ## Comparison with other NativeScript HTTP Clients
 
-| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling
-| --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation |
-| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown |
-| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation |
-| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation |
-| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | Yes | Yes | Yes, shared okhttp3 client |
+| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
+| --- | --- | --- | --- | --- | --- | --- |
+| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - |
+| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
+| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
+| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No |
+| nativescript-https | Yes, using Java okhttp3 | Yes, using | Yes | No | Yes, shared okhttp3 client | Yes, by manually replacing calls, data structures are the same |
+| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | Yes | Yes | Yes, shared okhttp3 client | Yes, automatically and manually |
 
 ## Implementation differences with NativeScript Core HTTP
  
@@ -96,6 +142,12 @@ request({
  * We use a default timeout of 60s for connect/write/read, you can change this using the timeout option
  * While the code of Core HTTP looks like it supports FormData, it only supports key/value and not files, we do support it with our `HTTPFormData` class.
  
+ ## Roadmap
+ * SSL Pinning
+ * More control over connection pooling and concurrency limits (total and per domain)
+ * More image decode control (never, with image content type, always)
+ * Websockets
+
 ## License
 
 The MIT License (MIT)
