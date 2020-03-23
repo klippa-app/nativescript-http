@@ -34,6 +34,22 @@ function parseJSON(source: string): any {
     return JSON.parse(src);
 }
 
+class NativeScriptHTTPOMGMultipartFormData extends OMGMultipartFormData {
+
+    static new(): NativeScriptHTTPOMGMultipartFormData;
+
+    static alloc(): NativeScriptHTTPOMGMultipartFormData;
+
+    getBody(): NSMutableData {
+        return this.body;
+
+    }
+
+    getBoundary(): NSString {
+        return this.boundary;
+    }
+}
+
 class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
     public URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: (p1: NSURLRequest) => void): void {
@@ -120,7 +136,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 // @ts-ignore
                 if (!matched && options.content instanceof HTTPFormData) {
                     matched = true;
-                    const multipartFormData = OMGMultipartFormData.new();
+                    const multipartFormData = NativeScriptHTTPOMGMultipartFormData.new();
                     const contentValues = options.content as HTTPFormData;
                     contentValues.forEach(((value, key) => {
                         if (typeof value === "string") {
@@ -170,13 +186,11 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
 
                     // This part is copied from OMGHTTPURLRQ. We do this to support multipart for other methods too.
                     // Set multipart content type and boundary.
-                    // @ts-ignore
-                    const contentType = "multipart/form-data; charset=utf-8; boundary=" + multipartFormData.boundary;
+                    const boundary = multipartFormData.getBoundary();
+                    const contentType = "multipart/form-data; charset=utf-8; boundary=" + boundary;
                     urlRequest.setValueForHTTPHeaderField(contentType, "Content-Type");
-                    // @ts-ignore
-                    const data = multipartFormData.body.mutableCopy();
-                    // @ts-ignore
-                    const lastLine = NSString.alloc().initWithString("\r\n--" + multipartFormData.boundary + "--\r\n");
+                    const data = multipartFormData.getBody().mutableCopy();
+                    const lastLine = NSString.alloc().initWithString("\r\n--" + boundary + "--\r\n");
                     data.appendData(lastLine.dataUsingEncoding(NSUTF8StringEncoding));
                     urlRequest.HTTPBody = NSData.dataWithData(data);
                 }
