@@ -82,6 +82,15 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 }
             }
 
+            let contentType: string;
+            if (options.headers) {
+                for (let key in options.headers) {
+                    if (key.toLowerCase() === "content-type") {
+                        contentType = options.headers[key];
+                    }
+                }
+            }
+
             if (types.isString(options.content) || options.content instanceof FormData) {
                 urlRequest.HTTPBody = NSString.stringWithString(options.content.toString()).dataUsingEncoding(4);
             } else if (options.content instanceof ArrayBuffer) {
@@ -97,6 +106,10 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 // We ignore the name in the File object so we can ignore that type.
                 // @ts-ignore
                 if (!matched && options.content instanceof Blob) {
+                    if (!contentType && options.content.type) {
+                        urlRequest.setValueForHTTPHeaderField(options.content.type, "Content-Type");
+                    }
+
                     // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                     // @ts-ignore
                     const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
@@ -153,6 +166,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                             multipartFormData.addFileParameterNameFilenameContentType(value, key, "", "application/octet-stream");
                         }
                     }));
+
 
                     // This part is copied from OMGHTTPURLRQ. We do this to support multipart for other methods too.
                     // Set multipart content type and boundary.
