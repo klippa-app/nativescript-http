@@ -1,15 +1,14 @@
 import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
-import { addHeader } from "@nativescript/core/http/http-request";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
     getFilenameFromUrl,
 } from "./http.common";
-export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
 import * as types from "@nativescript/core/utils/types";
 import * as domainDebugger from "tns-core-modules/debugger";
 import * as fs from "tns-core-modules/file-system";
+export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
 
 export enum HttpResponseEncoding {
     UTF8,
@@ -283,4 +282,16 @@ export function getBinary(arg: any): Promise<ArrayBuffer> {
                 }
             }, e => reject(e));
     });
+}
+
+export function addHeader(headers: Headers, key: string, value: string): void {
+    if (!headers[key]) {
+        headers[key] = value;
+    } else if (Array.isArray(headers[key])) {
+        (<string[]>headers[key]).push(value);
+    } else {
+        const values: string[] = [<string>headers[key]];
+        values.push(value);
+        headers[key] = values;
+    }
 }

@@ -1,5 +1,4 @@
-import { HttpResponseEncoding, HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
-import { addHeader } from "@nativescript/core/http/http-request";
+import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     getFilenameFromUrl,
@@ -12,6 +11,11 @@ import { NetworkAgent } from "tns-core-modules/debugger";
 export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
 
 declare var global: any;
+
+export enum HttpResponseEncoding {
+    UTF8,
+    GBK
+}
 
 function parseJSON(source: string): any {
     const src = source.trim();
@@ -422,4 +426,16 @@ export function getBinary(arg: any): Promise<ArrayBuffer> {
                 }
             }, e => reject(e));
     });
+}
+
+export function addHeader(headers: Headers, key: string, value: string): void {
+    if (!headers[key]) {
+        headers[key] = value;
+    } else if (Array.isArray(headers[key])) {
+        (<string[]>headers[key]).push(value);
+    } else {
+        const values: string[] = [<string>headers[key]];
+        values.push(value);
+        headers[key] = values;
+    }
 }

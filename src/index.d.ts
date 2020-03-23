@@ -1,5 +1,5 @@
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http/http";
-import { ImageSource } from "@nativescript/core/image-source/image-source";
+import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http";
+import { ImageSource } from "@nativescript/core/image-source";
 
 /**
  * Downloads the content from the specified URL as a string.
@@ -84,3 +84,5 @@ export declare class HTTPFormData implements FormData {
     set(name: string, value: string | Blob | any, fileName?: string): void;
     forEach(callbackfn: (value: HTTPFormDataEntryValue, key: string, parent: FormData) => void, thisArg?: any): void;
 }
+
+export declare function addHeader(headers: Headers, key: string, value: string): void;

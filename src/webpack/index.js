@@ -1,60 +1,43 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
+// Based on the NormalModuleReplacementPlugin plugin.
+class NativeScriptHTTPPlugin {
+    constructor() {}
 
-function getAllFiles(root) {
-    var res = [],
-        files = fs.readdirSync(root);
-    files.forEach(function (file) {
-        var pathname = root + '/' + file,
-            stat = fs.lstatSync(pathname);
+    apply(compiler) {
+        const resourceRegExp = /http-request/;
+        compiler.hooks.normalModuleFactory.tap(
+            "NativeScriptHTTPPlugin",
+            nmf => {
+                nmf.hooks.beforeResolve.tap("NativeScriptHTTPPlugin", result => {
+                    if (!result) return;
 
-        if (!stat.isDirectory()) {
-            res.push(pathname);
-        } else {
-            res = res.concat(getAllFiles(pathname));
-        }
-    });
-    return res
-}
+                    // Replace http-request imports by our own.
+                    if (resourceRegExp.test(result.request)) {
+                        // Replace the relative http-request import from core.
+                        if (result.request === "./http-request") {
+                            if (result.context.endsWith("@nativescript/core/http")) {
+                                result.request = "../../../@klippa/nativescript-http";
+                            }
+                            if (result.context.endsWith("tns-core-modules/http")) {
+                                result.request = "../../@klippa/nativescript-http";
+                            }
+                        }
 
-function replace(file) {
-    const src = path.resolve(file);
-    let fileContent = fs.readFileSync(src, 'utf8');
+                        // When other code directly imports http-request.
+                        if (result.request === "@nativescript/core/http/http-request" || result.request === "tns-core-modules/http/http-request") {
+                            result.request = "@klippa/nativescript-http";
+                        }
 
-    // We replace the require in the core http request to make the requests using our library.
-    if (fileContent.includes("var httpRequest = require(\"./http-request\");") || fileContent.includes("__export(require(\"./http-request\"));")) {
-        fileContent = fileContent.replace("var httpRequest = require(\"./http-request\");", "var httpRequest = require(\"@klippa/nativescript-http\");");
-        fileContent = fileContent.replace("__export(require(\"./http-request\"));", "__export(require(\"@klippa/nativescript-http\"));");
-        fs.writeFileSync(src, fileContent);
-    }
-}
+                        console.log(result.request, result.context);
+                    }
+                    return result;
+                });
 
-function NativeScriptHTTPPlugin() {
-};
 
-NativeScriptHTTPPlugin.prototype.apply = function (compiler) {
-    const done = (statsData) => {
-        if (statsData.hasErrors()) {
-            return
-        }
-        const files = getAllFiles("./");
-        files.forEach(file => {
-            if (file.endsWith("@nativescript/core/http/http.js") || file.endsWith("tns-core-modules/http/http.js")) {
-                replace(file);
             }
-        });
+        );
     }
-
-    if (compiler.hooks) {
-        const plugin = {
-            name: "NativeScriptHTTPPlugin"
-        };
-        compiler.hooks.done.tap(plugin, done);
-    } else {
-        compiler.plugin('done', done);
-    }
-};
+}
 
 module.exports = NativeScriptHTTPPlugin;
