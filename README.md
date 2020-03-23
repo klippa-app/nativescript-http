@@ -9,8 +9,8 @@
 * Shared connection pooling reduces request latency
 * Silently recovers from common connection problems
 * Everything runs on a native background thread
-* Transparent GZIP
-* HTTP/2 support
+* Transparent GZIP to shrink response size
+* HTTP/2 and SPDY support
 * Support for directly posting ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects
 * Multipart form data support (for file upload), file upload supports ArrayBuffer, File, Blob and native objects (like java.io.File, NSData.dataWithContentsOfFile)
 * Ability to use without any code change
