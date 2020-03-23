@@ -139,7 +139,7 @@ request({
 | nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
 | nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
 | nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No |
-| nativescript-https | Yes, using Java okhttp3 | Yes, using | Yes | No | Yes, shared okhttp3 client | Yes, by manually replacing calls, data structures are the same |
+| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared okhttp3 client | Yes, by manually replacing calls, data structures are the same |
 | @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | Yes | Yes | Yes, shared okhttp3 client | Yes, automatically and manually |
 
 ## Implementation differences with NativeScript Core HTTP
