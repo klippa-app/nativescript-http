@@ -28,8 +28,6 @@ class NativeScriptHTTPPlugin {
                         if (result.request === "@nativescript/core/http/http-request" || result.request === "tns-core-modules/http/http-request") {
                             result.request = "@klippa/nativescript-http";
                         }
-
-                        console.log(result.request, result.context);
                     }
                     return result;
                 });
