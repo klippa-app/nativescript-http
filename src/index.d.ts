@@ -102,8 +102,8 @@ export declare enum ImageParseMethod {
 export declare function setImageParseMethod(imageParseMethod: ImageParseMethod): void;
 
 /**
- * Sets the concurrency limit. (Only has affect on Android)
- * @param maxRequests how many requests the http client should do at the same time.
+ * Sets the concurrency limit.
+ * @param maxRequests how many requests the http client should do at the same time (Only has affect on Android, iOS allows no control over this).
  * @param maxRequestsPerHost How many requests the http client should do at the same time for the same host.
  */
 export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number): void;

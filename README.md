@@ -7,7 +7,7 @@
 ## Features
 * Modern TLS & SSL security features
 * Shared connection pooling reduces request latency
-* Control over concurrency
+* Control over concurrency/connection pooling
 * Silently recovers from common connection problems
 * Everything runs on a native background thread
 * Transparent GZIP to shrink response size
@@ -175,8 +175,8 @@ import { clearCookies } from "@klippa/nativescript-http";
 clearCookies();
 ```
 
-### Controlling concurrency limits
-Note: only has affect on Android.
+### Controlling concurrency / connection pool limits
+Note: only the domain limit has effect on iOS.
 ```
 import { setConcurrencyLimits } from "@klippa/nativescript-http";
 

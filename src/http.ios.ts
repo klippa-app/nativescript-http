@@ -400,7 +400,7 @@ export function setImageParseMethod(imageParseMethod: ImageParseMethod) {
 }
 
 export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number) {
-    // Doesn't do anything for iOS (yet).
+    sessionConfig.HTTPMaximumConnectionsPerHost = maxRequestsPerHost;
 }
 
 export function clearCookies() {
