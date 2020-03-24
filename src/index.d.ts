@@ -109,7 +109,7 @@ export declare function setImageParseMethod(imageParseMethod: ImageParseMethod):
 export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number): void;
 
 /**
- * Clear the cookies in the cookie jar. (Only has affect on Android)
+ * Clear the cookies in the cookie jar.
  */
 export declare function clearCookies(): void;
 

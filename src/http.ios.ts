@@ -404,7 +404,13 @@ export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: nu
 }
 
 export function clearCookies() {
-    // Doesn't do anything for iOS (yet).
+    if (sessionConfig.HTTPCookieStorage && sessionConfig.HTTPCookieStorage.cookies) {
+        const cookieSize = sessionConfig.HTTPCookieStorage.cookies.count;
+        for (let i = 0; i < cookieSize; i++) {
+            const cookie = sessionConfig.HTTPCookieStorage.cookies.objectAtIndex(i);
+            sessionConfig.HTTPCookieStorage.deleteCookie(cookie);
+        }
+    }
 }
 
 export function setUserAgent(userAgent?: string) {

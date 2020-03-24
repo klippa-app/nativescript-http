@@ -145,8 +145,8 @@ Note: this only works on Android for now.
 | nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
 | nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
 | nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No |
-| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared okhttp3 client | Yes, by manually replacing calls, data structures are the same |
-| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | Yes | Yes | Yes, shared okhttp3 client | Yes, automatically and manually |
+| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
+| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
 
 ## Implementation differences with NativeScript Core HTTP
  
@@ -156,14 +156,43 @@ Note: this only works on Android for now.
  
 ## API
 
-### Controlling image decode 
+### Controlling image decode (Android only)
 Note: only has affect on Android, on iOS this only happens when you use toImage().
+```
+import { setImageParseMethod, ImageParseMethod } from "@klippa/nativescript-http";
 
-### Controlling cookies (Android only)
+// Add this line where you want to change the image parse mode.
+// Options are: NEVER/CONTENTTYPE/ALWAYS.
+setImageParseMethod(ImageParseMethod.ALWAYS);
+```
+
+### Controlling cookies
+Clear all cookies:
+```
+import { clearCookies } from "@klippa/nativescript-http";
+
+// Add this line where you want to clear cookies.
+clearCookies();
+```
+
+### Controlling concurrency limits
 Note: only has affect on Android.
+```
+import { setConcurrencyLimits } from "@klippa/nativescript-http";
+
+// Add this line where you want to set the concurrency limits.
+// First argument is total limit, second per domain.
+setConcurrencyLimits(20, 5);
+```
 
 ### Setting a global User Agent
- 
+```
+import { setUserAgent } from "@klippa/nativescript-http";
+
+// Add this line where you want to set the user agent.
+setUserAgent("MyCoolApp");
+```
+
 ## Roadmap
  * SSL Pinning
  * Websockets
