@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import {request } from "@klippa/nativescript-http";
+import { request, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-http";
 import {HttpClient} from "@angular/common/http";
 import {ImageSource} from "@nativescript/core/image-source";
 
@@ -19,6 +19,71 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.testHTTPHandling();
+    }
+
+    testHTTPHandling() {
+        const blob = new Blob(["123"], {
+            type: "image/png"
+        });
+
+        const file = new File(["123"], "Henkus.png", {
+            type: "image/png"
+        });
+
+        // @ts-ignore
+        const arrayBuffer = Blob.InternalAccessor.getBuffer(file).buffer.slice(0) as ArrayBuffer;
+
+        const formData = new FormData();
+        formData.append("Henkus", "cool");
+        formData.append("Henkus", "bellen?");
+
+        const httpFormData = new HTTPFormData();
+        httpFormData.append("Henkus", "cool");
+        httpFormData.append("Henkus", "bellen?");
+        httpFormData.append("blob", blob);
+        httpFormData.append("file", file);
+        httpFormData.append("arrayBuffer", arrayBuffer);
+        httpFormData.append("blobEntry", new HTTPFormDataEntry(blob, null, blob.type));
+        httpFormData.append("fileEntry", new HTTPFormDataEntry(file, file.name, file.type));
+        httpFormData.append("arrayBufferEntry", new HTTPFormDataEntry(arrayBuffer));
+
+        const baseURL = "https://en9ugvtm1xi1.x.pipedream.net";
+
+        request({
+            url: baseURL + "/blob",
+            method: "POST",
+
+            // @ts-ignore
+            content: blob,
+        });
+
+        request({
+            url: baseURL + "/file",
+            method: "POST",
+
+            // @ts-ignore
+            content: file,
+        });
+
+        request({
+            url: baseURL + "/arrayBuffer",
+            method: "POST",
+            content: arrayBuffer,
+        });
+
+
+        request({
+            url: baseURL + "/formData",
+            method: "POST",
+            content: formData,
+        });
+
+        request({
+            url: baseURL + "/httpFormData",
+            method: "POST",
+            content: httpFormData,
+        });
     }
 
     getText() {
