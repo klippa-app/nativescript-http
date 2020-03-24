@@ -7,6 +7,7 @@
 ## Features
 * Modern TLS & SSL security features
 * Shared connection pooling reduces request latency
+* Control over concurrency
 * Silently recovers from common connection problems
 * Everything runs on a native background thread
 * Transparent GZIP to shrink response size
@@ -16,10 +17,13 @@
 * Ability to use without any code change
 * Ability to make all http requests go through this plugin
 * Backwards compatible (behaves the same as core HTTP)
+* Ability to set a global user agent
+* Ability to control cookies
+* Ability to control background image parsing
 
 ## Warning
-The iOS implementation has not been created yet. The Android implementation is finished.
-For iOS we fall back to the default NativeScript Core Request.
+The iOS implementation is not complete yet, it misses the multipart form data functionality.
+The Android implementation is finished.
 
 ## Installation
 
@@ -131,6 +135,8 @@ request({
 });
 ```
 
+Note: this only works on Android for now.
+
 ## Comparison with other NativeScript HTTP Clients
 
 | Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
@@ -148,12 +154,19 @@ request({
  * We use a default timeout of 60s for connect/write/read, you can change this using the timeout option
  * While the code of Core HTTP looks like it supports FormData, it only supports key/value and not files, we do support it with our `HTTPFormData` class.
  
- ## Roadmap
+## API
+
+### Controlling image decode 
+Note: only has affect on Android, on iOS this only happens when you use toImage().
+
+### Controlling cookies (Android only)
+Note: only has affect on Android.
+
+### Setting a global User Agent
+ 
+## Roadmap
  * SSL Pinning
- * More control over connection pooling and concurrency limits (total and per domain)
- * More image decode control (never, with image content type, always)
  * Websockets
- * Setting a global user agent
 
 ## License
 

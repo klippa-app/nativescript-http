@@ -12,11 +12,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Dispatcher;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -79,34 +83,97 @@ public class Async {
 
     public static class Http {
         private static final String GET_METHOD = "GET";
-        private static final String DELETE_METHOD = "DELETE";
         private static final String HEAD_METHOD = "HEAD";
         private static OkHttpClient client;
+        private static MemoryCookieJar cookieJar;
+        private static ImageParseMethod imageParseMethod = ImageParseMethod.CONTENTTYPE;
 
-        public static void MakeRequest(final RequestOptions options, final CompleteCallback callback, final Object context) {
-            if (client == null) {
-                client = new OkHttpClient.Builder()
-                    .writeTimeout(60, TimeUnit.SECONDS)
-                    .readTimeout(60, TimeUnit.SECONDS)
-                    .cookieJar(new MemoryCookieJar())
-                    .connectTimeout(60, TimeUnit.SECONDS)
-                    .build();
+        public static void InitClient() {
+            if (cookieJar == null) {
+                cookieJar = new MemoryCookieJar();
             }
 
+            if (client == null) {
+                client = new OkHttpClient.Builder()
+                        .writeTimeout(60, TimeUnit.SECONDS)
+                        .readTimeout(60, TimeUnit.SECONDS)
+                        .connectTimeout(60, TimeUnit.SECONDS)
+                        .cookieJar(cookieJar)
+                        .build();
+            }
+        }
+
+        public static void MakeRequest(final RequestOptions options, final CompleteCallback callback, final Object context) {
+            InitClient();
             final android.os.Handler mHandler = new android.os.Handler();
             threadPoolExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     final HttpRequestTask task = new HttpRequestTask(callback, context);
-                    final RequestResult result = task.doInBackground(options);
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            task.onPostExecute(result);
-                        }
-                    });
+
+                    try {
+                        final OkHttpClient client = task.buildClient(options);
+                        final Request request = task.buildRequest(options);
+
+                        client.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                final RequestResult result = new RequestResult();
+                                result.error = e;
+
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        task.onPostExecute(result);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                final RequestResult result = task.parseResponse(response, options);
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        task.onPostExecute(result);
+                                    }
+                                });
+                            }
+                        });
+                    } catch(Exception e) {
+                        final RequestResult result = new RequestResult();
+                        result.error = e;
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                task.onPostExecute(result);
+                            }
+                        });
+                    }
                 }
             });
+        }
+
+        public static void ClearCookies() {
+            cookieJar.clear();
+        }
+
+        public static void SetImageParseMethod(ImageParseMethod newImageParseMethod) {
+            imageParseMethod = newImageParseMethod;
+        }
+
+        public static void SetConcurrencyLimits(int maxRequests, int maxRequestsPerHost) {
+            // Make sure we have a client.
+            InitClient();
+            client.dispatcher().setMaxRequests(maxRequests);
+            client.dispatcher().setMaxRequestsPerHost(maxRequestsPerHost);
+        }
+
+        public enum ImageParseMethod {
+            NEVER,
+            CONTENTTYPE,
+            ALWAYS
         }
 
         public static class KeyValuePair {
@@ -195,13 +262,10 @@ public class Async {
                 this.raw = responseStream;
                 buff = null;
 
-                // Only decode as image with proper content type.
                 MediaType contentType = responseBody.contentType();
-                if (contentType != null && contentType.toString().startsWith("image/")) {
+                if (imageParseMethod == ImageParseMethod.ALWAYS || (imageParseMethod == ImageParseMethod.CONTENTTYPE && contentType != null && contentType.toString().startsWith("image/"))) {
                     // make the byte array conversion here, not in the JavaScript
                     // world for better performance
-                    // since we do not have some explicit way to determine whether
-                    // the content-type is image
                     try {
                         // TODO: Generally this approach will not work for very
                         // large files
@@ -269,58 +333,53 @@ public class Async {
                 this.context = context;
             }
 
-            protected RequestResult doInBackground(RequestOptions... params) {
+            protected OkHttpClient buildClient(RequestOptions... params) {
+                RequestOptions options = params[0];
+                OkHttpClient.Builder clientBuilder = client.newBuilder();
+                // apply timeout
+                if (options.timeout > 0) {
+                    clientBuilder.writeTimeout(options.timeout, TimeUnit.MILLISECONDS);
+                    clientBuilder.readTimeout(options.timeout, TimeUnit.MILLISECONDS);
+                    clientBuilder.connectTimeout(options.timeout, TimeUnit.MILLISECONDS);
+                }
+
+                // don't follow redirect (30x) responses; by default, HttpURLConnection follows them.
+                if (options.dontFollowRedirects) {
+                    clientBuilder.followRedirects(false);
+                }
+
+                return clientBuilder.build();
+            }
+
+            protected Request buildRequest(RequestOptions... params) {
+                RequestOptions options = params[0];
+                Request.Builder requestBuilder = new Request.Builder();
+                requestBuilder.url(options.url);
+
+                // set the request method
+                String requestMethod = options.method != null ? options.method.toUpperCase(Locale.ENGLISH) : GET_METHOD;
+                requestBuilder.method(requestMethod, options.content);
+
+                // add the headers
+                options.addHeaders(requestBuilder);
+
+                return requestBuilder.build();
+            }
+
+            protected RequestResult parseResponse(Response response, RequestOptions... params) {
                 RequestResult result = new RequestResult();
                 Stack<Closeable> openedStreams = new Stack<Closeable>();
 
                 try {
-                    OkHttpClient.Builder clientBuilder = client.newBuilder();
                     RequestOptions options = params[0];
-
-                    Request.Builder requestBuilder = new Request.Builder();
-                    requestBuilder.url(options.url);
-
-                    // set the request method
                     String requestMethod = options.method != null ? options.method.toUpperCase(Locale.ENGLISH) : GET_METHOD;
-                    requestBuilder.method(requestMethod, options.content);
-
-                    // add the headers
-                    options.addHeaders(requestBuilder);
-
-                    // apply timeout
-                    if (options.timeout > 0) {
-                        clientBuilder.writeTimeout(options.timeout, TimeUnit.MILLISECONDS);
-                        clientBuilder.readTimeout(options.timeout, TimeUnit.MILLISECONDS);
-                        clientBuilder.connectTimeout(options.timeout, TimeUnit.MILLISECONDS);
-                    }
-
-                    // don't follow redirect (30x) responses; by default, HttpURLConnection follows them.
-                    if (options.dontFollowRedirects) {
-                        clientBuilder.followRedirects(false);
-                    }
-
-                    // Do not attempt to write the content (body) for DELETE method, Java will throw directly
-                    if (!requestMethod.equals(DELETE_METHOD)) {
-                        //options.writeCont ent(connection, openedStreams);
-                    }
-
-                    OkHttpClient requestClient = clientBuilder.build();
-                    Request request = requestBuilder.build();
-
-
-                    Response response = requestClient.newCall(request).execute();
-                    Log.i("OkHTTP", response.toString());
-                    // close the opened streams (saves copy-paste implementation
-                    // in each method that throws IOException)
-                    this.closeOpenedStreams(openedStreams);
-
                     // build the result
                     result.getHeaders(response);
                     result.url = options.url;
                     result.statusCode = response.code();
                     result.statusText = response.message();
                     if (!requestMethod.equals(HEAD_METHOD)) {
-                       result.readResponseStream(response, openedStreams, options);
+                        result.readResponseStream(response, openedStreams, options);
                     }
 
                     // close the opened streams (saves copy-paste implementation

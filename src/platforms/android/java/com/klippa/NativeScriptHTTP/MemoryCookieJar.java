@@ -46,4 +46,8 @@ class MemoryCookieJar implements CookieJar {
     private static boolean isCookieExpired(Cookie cookie) {
         return cookie.expiresAt() < System.currentTimeMillis();
     }
+
+    public void clear() {
+        cache.clear();
+    }
 }
