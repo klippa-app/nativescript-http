@@ -3,12 +3,12 @@ import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
-    getFilenameFromUrl,
+    getFilenameFromUrl, ImageParseMethod,
 } from "./http.common";
 import * as types from "@nativescript/core/utils/types";
 import * as domainDebugger from "tns-core-modules/debugger";
 import * as fs from "tns-core-modules/file-system";
-export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 export enum HttpResponseEncoding {
     UTF8,
@@ -19,6 +19,7 @@ const currentDevice = UIDevice.currentDevice;
 const device = currentDevice.userInterfaceIdiom === UIUserInterfaceIdiom.Phone ? "Phone" : "Pad";
 const osVersion = currentDevice.systemVersion;
 
+let customUserAgent: string;
 const GET = "GET";
 const USER_AGENT_HEADER = "User-Agent";
 const USER_AGENT = `Mozilla/5.0 (i${device}; CPU OS ${osVersion.replace(".", "_")} like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/${osVersion} Mobile/10A5355d Safari/8536.25`;
@@ -122,20 +123,29 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
 
             urlRequest.HTTPMethod = types.isDefined(options.method) ? options.method : GET;
 
-            urlRequest.setValueForHTTPHeaderField(USER_AGENT, USER_AGENT_HEADER);
-
-            if (options.headers) {
-                for (let header in options.headers) {
-                    urlRequest.setValueForHTTPHeaderField(options.headers[header] + "", header);
-                }
-            }
-
             let contentType: string;
+            let userAgent: string;
             if (options.headers) {
                 for (let key in options.headers) {
                     if (key.toLowerCase() === "content-type") {
                         contentType = options.headers[key];
                     }
+                    if (key.toLowerCase() === "user-agent") {
+                        userAgent = options.headers[key];
+                    }
+                }
+            }
+
+            if (!userAgent) {
+                if (!options.headers) {
+                    options.headers = {};
+                    options.headers[USER_AGENT_HEADER] = customUserAgent ? customUserAgent : USER_AGENT;
+                }
+            }
+
+            if (options.headers) {
+                for (let header in options.headers) {
+                    urlRequest.setValueForHTTPHeaderField(options.headers[header] + "", header);
                 }
             }
 
@@ -438,4 +448,20 @@ export function addHeader(headers: Headers, key: string, value: string): void {
         values.push(value);
         headers[key] = values;
     }
+}
+
+export function setImageParseMethod(imageParseMethod: ImageParseMethod) {
+    // Doesn't do anything for iOS.
+}
+
+export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number) {
+    // Doesn't do anything for iOS (yet).
+}
+
+export function clearCookies() {
+    // Doesn't do anything for iOS (yet).
+}
+
+export function setUserAgent(userAgent?: string) {
+    customUserAgent = userAgent;
 }

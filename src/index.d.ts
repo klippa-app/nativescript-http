@@ -87,3 +87,34 @@ export declare class HTTPFormData implements FormData {
 }
 
 export declare function addHeader(headers: Headers, key: string, value: string): void;
+
+export declare enum ImageParseMethod {
+    NEVER = 0,
+    CONTENTTYPE = 1,
+    ALWAYS = 2
+}
+
+/**
+ * Sets the image parse method. (Only has affect on Android)
+ * Image parsing already decodes the raw result into an bitmap object for you on Android in the background thread.
+ * @param imageParseMethod The new image parse method.
+ */
+export declare function setImageParseMethod(imageParseMethod: ImageParseMethod): void;
+
+/**
+ * Sets the concurrency limit. (Only has affect on Android)
+ * @param maxRequests how many requests the http client should do at the same time.
+ * @param maxRequestsPerHost How many requests the http client should do at the same time for the same host.
+ */
+export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number): void;
+
+/**
+ * Clear the cookies in the cookie jar. (Only has affect on Android)
+ */
+export declare function clearCookies(): void;
+
+/**
+ * Set a global user agent.
+ * @param userAgent The new user agent. Set to null to use the default again.
+ */
+export declare function setUserAgent(userAgent?: string): void;

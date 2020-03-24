@@ -146,3 +146,9 @@ export class HTTPFormData implements FormData {
         }, thisArg);
     }
 }
+
+export enum ImageParseMethod {
+    NEVER,
+    CONTENTTYPE,
+    ALWAYS
+}

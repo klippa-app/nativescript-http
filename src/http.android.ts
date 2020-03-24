@@ -3,12 +3,12 @@ import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     getFilenameFromUrl,
     HTTPFormData,
-    HTTPFormDataEntry,
+    HTTPFormDataEntry, ImageParseMethod,
 } from "./http.common";
 import * as fs from "tns-core-modules/file-system";
 import { screen } from "tns-core-modules/platform";
 import { NetworkAgent } from "tns-core-modules/debugger";
-export {HTTPFormData, HTTPFormDataEntry } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 declare var global: any;
 
@@ -28,6 +28,7 @@ function parseJSON(source: string): any {
 
 let requestIdCounter = 0;
 const pendingRequests = {};
+let customUserAgent: string;
 
 let completeCallback: com.klippa.NativeScriptHTTP.Async.CompleteCallback;
 function ensureCompleteCallback() {
@@ -159,15 +160,26 @@ function buildJavaOptions(options: HttpRequestOptions) {
 
     let contentType: string;
     let mediaType: okhttp3.MediaType = null;
+    let userAgent: string;
     if (options.headers) {
         for (let key in options.headers) {
             if (key.toLowerCase() === "content-type") {
                 contentType = options.headers[key];
             }
+            if (key.toLowerCase() === "user-agent") {
+                userAgent = options.headers[key];
+            }
         }
 
         if (contentType) {
             mediaType = okhttp3.MediaType.parse(contentType);
+        }
+    }
+
+    if (!userAgent && customUserAgent) {
+        if (!options.headers) {
+            options.headers = {};
+            options.headers["User-Agent"] = customUserAgent;
         }
     }
 
@@ -437,4 +449,26 @@ export function addHeader(headers: Headers, key: string, value: string): void {
         values.push(value);
         headers[key] = values;
     }
+}
+
+export function setImageParseMethod(imageParseMethod: ImageParseMethod) {
+    if (imageParseMethod === ImageParseMethod.ALWAYS) {
+        com.klippa.NativeScriptHTTP.Async.Http.SetImageParseMethod(com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod.ALWAYS);
+    } else if (imageParseMethod === ImageParseMethod.CONTENTTYPE) {
+        com.klippa.NativeScriptHTTP.Async.Http.SetImageParseMethod(com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod.CONTENTTYPE);
+    } else if (imageParseMethod === ImageParseMethod.NEVER) {
+        com.klippa.NativeScriptHTTP.Async.Http.SetImageParseMethod(com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod.NEVER);
+    }
+}
+
+export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number) {
+    com.klippa.NativeScriptHTTP.Async.Http.SetConcurrencyLimits(maxRequests, maxRequestsPerHost);
+}
+
+export function clearCookies() {
+    com.klippa.NativeScriptHTTP.Async.Http.ClearCookies();
+}
+
+export function setUserAgent(userAgent?: string) {
+    customUserAgent = userAgent;
 }

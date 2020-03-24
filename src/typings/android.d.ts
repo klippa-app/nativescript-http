@@ -23,15 +23,29 @@ declare module com {
 				}
 				export class Http {
 					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http>;
-					public constructor();
+					public static SetConcurrencyLimits(param0: number, param1: number): void;
+					public static ClearCookies(): void;
 					public static MakeRequest(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param2: any): void;
+					public constructor();
+					public static InitClient(): void;
+					public static SetImageParseMethod(param0: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod): void;
 				}
 				export module Http {
 					export class HttpRequestTask {
 						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.HttpRequestTask>;
 						public constructor(param0: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param1: any);
+						public parseResponse(param0: okhttp3.Response, param1: native.Array<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>): com.klippa.NativeScriptHTTP.Async.Http.RequestResult;
+						public buildClient(param0: native.Array<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>): okhttp3.OkHttpClient;
+						public buildRequest(param0: native.Array<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>): okhttp3.Request;
 						public onPostExecute(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestResult): void;
-						public doInBackground(param0: native.Array<com.klippa.NativeScriptHTTP.Async.Http.RequestOptions>): com.klippa.NativeScriptHTTP.Async.Http.RequestResult;
+					}
+					export class ImageParseMethod {
+						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod>;
+						public static NEVER: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod;
+						public static CONTENTTYPE: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod;
+						public static ALWAYS: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod;
+						public static values(): native.Array<com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod>;
+						public static valueOf(param0: string): com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod;
 					}
 					export class KeyValuePair {
 						public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http.KeyValuePair>;
