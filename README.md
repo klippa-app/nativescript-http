@@ -122,6 +122,8 @@ import { request, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-h
 
 const form = new HTTPFormData();
 form.append("value", "Test");
+// You can also append ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects directly to form here, but please keep in mind that only the File object has the ability to set a filename. And only Blob/File objects have the ability to set a content type.
+// Use HTTPFormDataEntry if you want more control.
 
 const formFile = new HTTPFormDataEntry();
 formFile.fileName = "test.png";
