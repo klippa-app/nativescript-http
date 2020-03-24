@@ -60,10 +60,10 @@ const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack");
 
 // ... code
 
-// Add our plugin on top.
+// Add our plugin to the webpack plugins array.
 plugins: [
-            new NativeScriptHTTPPlugin(),
             // ... other plugins
+            new NativeScriptHTTPPlugin()
 ]
 
 // ... code
