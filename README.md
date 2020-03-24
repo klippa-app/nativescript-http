@@ -143,8 +143,6 @@ request({
 });
 ```
 
-Note: this only works on Android for now.
-
 ## Comparison with other NativeScript HTTP Clients
 
 | Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
