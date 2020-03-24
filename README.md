@@ -1,6 +1,16 @@
 # nativescript-http
 
-[![Build Status](https://travis-ci.org/klippa-app/nativescript-http.svg?branch=master)](https://travis-ci.org/klippa-app/nativescript-http)
+[![NPM version][npm-image]][npm-url]
+[![Downloads][downloads-image]][npm-url]
+[![TotalDownloads][total-downloads-image]][npm-url]
+[![Build Status][build-status]][build-url]
+
+[build-status]:https://travis-ci.org/klippa-app/nativescript-http.svg?branch=master
+[build-url]:https://travis-ci.org/klippa-app/nativescript-http
+[npm-image]:http://img.shields.io/npm/v/@klippa/nativescript-http.svg
+[npm-url]:https://npmjs.org/@klippa/nativescript-http
+[downloads-image]:http://img.shields.io/npm/dm/@klippa/nativescript-http.svg
+[total-downloads-image]:http://img.shields.io/npm/dt/@klippa/nativescript-http.svg?label=total%20downloads
 
 **A drop-in replacement for the core HTTP with important improvements like proper connection pooling and form data support.**
 
@@ -20,10 +30,6 @@
 * Ability to set a global user agent
 * Ability to control cookies
 * Ability to control background image parsing
-
-## Warning
-The iOS implementation is not complete yet, it misses the multipart form data functionality.
-The Android implementation is finished.
 
 ## Installation
 
