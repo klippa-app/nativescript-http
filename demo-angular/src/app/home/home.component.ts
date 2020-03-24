@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
         setUserAgent("Klippa/HTTP Example App");
 
         // Setting concurrency limits, 20 at the same time, 2 to the same host.
-        setConcurrencyLimits(20, 1);
+        setConcurrencyLimits(20, 2);
     }
 
     getText() {
