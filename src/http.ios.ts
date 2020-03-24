@@ -35,54 +35,6 @@ function parseJSON(source: string): any {
     return JSON.parse(src);
 }
 
-const iOSMultipartFormData = (NSObject as any).extend({
-    init: function() {
-        const self = this.super.init();
-        if (self) {
-            self.body = NSMutableData.alloc().init();
-            self.boundary = "------------------------" + (new Date()).getTime() + "-nativescripthttp";
-        }
-        return self;
-    },
-    getBody: function() {
-        return this.body;
-    },
-    getBoundary: function() {
-        return this.boundary;
-    },
-    addFileParameterNameFilenameContentType: function(data: NSData, parameterName: string, filename?: string, contentType?: string) {
-        const newLinePlain = "\r\n";
-
-        if (this.body.length) {
-            // if we already added something then we need an additional newline
-            const newLine = NSString.alloc().initWithString(newLinePlain);
-            this.body.appendData(newLine.dataUsingEncoding(NSUTF8StringEncoding));
-        }
-
-        const boundaryObject = NSString.alloc().initWithString(this.boundary + "--" + newLinePlain);
-        let newParam = "Content-Disposition: form-data; name=\"" + parameterName + "\"";
-        if (filename && filename !== "") {
-            newParam += "; filename=\"" + filename + "\"";
-        }
-
-        newParam += newLinePlain;
-
-        if (contentType && contentType !== "") {
-            newParam += "Content-Type: " + contentType + newLinePlain;
-        }
-
-        newParam += newLinePlain;
-        const newParamObject = NSString.alloc().initWithString(newParam);
-        this.body.appendData(boundaryObject.dataUsingEncoding(NSUTF8StringEncoding));
-        this.body.appendData(newParamObject.dataUsingEncoding(NSUTF8StringEncoding));
-        this.body.appendData(data);
-    },
-    addTextParameterName: function(text: string, parameterName: string) {
-        const newData = NSString.alloc().initWithString(text);
-        this.addFileParameterNameFilenameContentType(newData, parameterName);
-    }
-});
-
 class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
     public URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: (p1: NSURLRequest) => void): void {
@@ -178,7 +130,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 // @ts-ignore
                 if (!matched && options.content instanceof HTTPFormData) {
                     matched = true;
-                    const multipartFormData = iOSMultipartFormData.new();
+                    const multipartFormData = OMGMultipartFormData.new();
                     const contentValues = options.content as HTTPFormData;
                     contentValues.forEach(((value, key) => {
                         if (typeof value === "string") {
@@ -225,16 +177,9 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                         }
                     }));
 
-
-                    // This part is copied from OMGHTTPURLRQ. We do this to support multipart for other methods too.
-                    // Set multipart content type and boundary.
-                    const boundary = multipartFormData.getBoundary();
-                    const contentType = "multipart/form-data; charset=utf-8; boundary=" + boundary;
-                    urlRequest.setValueForHTTPHeaderField(contentType, "Content-Type");
-                    const data = multipartFormData.getBody().mutableCopy();
-                    const lastLine = NSString.alloc().initWithString("\r\n--" + boundary + "--\r\n");
-                    data.appendData(lastLine.dataUsingEncoding(NSUTF8StringEncoding));
-                    urlRequest.HTTPBody = NSData.dataWithData(data);
+                    // Abuse OMGHTTPURLRQ to make our HTTPBody, but don't let it make our request.
+                    let request: NSMutableURLRequest = OMGHTTPURLRQ.POSTError(options.url, multipartFormData);
+                    urlRequest.HTTPBody = NSData.dataWithData(request.HTTPBody);
                 }
 
                 if (!matched && options.content) {
