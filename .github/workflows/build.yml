@@ -20,7 +20,10 @@ jobs:
         run: cd src && npm run build
 
       - name: Lint
-        run: cd src && npm run ci.tslint
+        run: |
+          cd src && npm run ci.tslint
+          cd ../demo && npm run ci.tslint
+          cd ../demo-angular && npm run ci.tslint
 
       - name: Setup JDK 1.8
         uses: actions/setup-java@v1
