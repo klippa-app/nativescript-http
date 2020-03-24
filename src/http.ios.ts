@@ -178,8 +178,10 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                     }));
 
                     // Abuse OMGHTTPURLRQ to make our HTTPBody, but don't let it make our request.
-                    let request: NSMutableURLRequest = OMGHTTPURLRQ.POSTError(options.url, multipartFormData);
-                    urlRequest.HTTPBody = NSData.dataWithData(request.HTTPBody);
+                    let multipartRequest: NSMutableURLRequest = OMGHTTPURLRQ.POSTError(options.url, multipartFormData);
+                    const multiPartContentType = multipartRequest.allHTTPHeaderFields.objectForKey("Content-Type");
+                    urlRequest.setValueForHTTPHeaderField(multiPartContentType, "Content-Type");
+                    urlRequest.HTTPBody = NSData.dataWithData(multipartRequest.HTTPBody);
                 }
 
                 if (!matched && options.content) {
