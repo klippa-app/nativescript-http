@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { request, HTTPFormData, HTTPFormDataEntry, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
+import { request, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
 import {HttpClient} from "@angular/common/http";
 import {ImageSource} from "@nativescript/core/image-source";
 

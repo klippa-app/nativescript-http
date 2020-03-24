@@ -1,6 +1,6 @@
 import { Observable } from "tns-core-modules/data/observable";
-import {request } from "@klippa/nativescript-http";
-import {ImageSource} from "@nativescript/core/image-source";
+import { request, setImageParseMethod, ImageParseMethod } from "@klippa/nativescript-http";
+import { ImageSource } from "@nativescript/core/image-source";
 
 export class HomeViewModel extends Observable {
     isLoading = false;
@@ -54,6 +54,9 @@ export class HomeViewModel extends Observable {
 
     getImage() {
         this.set("isLoading", true);
+
+        // Use this method when you want to use toImage() and the endpoint does not return a proper content type.
+        setImageParseMethod(ImageParseMethod.ALWAYS);
 
         request({
             url: "https://via.placeholder.com/500",
