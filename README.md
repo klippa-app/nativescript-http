@@ -5,8 +5,8 @@
 [![TotalDownloads][total-downloads-image]][npm-url]
 [![Build Status][build-status]][build-url]
 
-[build-status]:https://travis-ci.org/klippa-app/nativescript-http.svg?branch=master
-[build-url]:https://travis-ci.org/klippa-app/nativescript-http
+[build-status]:https://github.com/klippa-app/nativescript-http/workflows/Build%20CI/badge.svg
+[build-url]:https://github.com/klippa-app/nativescript-http/actions
 [npm-image]:http://img.shields.io/npm/v/@klippa/nativescript-http.svg
 [npm-url]:https://npmjs.org/@klippa/nativescript-http
 [downloads-image]:http://img.shields.io/npm/dm/@klippa/nativescript-http.svg
@@ -33,7 +33,7 @@
 
 ## Installation
 
-```javascript
+```
 tns plugin add @klippa/nativescript-http
 ```
 
@@ -54,7 +54,7 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
 
 The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
 
-```js
+```javascript
 // Add on top of page.
 const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack");
 
@@ -163,8 +163,14 @@ Note: this only works on Android for now.
 ## API
 
 ### Controlling image decode (Android only)
-Note: only has affect on Android, on iOS this only happens when you use toImage().
-```
+The NativeScript HTTP implementation always tries to decode responses as image to make sure toImage() works fast.
+However, a lot of times you don't want it to do this, as you are not expecting images.
+By default this plugin only works like this when the endpoint returns a proper image content type (`ImageParseMethod.CONTENTTYPE`).
+With this method you can control this behaviour, with `ImageParseMethod.ALWAYS` you revert to Core HTTP behaviour, with `ImageParseMethod.NEVER` you can completely disable it. 
+
+Note: only has affect on Android, on iOS image decoding already only happens when you use toImage().
+
+```typescript
 import { setImageParseMethod, ImageParseMethod } from "@klippa/nativescript-http";
 
 // Add this line where you want to change the image parse mode.
@@ -174,7 +180,8 @@ setImageParseMethod(ImageParseMethod.ALWAYS);
 
 ### Controlling cookies
 Clear all cookies:
-```
+
+```typescript
 import { clearCookies } from "@klippa/nativescript-http";
 
 // Add this line where you want to clear cookies.
@@ -183,7 +190,8 @@ clearCookies();
 
 ### Controlling concurrency / connection pool limits
 Note: only the domain limit has effect on iOS.
-```
+
+```typescript
 import { setConcurrencyLimits } from "@klippa/nativescript-http";
 
 // Add this line where you want to set the concurrency limits.
@@ -192,7 +200,7 @@ setConcurrencyLimits(20, 5);
 ```
 
 ### Setting a global User Agent
-```
+```typescript
 import { setUserAgent } from "@klippa/nativescript-http";
 
 // Add this line where you want to set the user agent.
