@@ -154,7 +154,9 @@ public class Async {
         }
 
         public static void ClearCookies() {
-            cookieJar.clear();
+            if (cookieJar != null) {
+                cookieJar.clear();
+            }
         }
 
         public static void SetImageParseMethod(ImageParseMethod newImageParseMethod) {
