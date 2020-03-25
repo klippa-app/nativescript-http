@@ -149,7 +149,7 @@ function onRequestError(error: string, requestId: number) {
     }
 }
 
-function buildJavaOptions(options: HttpRequestOptions) {
+export function buildJavaOptions(options: HttpRequestOptions) {
     if (typeof options.url !== "string") {
         throw new Error("Http request must provide a valid url.");
     }
@@ -192,8 +192,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
         if (!mediaType) {
             mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
         }
-        const nativeString = new java.lang.String(options.content.toString());
-        javaOptions.content = okhttp3.RequestBody.create(nativeString, mediaType);
+        javaOptions.content = okhttp3.RequestBody.create(options.content.toString(), mediaType);
     } else if (options.content instanceof ArrayBuffer) {
         // Make sure we behave the same as the core http.
         if (!mediaType) {

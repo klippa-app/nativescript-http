@@ -3,10 +3,17 @@
 </ActionBar>
 
 <GridLayout rows="auto, *" columns="*">
-    <GridLayout row="0" rows="auto" columns="*, *, *">
-        <Button col="0" text="Get text" (tap)="getText()"></Button>
-        <Button col="1" text="Get JSON" (tap)="getJson()"></Button>
-        <Button col="2" text="Get Image" (tap)="getImage()"></Button>
+    <GridLayout row="0" rows="auto" columns="*, *, *, auto" *ngIf="!websocket">
+        <Button col="0" text="Text" (tap)="getText()"></Button>
+        <Button col="1" text="JSON" (tap)="getJson()"></Button>
+        <Button col="2" text="Image" (tap)="getImage()"></Button>
+        <Button col="3" text="Connect WebSocket" (tap)="startWebSocket()"></Button>
+    </GridLayout>
+
+    <GridLayout row="0" rows="auto" columns="*, *, *" *ngIf="websocket && !isLoading">
+        <Button col="0" text="Send text" (tap)="sendMessage()"></Button>
+        <Button col="1" text="Send binary" (tap)="sendBinary()"></Button>
+        <Button col="2" text="Disconnect" (tap)="disconnectWebsocket()"></Button>
     </GridLayout>
 
     <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">

@@ -28,6 +28,7 @@ declare module com {
 					public static MakeRequest(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param2: any): void;
 					public constructor();
 					public static InitClient(): void;
+					public static GetWebSocketConnection(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: okhttp3.WebSocketListener): okhttp3.WebSocket;
 					public static SetImageParseMethod(param0: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod): void;
 				}
 				export module Http {
@@ -4474,6 +4475,105 @@ declare module org {
 				public static VERSION_NAME: string;
 				public constructor();
 			}
+		}
+	}
+}
+
+declare module okio {
+	export class ByteString extends java.lang.Object {
+		public static class: java.lang.Class<okio.ByteString>;
+		public static EMPTY: okio.ByteString;
+		public static Companion: okio.ByteString.Companion;
+		public static of(param0: native.Array<number>): okio.ByteString;
+		public base64(): string;
+		public equals(param0: any): boolean;
+		public static encodeString(param0: string, param1: java.nio.charset.Charset): okio.ByteString;
+		public base64Url(): string;
+		public getHashCode$okio(): number;
+		public asByteBuffer(): java.nio.ByteBuffer;
+		public setHashCode$okio(param0: number): void;
+		public lastIndexOf(param0: okio.ByteString, param1: number): number;
+		/** @deprecated */
+		public deprecated_getByte(param0: number): number;
+		public compareTo(param0: okio.ByteString): number;
+		public constructor(param0: native.Array<number>);
+		public indexOf(param0: native.Array<number>): number;
+		public startsWith(param0: native.Array<number>): boolean;
+		public toString(): string;
+		public string(param0: java.nio.charset.Charset): string;
+		public md5(): okio.ByteString;
+		public static encodeUtf8(param0: string): okio.ByteString;
+		public startsWith(param0: okio.ByteString): boolean;
+		public endsWith(param0: okio.ByteString): boolean;
+		public endsWith(param0: native.Array<number>): boolean;
+		public toAsciiLowercase(): okio.ByteString;
+		public sha1(): okio.ByteString;
+		public internalArray$okio(): native.Array<number>;
+		public write(param0: java.io.OutputStream): void;
+		public lastIndexOf(param0: native.Array<number>, param1: number): number;
+		public substring(param0: number, param1: number): okio.ByteString;
+		public indexOf(param0: okio.ByteString, param1: number): number;
+		/** @deprecated */
+		public deprecated_size(): number;
+		public substring(param0: number): okio.ByteString;
+		public substring(): okio.ByteString;
+		public hmacSha512(param0: okio.ByteString): okio.ByteString;
+		public hmacSha1(param0: okio.ByteString): okio.ByteString;
+		public setUtf8$okio(param0: string): void;
+		public static read(param0: java.io.InputStream, param1: number): okio.ByteString;
+		public sha512(): okio.ByteString;
+		public size(): number;
+		public lastIndexOf(param0: native.Array<number>): number;
+		public hex(): string;
+		public hashCode(): number;
+		public toAsciiUppercase(): okio.ByteString;
+		public getSize$okio(): number;
+		public indexOf(param0: native.Array<number>, param1: number): number;
+		public static decodeBase64(param0: string): okio.ByteString;
+		public rangeEquals(param0: number, param1: okio.ByteString, param2: number, param3: number): boolean;
+		public lastIndexOf(param0: okio.ByteString): number;
+		public digest$okio(param0: string): okio.ByteString;
+		public internalGet$okio(param0: number): number;
+		public static decodeHex(param0: string): okio.ByteString;
+		public getUtf8$okio(): string;
+		public sha256(): okio.ByteString;
+		public getByte(param0: number): number;
+		public static of(param0: java.nio.ByteBuffer): okio.ByteString;
+		public hmac$okio(param0: string, param1: okio.ByteString): okio.ByteString;
+		public write$okio(param0: okio.Buffer, param1: number, param2: number): void;
+		public rangeEquals(param0: number, param1: native.Array<number>, param2: number, param3: number): boolean;
+		public static of(param0: native.Array<number>, param1: number, param2: number): okio.ByteString;
+		public utf8(): string;
+		public getData$okio(): native.Array<number>;
+		public toByteArray(): native.Array<number>;
+		public hmacSha256(param0: okio.ByteString): okio.ByteString;
+		public indexOf(param0: okio.ByteString): number;
+	}
+	export module ByteString {
+		export class Companion {
+			public static class: java.lang.Class<okio.ByteString.Companion>;
+			/** @deprecated */
+			public deprecated_of(param0: java.nio.ByteBuffer): okio.ByteString;
+			/** @deprecated */
+			public deprecated_decodeHex(param0: string): okio.ByteString;
+			/** @deprecated */
+			public deprecated_encodeString(param0: string, param1: java.nio.charset.Charset): okio.ByteString;
+			/** @deprecated */
+			public deprecated_decodeBase64(param0: string): okio.ByteString;
+			public encodeString(param0: string, param1: java.nio.charset.Charset): okio.ByteString;
+			public decodeBase64(param0: string): okio.ByteString;
+			public encodeUtf8(param0: string): okio.ByteString;
+			/** @deprecated */
+			public deprecated_encodeUtf8(param0: string): okio.ByteString;
+			public of(param0: java.nio.ByteBuffer): okio.ByteString;
+			public read(param0: java.io.InputStream, param1: number): okio.ByteString;
+			public of(param0: native.Array<number>, param1: number, param2: number): okio.ByteString;
+			public decodeHex(param0: string): okio.ByteString;
+			/** @deprecated */
+			public deprecated_read(param0: java.io.InputStream, param1: number): okio.ByteString;
+			public of(param0: native.Array<number>): okio.ByteString;
+			/** @deprecated */
+			public deprecated_of(param0: native.Array<number>, param1: number, param2: number): okio.ByteString;
 		}
 	}
 }

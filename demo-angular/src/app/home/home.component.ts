@@ -1,7 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, NgZone, OnInit} from "@angular/core";
 import { request, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
+import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
 import {HttpClient} from "@angular/common/http";
 import {ImageSource} from "@nativescript/core/image-source";
+import * as dialogs from "tns-core-modules/ui/dialogs";
 
 @Component({
     selector: "Home",
@@ -13,8 +15,9 @@ export class HomeComponent implements OnInit {
     contentType = "";
     contentText = "";
     contentImage: ImageSource;
+    websocket: IWebsocketConnection;
 
-    constructor(protected http: HttpClient) {
+    constructor(protected http: HttpClient, private ngZone: NgZone) {
 
     }
 
@@ -91,5 +94,91 @@ export class HomeComponent implements OnInit {
             this.hasContent = true;
             this.isLoading = false;
         });
+    }
+
+    startWebSocket() {
+        this.contentType = "text";
+        this.contentText = "Connecting websocket...";
+        this.hasContent = true;
+        this.isLoading = true;
+
+        newWebsocketConnection({
+            url: "wss://echo.websocket.org",
+            method: "GET",
+        }, {
+            // It's important to wrap callbacks in ngzone when you do anything binding related.
+            // If you don't do this, Angular won't update the views.
+            onClosed: (code: number, reason: string) => {
+                this.ngZone.run(() => {
+                    this.contentText += "\n - Websocket connection is closed: " + code + ", " + reason;
+                    this.websocket = null;
+                });
+            },
+            onFailure: (error) => {
+                this.ngZone.run(() => {
+                    this.contentType = "text";
+                    this.contentText = "Error while connecting to websocket: " + error;
+                    this.hasContent = true;
+                    this.isLoading = false;
+                    this.websocket = null;
+                });
+            },
+            onOpen: () => {
+                this.ngZone.run(() => {
+                    this.contentType = "text";
+                    this.contentText = " - Websocket connection is opened";
+                    this.hasContent = true;
+                    this.isLoading = false;
+                });
+            },
+            onClosing: (code: number, reason: string) => {
+                this.ngZone.run(() => {
+                    this.contentText += "\n - Websocket connection is closing: " + code + ", " + reason;
+                });
+            },
+            onMessage: (text: string) => {
+                this.ngZone.run(() => {
+                    this.contentText += "\n - Got message on websocket: " + text;
+                });
+            },
+            onBinaryMessage: (data: ArrayBuffer) => {
+                this.ngZone.run(() => {
+                    this.contentText += "\n - Received binary message on websocket of length " + data.byteLength + ", content: " + String.fromCharCode.apply(null, Array.from(new Uint8Array(data)));
+                });
+            }
+        }).then((webSocket) => {
+            this.websocket = webSocket;
+        });
+    }
+
+    sendMessage() {
+        dialogs.prompt({
+            title: "Enter message",
+            message: "Enter the message you want to send. The websocket server will echo the message back to you.",
+            okButtonText: "Send message"
+        }).then((res) => {
+            if (res.result) {
+                if (this.websocket) {
+                    this.websocket.send(res.text);
+                }
+            }
+        });
+    }
+
+    sendBinary() {
+        if (this.websocket) {
+            const blob = new Blob(["binaryFileContent"], {
+                type: "image/png",
+            });
+
+            // @ts-ignore
+            this.websocket.sendBinary(Blob.InternalAccessor.getBuffer(blob).buffer.slice(0) as ArrayBuffer);
+        }
+    }
+
+    disconnectWebsocket() {
+        if (this.websocket) {
+            this.websocket.close(1000, "Goodbye");
+        }
     }
 }
