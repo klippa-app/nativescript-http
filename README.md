@@ -145,14 +145,14 @@ request({
 
 ## Comparison with other NativeScript HTTP Clients
 
-| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
-| --- | --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - |
-| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
-| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
-| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No |
-| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
-| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
+| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | WebSockets |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - | No |
+| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No | No |
+| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No | No |
+| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No | No |
+| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same | No |
+| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually | Yes |
 
 ## Implementation differences with NativeScript Core HTTP
  
@@ -207,9 +207,53 @@ import { setUserAgent } from "@klippa/nativescript-http";
 setUserAgent("MyCoolApp");
 ```
 
+### WebSockets
+
+Creating a WebSocket is quite simple in this plugin:
+
+```typescript
+import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
+
+newWebsocketConnection({
+    url: "wss://echo.websocket.org",
+    method: "GET",
+}, {
+    // It's important to wrap callbacks in ngZone for Angular when you do anything binding related.
+    // If you don't do this, Angular won't update the views.
+    onClosed: (code: number, reason: string) => {
+        // Invoked when both peers have indicated that no more messages will be transmitted and the connection has been successfully released.
+        // No further calls to this callback will be made.
+        console.log("onClosed", code, reason);
+    },
+    onFailure: (error) => {
+        // Invoked when a web socket has been closed due to an error reading from or writing to the network.
+        // Both outgoing and incoming messages may have been lost. No further calls to this callback will be made.
+        console.log("onFailure", error);
+    },
+    onOpen: () => {
+        // Invoked when a web socket has been accepted by the remote peer and may begin transmitting messages.
+        console.log("onOpen");
+    },
+    onClosing: (code: number, reason: string) => {
+        // Invoked when the remote peer has indicated that no more incoming messages will be transmitted.
+        console.log("onClosing", code, reason);
+    },
+    onMessage: (text: string) => {
+        // Invoked when a text (type 0x1) message has been received.
+        console.log("onMessage", text);
+    },
+    onBinaryMessage: (data: ArrayBuffer) => {
+        // Invoked when a binary (type 0x2) message has been received.
+        console.log("onBinaryMessage", data);
+    }
+}).then((webSocket) => {
+    // With the webSocket object you can send messages and close the connection.
+    // Receiving a WebSocket here does not mean the connection worked, you have to check onFailure and onOpen for that.
+});
+```
+
 ## Roadmap
  * SSL Pinning
- * Websockets
 
 ## License
 
