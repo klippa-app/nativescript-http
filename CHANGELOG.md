@@ -1,3 +1,11 @@
+## 1.0.1
+
+### Fixed
+
+- Fix cookie jar null check for Android, error while trying to clear cookies when cookie jar does not exist yet
+- Fix custom User Agent not applying when headers are set
+- Fix POST/PATCH/PUT failing for Android with empty body
+
 ## 1.0.0
 
 Stable release with both iOS and Android support.

@@ -91,8 +91,9 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
             if (!userAgent) {
                 if (!options.headers) {
                     options.headers = {};
-                    options.headers[USER_AGENT_HEADER] = customUserAgent ? customUserAgent : USER_AGENT;
                 }
+
+                options.headers[USER_AGENT_HEADER] = customUserAgent ? customUserAgent : USER_AGENT;
             }
 
             if (options.headers) {
