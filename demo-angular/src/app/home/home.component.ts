@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from "@angular/core";
+import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
 import { request, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
 import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
 import {HttpClient} from "@angular/common/http";
@@ -9,7 +9,7 @@ import * as dialogs from "tns-core-modules/ui/dialogs";
     selector: "Home",
     templateUrl: "./home.component.html"
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
     isLoading = false;
     hasContent = false;
     contentType = "";
@@ -30,6 +30,12 @@ export class HomeComponent implements OnInit {
 
         // Setting concurrency limits, 20 at the same time, 2 to the same host.
         setConcurrencyLimits(20, 2);
+    }
+
+    ngOnDestroy(): void {
+        if (this.websocket) {
+            this.websocket.cancel();
+        }
     }
 
     getText() {

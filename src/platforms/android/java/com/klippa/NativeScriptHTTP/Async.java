@@ -156,6 +156,7 @@ public class Async {
         }
 
         public static WebSocket GetWebSocketConnection(final RequestOptions options, final WebSocketListener listener)  {
+            InitClient();
             OkHttpClient.Builder clientBuilder = client.newBuilder();
 
             // don't follow redirect (30x) responses; by default, HttpURLConnection follows them.
