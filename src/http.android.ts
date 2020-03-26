@@ -480,3 +480,11 @@ export function clearCookies() {
 export function setUserAgent(userAgent?: string) {
     customUserAgent = userAgent;
 }
+
+export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
+    com.klippa.NativeScriptHTTP.Async.Http.PinCertificate(pattern, hashes);
+}
+
+export function certificatePinningClear() {
+    com.klippa.NativeScriptHTTP.Async.Http.RemoveCertificatePins();
+}

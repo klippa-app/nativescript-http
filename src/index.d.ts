@@ -118,3 +118,29 @@ export declare function clearCookies(): void;
  * @param userAgent The new user agent. Set to null to use the default again.
  */
 export declare function setUserAgent(userAgent?: string): void;
+
+/**
+ * Add a new certificate to pin.
+ *
+ * Warning: Certificate Pinning is Dangerous!
+ * Pinning certificates limits your server team’s abilities to update their TLS certificates.
+ * By pinning certificates, you take on additional operational complexity and limit your ability to migrate between certificate authorities.
+ * Do not use certificate pinning without the blessing of your server’s TLS administrator!
+ *
+ * Note about self-signed certificates:
+ * Can not be used to pin self-signed certificate if such certificate is not accepted by javax.net.ssl.TrustManager.
+ *
+ * @param pattern Pinning is per-hostname and/or per-wildcard pattern. To pin both publicobject.com and www.publicobject.com you must configure both hostnames. Or you may use patterns to match sets of related domain names. The following forms are permitted:
+ *                Full domain name: you may pin an exact domain name like www.publicobject.com. It won’t match additional prefixes (us-west.www.publicobject.com) or suffixes (publicobject.com).
+ *                Any number of subdomains: Use two asterisks to like **.publicobject.com to match any number of prefixes (us-west.www.publicobject.com, www.publicobject.com) including no prefix at all (publicobject.com). For most applications this is the best way to configure certificate pinning.
+ *                Exactly one subdomain: Use a single asterisk like *.publicobject.com to match exactly one prefix (www.publicobject.com, api.publicobject.com). Be careful with this approach as no pinning will be enforced if additional prefixes are present, or if no prefixes are present.
+ *                Note that any other form is unsupported. You may not use asterisks in any position other than the leftmost label.
+ *                If multiple patterns match a hostname, any match is sufficient. For example, suppose pin A applies to *.publicobject.com and pin B applies to api.publicobject.com. Handshakes for api.publicobject.com are valid if either A’s or B’s certificate is in the chain.
+ * @param hashes SHA-256 or SHA-1 hashes. Each pin is a hash of a certificate's Subject Public Key Info, base64-encoded and prefixed with either `sha256/` or `sha1/`.
+ */
+export declare function certificatePinningAdd(pattern: string, hashes: Array<string>): void;
+
+/**
+ * Clear all the certificate pins that were added by certificatePinningAdd().
+ */
+export declare function certificatePinningClear(): void;

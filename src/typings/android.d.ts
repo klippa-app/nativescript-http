@@ -28,7 +28,9 @@ declare module com {
 					public static MakeRequest(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param2: any): void;
 					public constructor();
 					public static InitClient(): void;
+					public static PinCertificate(param0: string, param1: native.Array<string>): void;
 					public static SetImageParseMethod(param0: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod): void;
+					public static RemoveCertificatePins(): void;
 				}
 				export module Http {
 					export class HttpRequestTask {
