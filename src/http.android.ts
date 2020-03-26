@@ -179,120 +179,129 @@ export function buildJavaOptions(options: HttpRequestOptions) {
     if (!userAgent && customUserAgent) {
         if (!options.headers) {
             options.headers = {};
-            options.headers["User-Agent"] = customUserAgent;
         }
+
+        options.headers["User-Agent"] = customUserAgent;
     }
 
     if (typeof options.method === "string") {
         javaOptions.method = options.method;
     }
 
-    if (typeof options.content === "string" || options.content instanceof FormData) {
-        // Make sure we behave the same as the core http.
-        if (!mediaType) {
-            mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
-        }
-        javaOptions.content = okhttp3.RequestBody.create(options.content.toString(), mediaType);
-    } else if (options.content instanceof ArrayBuffer) {
-        // Make sure we behave the same as the core http.
-        if (!mediaType) {
-            mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
-        }
-        const typedArray = new Uint8Array(options.content as ArrayBuffer);
-        const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-        javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
-    } else {
-        let matched = false;
+    const upperCaseMethod = options.method && typeof options.method === "string" ? options.method.toUpperCase() : "GET";
 
-        // We have to do it in this structure to make the ts-ignore work.
-        // Normal HTTP Request structure does not allow these types.
-
-        // This matches both Blob and File.
-        // We ignore the name in the File object so we can ignore that type.
-        // @ts-ignore
-        if (!matched && options.content instanceof Blob) {
-            // Try to set a mimetype if we have it.
-            // @ts-ignore
-            if (!mediaType && options.content.type) {
-
-                // @ts-ignore
-                mediaType = okhttp3.MediaType.parse(options.content.type);
+    // Only these methods can and must have a request body..
+    if (upperCaseMethod === "POST" || upperCaseMethod === "PATCH" || upperCaseMethod === "PUT" || upperCaseMethod === "PROPPATCH" || upperCaseMethod === "REPORT") {
+        if (typeof options.content === "string" || options.content instanceof FormData) {
+            // Make sure we behave the same as the core http.
+            if (!mediaType) {
+                mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
             }
-
-            // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
-            // @ts-ignore
-            const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
+            javaOptions.content = okhttp3.RequestBody.create(options.content.toString(), mediaType);
+        } else if (options.content instanceof ArrayBuffer) {
+            // Make sure we behave the same as the core http.
+            if (!mediaType) {
+                mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+            }
+            const typedArray = new Uint8Array(options.content as ArrayBuffer);
             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
             javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+        } else {
+            let matched = false;
 
-            matched = true;
-        }
+            // We have to do it in this structure to make the ts-ignore work.
+            // Normal HTTP Request structure does not allow these types.
 
-        // @ts-ignore
-        if (!matched && options.content instanceof HTTPFormData) {
-            matched = true;
-            if (!mediaType) {
-                mediaType = okhttp3.MediaType.parse("multipart/form-data");
+            // This matches both Blob and File.
+            // We ignore the name in the File object so we can ignore that type.
+            // @ts-ignore
+            if (!matched && options.content instanceof Blob) {
+                // Try to set a mimetype if we have it.
+                // @ts-ignore
+                if (!mediaType && options.content.type) {
+
+                    // @ts-ignore
+                    mediaType = okhttp3.MediaType.parse(options.content.type);
+                }
+
+                // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
+                // @ts-ignore
+                const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
+                const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
+                javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+
+                matched = true;
             }
 
-            const builder = new okhttp3.MultipartBody.Builder();
-            builder.setType(mediaType);
-            const contentValues = options.content as HTTPFormData;
-            contentValues.forEach(((value, key) => {
-                if (typeof value === "string") {
-                    builder.addFormDataPart(key, value);
-                } else if (value instanceof ArrayBuffer) {
-                    const typedArray = new Uint8Array(value as ArrayBuffer);
-                    const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                    builder.addFormDataPart(key, null, okhttp3.RequestBody.create(nativeBuffer.array(), null));
-                } else if (value instanceof Blob) {
-                    let formDataPartMediaType = null;
-                    if (value.type) {
-                        formDataPartMediaType = okhttp3.MediaType.parse(value.type);
-                    }
+            // @ts-ignore
+            if (!matched && options.content instanceof HTTPFormData) {
+                matched = true;
+                if (!mediaType) {
+                    mediaType = okhttp3.MediaType.parse("multipart/form-data");
+                }
 
-                    let filename = null;
-                    if (value instanceof File) {
-                        filename = value.name;
-                    }
-
-                    // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
-                    // @ts-ignore
-                    const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
-                    const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                    builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
-                } else if (value instanceof HTTPFormDataEntry) {
-                    let formDataPartMediaType = null;
-                    if (value.type) {
-                        formDataPartMediaType = okhttp3.MediaType.parse(value.type);
-                    }
-
-                    if (value.data instanceof ArrayBuffer) {
-                        const typedArray = new Uint8Array(value.data as ArrayBuffer);
+                const builder = new okhttp3.MultipartBody.Builder();
+                builder.setType(mediaType);
+                const contentValues = options.content as HTTPFormData;
+                contentValues.forEach(((value, key) => {
+                    if (typeof value === "string") {
+                        builder.addFormDataPart(key, value);
+                    } else if (value instanceof ArrayBuffer) {
+                        const typedArray = new Uint8Array(value as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                        builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
-                    } else if (value.data instanceof Blob) {
+                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(nativeBuffer.array(), null));
+                    } else if (value instanceof Blob) {
+                        let formDataPartMediaType = null;
+                        if (value.type) {
+                            formDataPartMediaType = okhttp3.MediaType.parse(value.type);
+                        }
+
+                        let filename = null;
+                        if (value instanceof File) {
+                            filename = value.name;
+                        }
+
                         // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                         // @ts-ignore
-                        const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
+                        const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                        builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                        builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                    } else if (value instanceof HTTPFormDataEntry) {
+                        let formDataPartMediaType = null;
+                        if (value.type) {
+                            formDataPartMediaType = okhttp3.MediaType.parse(value.type);
+                        }
+
+                        if (value.data instanceof ArrayBuffer) {
+                            const typedArray = new Uint8Array(value.data as ArrayBuffer);
+                            const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                        } else if (value.data instanceof Blob) {
+                            // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
+                            // @ts-ignore
+                            const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
+                            const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                        } else {
+                            // Support for native file objects.
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(value.data, formDataPartMediaType));
+                        }
                     } else {
                         // Support for native file objects.
-                        builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(value.data, formDataPartMediaType));
+                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(value, null));
                     }
-                } else {
-                    // Support for native file objects.
-                    builder.addFormDataPart(key, null, okhttp3.RequestBody.create(value, null));
-                }
-            }));
+                }));
 
-            javaOptions.content = builder.build();
-        }
+                javaOptions.content = builder.build();
+            }
 
-        if (!matched && options.content) {
-            // Assume options.content is a native object.
-            javaOptions.content = okhttp3.RequestBody.create(options.content, mediaType);
+            if (!matched && options.content) {
+                // Assume options.content is a native object.
+                javaOptions.content = okhttp3.RequestBody.create(options.content, mediaType);
+            } else if (!matched) {
+                // Fall back to empty string, okhttp must have a request body.
+                javaOptions.content = okhttp3.RequestBody.create("", mediaType);
+            }
         }
     }
 

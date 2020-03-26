@@ -50,6 +50,7 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
    * request
    * fetch
    * getString, getJSON, getImage, getFile, getBinary
+   * **Not** NativeScript ImageCache
  * Any NativeScript plugin that uses above methods internally
 
 The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
@@ -142,6 +143,8 @@ request({
 }, (e) => {
 });
 ```
+
+**Note: this does not work with the Angular HTTPClient, because it tries to transform the HTTPFormData to json. Use the request() method for Multipart posting.**
 
 ## Comparison with other NativeScript HTTP Clients
 
@@ -254,6 +257,7 @@ newWebsocketConnection({
 
 ## Roadmap
  * SSL Pinning
+ * NativeScript ImageCache support
 
 ## License
 
