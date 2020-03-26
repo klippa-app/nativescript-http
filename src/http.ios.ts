@@ -25,6 +25,7 @@ const USER_AGENT_HEADER = "User-Agent";
 const USER_AGENT = `Mozilla/5.0 (i${device}; CPU OS ${osVersion.replace(".", "_")} like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/${osVersion} Mobile/10A5355d Safari/8536.25`;
 const sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration;
 const queue = NSOperationQueue.mainQueue;
+let certificatePinningEnabled = false;
 
 function parseJSON(source: string): any {
     const src = source.trim();
@@ -37,23 +38,46 @@ function parseJSON(source: string): any {
 
 class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
+
+    public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        if (!certificatePinningEnabled) {
+            // Default behaviour when we don't want certificate pinning.
+            completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
+            return;
+        }
+
+        //const pinningValidator = TrustKit.sharedInstance().pinningValidator();
+
+        // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
+        //if (!pinningValidator.handleChallenge(challenge, completionHandler)) {
+            // TrustKit did not handle this challenge: perhaps it was not for server trust
+            // or the domain was not pinned. Fall back to the default behavior
+        //    completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
+        //}
+    }
+}
+
+const sessionTaskDelegateInstance: NSURLSessionTaskDelegateImpl = <NSURLSessionTaskDelegateImpl>NSURLSessionTaskDelegateImpl.new();
+
+class NoRedirectNSURLSessionTaskDelegateImpl extends NSURLSessionTaskDelegateImpl implements NSURLSessionTaskDelegate {
+    public static ObjCProtocols = [NSURLSessionTaskDelegate];
     public URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: (p1: NSURLRequest) => void): void {
         completionHandler(null);
     }
 }
-const sessionTaskDelegateInstance: NSURLSessionTaskDelegateImpl = <NSURLSessionTaskDelegateImpl>NSURLSessionTaskDelegateImpl.new();
+const noRedirectSessionTaskDelegateInstance: NoRedirectNSURLSessionTaskDelegateImpl = <NoRedirectNSURLSessionTaskDelegateImpl>NoRedirectNSURLSessionTaskDelegateImpl.new();
 
 let defaultSession;
 function ensureDefaultSession() {
     if (!defaultSession) {
-        defaultSession = NSURLSession.sessionWithConfigurationDelegateDelegateQueue(sessionConfig, null, queue);
+        defaultSession = NSURLSession.sessionWithConfigurationDelegateDelegateQueue(sessionConfig, sessionTaskDelegateInstance, queue);
     }
 }
 
 let sessionNotFollowingRedirects;
 function ensureSessionNotFollowingRedirects() {
     if (!sessionNotFollowingRedirects) {
-        sessionNotFollowingRedirects = NSURLSession.sessionWithConfigurationDelegateDelegateQueue(sessionConfig, sessionTaskDelegateInstance, queue);
+        sessionNotFollowingRedirects = NSURLSession.sessionWithConfigurationDelegateDelegateQueue(sessionConfig, noRedirectSessionTaskDelegateInstance, queue);
     }
 }
 
@@ -418,4 +442,12 @@ export function clearCookies() {
 
 export function setUserAgent(userAgent?: string) {
     customUserAgent = userAgent;
+}
+
+export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
+    // Init trustkit https://github.com/datatheorem/TrustKit/blob/master/docs/getting-started.md
+}
+
+export function certificatePinningClear() {
+    certificatePinningEnabled = false;
 }
