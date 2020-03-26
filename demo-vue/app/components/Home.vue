@@ -5,10 +5,17 @@
         </ActionBar>
 
         <GridLayout rows="auto, *" columns="*">
-            <GridLayout row="0" rows="auto" columns="*, *, *">
-                <Button col="0" text="Get text" @tap="getText"></Button>
-                <Button col="1" text="Get JSON" @tap="getJson"></Button>
-                <Button col="2" text="Get Image" @tap="getImage"></Button>
+            <GridLayout row="0" rows="auto" columns="*, *, *, auto" v-show="!websocket">
+                <Button col="0" text="Text" @tap="getText"></Button>
+                <Button col="1" text="JSON" @tap="getJson"></Button>
+                <Button col="2" text="Image" @tap="getImage"></Button>
+                <Button col="3" text="Connect WebSocket" @tap="startWebSocket"></Button>
+            </GridLayout>
+
+            <GridLayout row="0" rows="auto" columns="*, *, *" v-show="websocket && !isLoading">
+                <Button col="0" text="Send text" @tap="sendMessage"></Button>
+                <Button col="1" text="Send binary" @tap="sendBinary"></Button>
+                <Button col="2" text="Disconnect" @tap="disconnectWebsocket"></Button>
             </GridLayout>
 
             <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
@@ -22,8 +29,9 @@
 </template>
 
 <script>
-    import { request, setImageParseMethod, ImageParseMethod } from "@klippa/nativescript-http";
-    import { clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
+    import { request, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
+    import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
+    import * as dialogs from "tns-core-modules/ui/dialogs";
 
     export default {
         data() {
@@ -32,7 +40,9 @@
                 hasContent: false,
                 contentType: "",
                 contentText: "",
-                contentImage: null
+                contentImage: null,
+                websocket: null,
+                hasWebSocket: false
             }
         },
         mounted() {
@@ -109,6 +119,74 @@
                     this.isLoading = false;
                 });
             },
+            startWebSocket() {
+                this.contentType = "text";
+                this.contentText = "Connecting websocket...";
+                this.hasContent = true;
+                this.isLoading = true;
+
+                newWebsocketConnection({
+                    url: "wss://echo.websocket.org",
+                    method: "GET",
+                }, {
+                    onClosed: (code, reason) => {
+                        this.contentText += "\n - Websocket connection is closed: " + code + ", " + reason;
+                        this.websocket = null;
+                    },
+                    onFailure: (error) => {
+                        this.contentType = "text";
+                        this.contentText = "Error while connecting to websocket: " + error;
+                        this.hasContent = true;
+                        this.isLoading = false;
+                        this.websocket = null;
+                    },
+                    onOpen: () => {
+                        this.contentType = "text";
+                        this.contentText = " - Websocket connection is opened";
+                        this.hasContent = true;
+                        this.isLoading = false;
+                    },
+                    onClosing: (code, reason) => {
+                        this.contentText += "\n - Websocket connection is closing: " + code + ", " + reason;
+                    },
+                    onMessage: (text) => {
+                        this.contentText += "\n - Got message on websocket: " + text;
+                    },
+                    onBinaryMessage: (data) => {
+                        this.contentText += "\n - Received binary message on websocket of length " + data.byteLength + ", content: " + String.fromCharCode.apply(null, Array.from(new Uint8Array(data)));
+                    }
+                }).then((webSocket) => {
+                    this.websocket = webSocket;
+                });
+            },
+            sendMessage() {
+                dialogs.prompt({
+                    title: "Enter message",
+                    message: "Enter the message you want to send. The websocket server will echo the message back to you.",
+                    okButtonText: "Send message"
+                }).then((res) => {
+                    if (res.result) {
+                        if (this.websocket) {
+                            this.websocket.send(res.text);
+                        }
+                    }
+                });
+            },
+            sendBinary() {
+                if (this.websocket) {
+                    const blob = new Blob(["binaryFileContent"], {
+                        type: "image/png",
+                    });
+
+                    // @ts-ignore
+                    this.websocket.sendBinary(Blob.InternalAccessor.getBuffer(blob).buffer.slice(0));
+                }
+            },
+            disconnectWebsocket() {
+                if (this.websocket) {
+                    this.websocket.close(1000, "Goodbye");
+                }
+            }
         },
         computed: {
             message() {
