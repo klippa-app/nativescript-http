@@ -1,3 +1,9 @@
+## 1.0.2
+
+### Added
+
+- Added Vue demo.
+
 ## 1.0.1
 
 ### Fixed
