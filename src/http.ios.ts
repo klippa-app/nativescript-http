@@ -46,14 +46,14 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
             return;
         }
 
-        //const pinningValidator = TrustKit.sharedInstance().pinningValidator();
+        // const pinningValidator = TrustKit.sharedInstance().pinningValidator();
 
         // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
-        //if (!pinningValidator.handleChallenge(challenge, completionHandler)) {
+        // if (!pinningValidator.handleChallenge(challenge, completionHandler)) {
             // TrustKit did not handle this challenge: perhaps it was not for server trust
             // or the domain was not pinned. Fall back to the default behavior
         //    completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
-        //}
+        // }
     }
 }
 
