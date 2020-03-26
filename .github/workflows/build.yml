@@ -24,6 +24,7 @@ jobs:
           cd src && npm run ci.tslint
           cd ../demo && npm run ci.tslint
           cd ../demo-angular && npm run ci.tslint
+          cd ../demo-vue && npm run ci.tslint
 
       - name: Setup JDK 1.8
         uses: actions/setup-java@v1
@@ -59,4 +60,14 @@ jobs:
       - name: Build iOS Demo Angular App
         run: |
           cd demo-angular
+          tns build ios --env.uglify
+
+      - name: Build Android Vue Demo App
+        run: |
+          cd demo-vue
+          tns build android --env.uglify
+
+      - name: Build iOS Demo Vue App
+        run: |
+          cd demo-vue
           tns build ios --env.uglify

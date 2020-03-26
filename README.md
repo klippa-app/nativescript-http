@@ -43,9 +43,10 @@ tns plugin add @klippa/nativescript-http
 
 Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http),
 we can automatically use this plugin for all HTTP calls in NativeScript that use the XHR framework to do HTTP calls, this includes:
- * Any JavaScript/Angular plugin that was created for the browser
+ * Any JavaScript/Angular/Vue plugin that was created to be used in the browser
    * Axios
    * Angular HTTPClient
+   * vue-resource
  * Any NativeScript http method
    * request
    * fetch
