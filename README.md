@@ -152,12 +152,12 @@ request({
 
 | Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - | No |
-| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No | No |
-| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No | No |
-| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No | No |
-| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are (almost) the same | Yes |
-| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually | Yes |
+| @nativescript/core/http | :heavy_check_mark:, using Java HttpURLConnection | :heavy_check_mark:, using NSMutableURLRequest | :heavy_check_mark: | :x: | :x:, bad Android implementation | - | :x: |
+| nativescript-background-http | :heavy_check_mark:, using gotev/android-upload-service | :heavy_check_mark:, using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: |
+| nativescript-http-formdata | :heavy_check_mark:, using okhttp3 | :heavy_check_mark:, using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x:, bad okhttp3 implementation | :x: | :x: |
+| nativescript-okhttp | :heavy_check_mark:, okhttp3 | :x: | :x: | :x: | :x:, bad okhttp3 implementation | :x: | :x: |
+| nativescript-https | :heavy_check_mark:, okhttp3 | :heavy_check_mark:, using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark:, shared client | :white_check_mark:, by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: |
+| @klippa/nativescript-http | :heavy_check_mark:, okhttp3 | :heavy_check_mark:, using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:, shared client | :heavy_check_mark:, automatically and manually | :heavy_check_mark: |
 
 ## Implementation differences with NativeScript Core HTTP
  
