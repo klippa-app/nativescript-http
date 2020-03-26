@@ -30,6 +30,7 @@
 * Ability to set a global user agent
 * Ability to control cookies
 * Ability to control background image parsing
+* Certificate/SSL pinning
 
 ## Installation
 
@@ -211,8 +212,26 @@ import { setUserAgent } from "@klippa/nativescript-http";
 setUserAgent("MyCoolApp");
 ```
 
+### Certificate pinning
+
+Please read about certificate pinning before you enable it.
+It can have serious consequences. Good articles are [here](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-certificate-pinner/) and [here](https://infinum.com/the-capsized-eight/how-to-make-your-ios-apps-more-secure-with-ssl-pinning).
+
+You can use this [question on Stack Overflow](https://stackoverflow.com/questions/40404963/how-do-i-get-public-key-hash-for-ssl-pinning) to learn how to get the certificate hashes.
+
+```typescript
+import { certificatePinningAdd, certificatePinningClear } from "@klippa/nativescript-http";
+
+// Add this line where you want to pin the certificate to a specific domain. The second argument is the certificate hash chain.
+// You can use *.mydomain.com to also use this for direct subdomains, and **.mydomain.com for any subdomain.
+certificatePinningAdd("mydomain.com", ["sha256/CDCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+
+// Use this to clear all certificate pins.
+certificatePinningClear();
+```
+
+
 ## Roadmap
- * SSL Pinning
  * Websockets
  * NativeScript ImageCache support
 
