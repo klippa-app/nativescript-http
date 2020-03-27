@@ -138,6 +138,7 @@ export declare function setUserAgent(userAgent?: string): void;
  *                If multiple patterns match a hostname, any match is sufficient. For example, suppose pin A applies to *.publicobject.com and pin B applies to api.publicobject.com. Handshakes for api.publicobject.com are valid if either A’s or B’s certificate is in the chain.
  *                Note: for iOS, *.publicobject.com also behaves as **.publicobject.com due to limitation in TrustKit.
  *                Note 2: for Android, if you use the older version of OkHttp, the **. prefix does not work.
+ *                Note 3: for iOS, you need to have at least 2 hashes, because Trustkit requires you to have a backup certificate.
  * @param hashes SHA-256 hashes. Each pin is a hash of a certificate's Subject Public Key Info, base64-encoded. Don't prefix with `sha256/`.
  */
 export declare function certificatePinningAdd(pattern: string, hashes: Array<string>): void;
