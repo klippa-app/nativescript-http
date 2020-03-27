@@ -477,7 +477,13 @@ export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
 
     const domainSetting = NSMutableDictionary.new<string, any>().init();
     domainSetting.setValueForKey(true, kTSKDisableDefaultReportUri);
-    domainSetting.setValueForKey(hashes, kTSKPublicKeyHashes);
+
+    const nativeHashes = NSMutableArray.alloc().init();
+    hashes.forEach((hash) => {
+        nativeHashes.addObject(NSString.stringWithString(hash));
+    });
+
+    domainSetting.setValueForKey(nativeHashes, kTSKPublicKeyHashes);
 
     let allowSubdomains = false;
     let domain = pattern;
