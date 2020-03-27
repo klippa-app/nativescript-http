@@ -76,6 +76,8 @@ plugins: [
 
 **Note: if you do this, you don't have to do the other integrations.**
 
+**Note 2: please pay attention when upgrading the webpack file after an update to NativeScript, don't forget to re-add it**
+
 ### Integration in code
 
 Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http), you can execute the requests in the same way as with the Core HTTP, the only thing different is the import:
@@ -96,6 +98,7 @@ request({
 ```
 
 ### Integration in Angular
+
 We also provide a drop-in replacement `NativeScriptHttpClientModule` from the `nativescript-angular` project.
 
 In order to make Angular use our HTTP implementation, import our module like this:
@@ -115,10 +118,13 @@ Be aware that this plugin tries to parse your image in the background so you won
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
 ## Important note for apps with support for < Android 5 (SDK 21)
+
 The default minSdk of NativeScript is 17, this is Android 4.2. We use OkHttp version 4, which [does not have support for Android 4](https://developer.squareup.com/blog/okhttp-3-13-requires-android-5/).
 
 ### If you do not care about Android 4 users
+
 If you do not care about Android 4 users, edit the file `App_Resources/Android/app.gradle` and change the minSdk to 21:
+
 ```gradle
 android {
   defaultConfig {
@@ -131,9 +137,11 @@ android {
 This let's the play store know the app can't be installed on anything lower than Android 5.
 
 ### If you do care about Android 4 users
-Luckily, OkHtpp has a [special support branch called okhttp_3.12.x](https://github.com/square/okhttp/tree/okhttp_3.12.x) for older devices, and because OkHttp is binary safe, which means all the methods have the same signature, we can just replace the version.
+
+Luckily, OkHtpp has a [special support branch called okhttp_3.12.x](https://github.com/square/okhttp/tree/okhttp_3.12.x) for older Android version, and because OkHttp is binary safe, which means all the methods have the same signature, we can just replace the version and everything just works™.
 
 #### I don't mind using an older OkHttp version
+
 If you don't mind everyone having an older OkHttp version, you can do the following easy™ fix:
 
 Edit the file `App_Resources/Android/app.gradle`, add the following lines:
@@ -154,6 +162,7 @@ Please note that this `okhttp_3.12.x` branch is support through December 31, 202
 This means you won't get any [cool features](https://github.com/square/okhttp/blob/master/CHANGELOG.md) from version 4.
 
 #### I want to use the latest version for Android 5, and version 3.12 for Android 4
+
 Luckily, this is also a possibility, but a little bit more difficult because you have to split your builds.
 
 Edit the file `App_Resources/Android/app.gradle`, add the following lines:
@@ -226,6 +235,7 @@ When you upload both APK's to the Playstore, Google will make sure the proper AP
 ## API
 
 ### Form data
+
 By default this client behaves the same as the Core HTTP for FormData objects, meaning it will just encode it as key=value pairs and it does not support Blob/File objects.
 It will be posted as `application/x-www-form-urlencoded` unless you override it using a custom header.
 
@@ -279,6 +289,7 @@ setImageParseMethod(ImageParseMethod.ALWAYS);
 ```
 
 ### Controlling cookies
+
 Clear all cookies:
 
 ```typescript
@@ -289,6 +300,7 @@ clearCookies();
 ```
 
 ### Controlling concurrency / connection pool limits
+
 Note: only the domain limit has effect on iOS.
 
 ```typescript
@@ -300,6 +312,7 @@ setConcurrencyLimits(20, 5);
 ```
 
 ### Setting a global User Agent
+
 ```typescript
 import { setUserAgent } from "@klippa/nativescript-http";
 
@@ -315,27 +328,33 @@ It can have serious consequences. Good articles are [here](https://square.github
 You can use this [question on Stack Overflow](https://stackoverflow.com/questions/40404963/how-do-i-get-public-key-hash-for-ssl-pinning) to learn how to get the certificate hashes.
 
 #### Always provide at least one backup pin
-In order to prevent accidentally locking users out of your site, make sure you have at least one backup pin and that you have procedures in place to transition to using the backup pin if your primary pin can no longer be used. For example, if you pin to the public key of your server's certificate, you should generate a backup key that is stored somewhere safe. If you pin to an intermediate CA or a root CA, then you should also select an alternative CA that you are willing to switch to if your current CA (or their intermediate CA) becomes invalid for some reason.
+In order to prevent accidentally locking users out of your app, make sure you have at least one backup pin and that you have procedures in place to transition to using the backup pin if your primary pin can no longer be used. For example, if you pin to the public key of your server's certificate, you should generate a backup key that is stored somewhere safe. If you pin to an intermediate CA or a root CA, then you should also select an alternative CA that you are willing to switch to if your current CA (or their intermediate CA) becomes invalid for some reason.
 
 If you do not have a backup pin, you could inadvertently prevent your app from working until you released a new version of your app, and your users updated it. One such incident led to a bank having to ask their CA to issue a new certificate using a deprecated intermediate CA in order to allow their users to use the app, or face weeks of the app being unusable.
 
 ```typescript
 import { certificatePinningAdd, certificatePinningClear } from "@klippa/nativescript-http";
 
-// Add this line where you want to pin the certificate to a specific domain. The second argument is the certificate hash chain.
+// Add this line where you want to pin the certificate to a specific domain. The second argument are the certificate hashes that you want to pin.
 // You can use *.mydomain.com to also use this for direct subdomains, and **.mydomain.com for any subdomain.
 // Note: for iOS, *.publicobject.com also behaves as **.publicobject.com due to limitation in TrustKit.
 // Note 2: for Android, if you use the older version of OkHttp, the **. prefix does not work.
+// Note 3: for iOS, you need to have at least 2 hashes, because Trustkit requires you to have a backup certificate.
 certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "Lh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
 
 // Use this to clear all certificate pins.
 certificatePinningClear();
 ```
 
-
 ## Roadmap
  * Websockets
  * NativeScript ImageCache support
+
+## About Klippa
+
+[Klippa](https://www.klippa.com/en) is a scale-up from [Groningen, The Netherlands](https://goo.gl/maps/CcCGaPTBz3u8noSd6) and was founded in 2015 by six Dutch IT specialists with the goal to digitize paper processes with modern technologies.
+
+We help clients enhance the effectiveness of their organization by using machine learning and OCR. Since 2015 more than a 1000 happy clients have been served with a variety of the software solutions that Klippa offers. Our passion is to help our clients to digitize paper processes by using smart apps, accounts payable software and data extraction by using OCR.
 
 ## License
 
