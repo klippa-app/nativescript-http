@@ -12,9 +12,14 @@
 [downloads-image]:http://img.shields.io/npm/dm/@klippa/nativescript-http.svg
 [total-downloads-image]:http://img.shields.io/npm/dt/@klippa/nativescript-http.svg?label=total%20downloads
 
-**A drop-in replacement for the core HTTP with important improvements like proper connection pooling and form data support.**
+*The best way to do HTTP requests in NativeScript*
+
+**A drop-in replacement for the core HTTP with important improvements and additions like proper connection pooling, form data support and certificate pinning.**
 
 ## Features
+* Ability to use without any code change
+* Ability to make all http requests go through this plugin
+* Backwards compatible (behaves the same as core HTTP)
 * Modern TLS & SSL security features
 * Shared connection pooling reduces request latency
 * Control over concurrency/connection pooling
@@ -22,11 +27,8 @@
 * Everything runs on a native background thread
 * Transparent GZIP to shrink response size
 * HTTP/2 and SPDY support
-* Support for directly posting ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects
-* Multipart form data support (for file upload), file upload supports ArrayBuffer, File, Blob and native objects (like java.io.File, NSData.dataWithContentsOfFile)
-* Ability to use without any code change
-* Ability to make all http requests go through this plugin
-* Backwards compatible (behaves the same as core HTTP)
+* Support for directly posting ArrayBuffer/File/Blob/native(such as `java.io.File` and `NSData.dataWithContentsOfFile`) objects in the content property
+* Multipart form data (multipart/form-data) support (for file uploads), supports ArrayBuffer, File, Blob and native objects (like `java.io.File` and `NSData.dataWithContentsOfFile`)
 * Ability to set a global user agent
 * Ability to control cookies
 * Ability to control background image parsing
@@ -112,42 +114,6 @@ From now on you can make requests using Angular's HttpClient service like explai
 Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (core HTTP does the same).
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
-## Form data
-By default this client behaves the same as the Core HTTP for FormData objects, meaning it will just encode it as key=value pairs and it does not support Blob/File objects.
-It will be posted as `application/x-www-form-urlencoded` unless you override it using a custom header.
-
-If you want to create multipart (multipart/form-data) form data requests, you can use the HTTPFormData class from this plugin.
-You can create form data requests like this:
-
-```typescript
-import { HttpResponse } from "tns-core-modules/http";
-import { request, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-http";
-
-const form = new HTTPFormData();
-form.append("value", "Test");
-// You can also append ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects directly to form here, but please keep in mind that only the File object has the ability to set a filename. And only Blob/File objects have the ability to set a content type.
-// Use HTTPFormDataEntry if you want more control.
-
-const formFile = new HTTPFormDataEntry();
-formFile.fileName = "test.png";
-formFile.contentType = "image/png";
-
-// formFile.data can be a JavaScript ArrayBuffer but also native file objects like java.io.File and NSData.dataWithContentsOfFile.
-formFile.data = new java.io.File(fileLocation);
-form.append("file", formFile);
-
-request({
-    url: "https://httpbin.org/post",
-    method: "POST",
-    content: form
-}).then((response: HttpResponse) => {
-    // Argument (response) is HttpResponse
-}, (e) => {
-});
-```
-
-**Note: this does not work with the Angular HTTPClient, because it tries to transform the HTTPFormData to json. Use the request() method for Multipart posting.**
-
 ## Important note for apps with support for < Android 5 (SDK 21)
 The default minSdk of NativeScript is 17, this is Android 4.2. We use OkHttp version 4, which [does not have support for Android 4](https://developer.squareup.com/blog/okhttp-3-13-requires-android-5/).
 
@@ -201,23 +167,44 @@ android {
     minApi21 {
       dimension "api"
       minSdkVersion 21
-      versionCode 20000 + android.defaultConfig.versionCode
       versionNameSuffix "-minApi21"
     }
 
     minApi17 {
       dimension "api"
       minSdkVersion 17
-      versionCode 10000  + android.defaultConfig.versionCode
       versionNameSuffix "-minApi17"
-      resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+    }
+  }
+}
+
+android.applicationVariants.all { variant ->
+  if (variant.name.contains("minApi17")) {
+    variant.getCompileConfiguration().resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+    variant.getRuntimeConfiguration().resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+  }
+
+  variant.outputs.each { output ->
+    if (variant.name.contains("minApi17")) {
+      output.versionCodeOverride = 10000000 + variant.versionCode
+    } else {
+      output.versionCodeOverride = 20000000 + variant.versionCode
     }
   }
 }
 ```
 
-This will create 2 APK's when you build a release, 1 for Android 4 (app-minApi17-release.apk), and 1 for Android 5 (app-minApi21-release.apk).
+The part in `android` is to create 2 product flavors, one for minSdk 17, and one for minSdk 21. 
+
+The part in `android.applicationVariants` consists of two things:
+
+1. Making sure flavor minApi17 uses version 3.12.+ for minSdk 17
+2. Making sure that every flavor has it's own build versionCode. It takes the version from the manifest and does (10000000 + manifestVersionCode) for minApi17 and (20000000 + manifestVersionCode) for minApi21.
+
+This will create 2 APK's when you build a release, one for Android 4 (app-minApi17-release.apk), and one for Android 5 (app-minApi21-release.apk).
 You can also combine this with ABI splitting.
+
+When you upload both APK's to the Playstore, Google will make sure the proper APK get's distributed to the different devices.
 
 ## Comparison with other NativeScript HTTP Clients
 
@@ -237,6 +224,43 @@ You can also combine this with ABI splitting.
  * While the code of Core HTTP looks like it supports FormData, it only supports key/value and not files, we do support it with our `HTTPFormData` class.
  
 ## API
+
+### Form data
+By default this client behaves the same as the Core HTTP for FormData objects, meaning it will just encode it as key=value pairs and it does not support Blob/File objects.
+It will be posted as `application/x-www-form-urlencoded` unless you override it using a custom header.
+
+If you want to create multipart form data (multipart/form-data) requests, you can use the HTTPFormData class from this plugin.
+You can create form data requests like this:
+
+```typescript
+import { HttpResponse } from "tns-core-modules/http";
+import { request, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-http";
+
+const form = new HTTPFormData();
+form.append("value", "Test");
+// You can also append ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects directly to form here, but please keep in mind that only the File object has the ability to set a filename. And only Blob/File objects have the ability to set a content type.
+// Use HTTPFormDataEntry if you want more control.
+
+const formFile = new HTTPFormDataEntry();
+formFile.fileName = "test.png";
+formFile.contentType = "image/png";
+
+// formFile.data can be a JavaScript ArrayBuffer but also native file objects like java.io.File and NSData.dataWithContentsOfFile.
+formFile.data = new java.io.File(fileLocation);
+form.append("file", formFile);
+
+request({
+    url: "https://httpbin.org/post",
+    method: "POST",
+    content: form
+}).then((response: HttpResponse) => {
+    // Argument (response) is HttpResponse
+}, (e) => {
+});
+```
+
+**Note: this does not work with the Angular HTTPClient, because it tries to transform the HTTPFormData to json. Use the request() method for Multipart posting.**
+
 
 ### Controlling image decode (Android only)
 The NativeScript HTTP implementation always tries to decode responses as image to make sure toImage() works fast.
