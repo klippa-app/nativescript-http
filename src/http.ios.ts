@@ -466,6 +466,11 @@ export function setUserAgent(userAgent?: string) {
 }
 
 export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
+    // Clear caches because pins have changed.
+    if (sessionConfig.URLCache) {
+        sessionConfig.URLCache.removeAllCachedResponses();
+    }
+
     if (certificatePinningConfig == null) {
         certificatePinningConfig = NSMutableDictionary.new<string, any>().init();
         certificatePinningConfig.setValueForKey(false, kTSKSwizzleNetworkDelegates);
@@ -499,10 +504,12 @@ export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
 }
 
 export function certificatePinningClear() {
-    certificatePinningConfig = null;
-    certificatePinningInstance = null;
-    certificatePinningDomainList = null;
+    // Clear caches because pins have changed.
     if (sessionConfig.URLCache) {
         sessionConfig.URLCache.removeAllCachedResponses();
     }
+
+    certificatePinningConfig = null;
+    certificatePinningInstance = null;
+    certificatePinningDomainList = null;
 }
