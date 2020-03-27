@@ -201,23 +201,44 @@ android {
     minApi21 {
       dimension "api"
       minSdkVersion 21
-      versionCode 20000 + android.defaultConfig.versionCode
       versionNameSuffix "-minApi21"
     }
 
     minApi17 {
       dimension "api"
       minSdkVersion 17
-      versionCode 10000  + android.defaultConfig.versionCode
       versionNameSuffix "-minApi17"
-      resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+    }
+  }
+}
+
+android.applicationVariants.all { variant ->
+  if (variant.name.contains("minApi17")) {
+    variant.getCompileConfiguration().resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+    variant.getRuntimeConfiguration().resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+  }
+
+  variant.outputs.each { output ->
+    if (variant.name.contains("minApi17")) {
+      output.versionCodeOverride = 10000000 + variant.versionCode
+    } else {
+      output.versionCodeOverride = 20000000 + variant.versionCode
     }
   }
 }
 ```
 
-This will create 2 APK's when you build a release, 1 for Android 4 (app-minApi17-release.apk), and 1 for Android 5 (app-minApi21-release.apk).
+The part in `android` is to create 2 product flavors, one for minSdk 17, and one for minSdk 21. 
+
+The part in `android.applicationVariants` consists of two things:
+
+1. Making sure flavor minApi17 uses version 3.12.+ for minSdk 17
+2. Making sure that every flavor has it's own build versionCode. It takes the version from the manifest and does (10000000 + manifestVersionCode) for minApi17 and (20000000 + manifestVersionCode) for minApi21.
+
+This will create 2 APK's when you build a release, one for Android 4 (app-minApi17-release.apk), and one for Android 5 (app-minApi21-release.apk).
 You can also combine this with ABI splitting.
+
+When you upload both APK's to the Playstore, Google will make sure the proper APK get's distributed to the different devices.
 
 ## Comparison with other NativeScript HTTP Clients
 
