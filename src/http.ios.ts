@@ -25,7 +25,9 @@ const USER_AGENT_HEADER = "User-Agent";
 const USER_AGENT = `Mozilla/5.0 (i${device}; CPU OS ${osVersion.replace(".", "_")} like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/${osVersion} Mobile/10A5355d Safari/8536.25`;
 const sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration;
 const queue = NSOperationQueue.mainQueue;
-let certificatePinningEnabled = false;
+let certificatePinningInstance: TrustKit = null;
+let certificatePinningConfig: NSDictionary<string, any> = null;
+let certificatePinningDomainList: NSDictionary<string, any> = null;
 
 function parseJSON(source: string): any {
     const src = source.trim();
@@ -40,20 +42,20 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
-        if (!certificatePinningEnabled) {
-            // Default behaviour when we don't want certificate pinning.
+        // Default behaviour when we don't want certificate pinning.
+        if (certificatePinningInstance == null) {
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
             return;
         }
 
-        // const pinningValidator = TrustKit.sharedInstance().pinningValidator();
+        const pinningValidator = certificatePinningInstance.pinningValidator;
 
         // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
-        // if (!pinningValidator.handleChallenge(challenge, completionHandler)) {
+        if (!pinningValidator.handleChallengeCompletionHandler(challenge, completionHandler)) {
             // TrustKit did not handle this challenge: perhaps it was not for server trust
             // or the domain was not pinned. Fall back to the default behavior
-        //    completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
-        // }
+            completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
+        }
     }
 }
 
@@ -445,9 +447,40 @@ export function setUserAgent(userAgent?: string) {
 }
 
 export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
-    // Init trustkit https://github.com/datatheorem/TrustKit/blob/master/docs/getting-started.md
+    if (certificatePinningConfig == null) {
+        certificatePinningConfig = NSMutableDictionary.new<string, any>().init();
+        certificatePinningConfig.setValueForKey(false, kTSKSwizzleNetworkDelegates);
+    }
+
+    if (certificatePinningDomainList == null) {
+        certificatePinningDomainList = NSMutableDictionary.new<string, any>().init();
+    }
+
+    const domainSetting = NSMutableDictionary.new<string, any>().init();
+    domainSetting.setValueForKey(false, kTSKDisableDefaultReportUri);
+    domainSetting.setValueForKey(hashes, kTSKPublicKeyHashes);
+
+    let allowSubdomains = false;
+    let domain = pattern;
+    if (domain.indexOf("**.") === 0) {
+        domain = domain.slice("**.".length);
+        allowSubdomains = true;
+    }
+
+    if (domain.indexOf("*.") === 0) {
+        domain = domain.slice("*.".length);
+        allowSubdomains = true;
+    }
+
+    domainSetting.setValueForKey(allowSubdomains, kTSKIncludeSubdomains);
+    certificatePinningDomainList.setValueForKey(domainSetting, domain);
+
+    certificatePinningConfig.setValueForKey(certificatePinningDomainList, kTSKPinnedDomains);
+    certificatePinningInstance = TrustKit.alloc().initWithConfiguration(certificatePinningConfig);
 }
 
 export function certificatePinningClear() {
-    certificatePinningEnabled = false;
+    certificatePinningConfig = null;
+    certificatePinningInstance = null;
+    certificatePinningDomainList = null;
 }
