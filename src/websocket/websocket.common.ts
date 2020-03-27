@@ -46,6 +46,7 @@ export interface IWebsocketConnection {
      * It also doesn’t include any bytes buffered by the operating system or network intermediaries.
      * This method returns 0 if no messages are waiting in the queue.
      * If may return a nonzero value after the web socket has been canceled;this indicates that enqueued messages were not transmitted.
+     * Note: on iOS this value will always return 0.
      */
     queueSize(): number;
 
@@ -64,6 +65,7 @@ export interface IWebsocketConnection {
     /**
      * Attempts to initiate a graceful shutdown of this web socket.
      * Any already-enqueued messages will be transmitted before the close message is sent but subsequent calls to send will return false and their messages will not be enqueued.
+     * Note: on iOS the reason is not used.
      * @param code
      * @param reason
      */
