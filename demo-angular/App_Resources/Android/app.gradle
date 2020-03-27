@@ -24,16 +24,32 @@ android {
     minApi21 {
       dimension "api"
       minSdkVersion 21
-      versionCode 20000 + android.defaultConfig.versionCode
       versionNameSuffix "-minApi21"
+
+      configurations.all {
+        resolutionStrategy.force "com.squareup.okhttp3:okhttp:4.4.+"
+      }
     }
 
     minApi17 {
       dimension "api"
       minSdkVersion 17
-      versionCode 10000  + android.defaultConfig.versionCode
       versionNameSuffix "-minApi17"
-      resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+
+      configurations.all {
+        resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+      }
     }
   }
 }
+
+android.applicationVariants.all { variant ->
+  variant.outputs.each { output ->
+    if (output.name.contains("minApi17")) {
+      output.versionCodeOverride = 1 * 10000000 + variant.versionCode
+    } else {
+      output.versionCodeOverride = 2 * 10000000 + variant.versionCode
+    }
+  }
+}
+
