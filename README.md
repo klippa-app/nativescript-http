@@ -12,7 +12,7 @@
 [downloads-image]:http://img.shields.io/npm/dm/@klippa/nativescript-http.svg
 [total-downloads-image]:http://img.shields.io/npm/dt/@klippa/nativescript-http.svg?label=total%20downloads
 
-*The best way to do HTTP requests in NativeScript*
+:rocket: *The best way to do HTTP requests in NativeScript* :rocket:
 
 **A drop-in replacement for the core HTTP with important improvements and additions like proper connection pooling, form data support and certificate pinning.**
 
