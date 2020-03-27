@@ -30,6 +30,7 @@
 * Ability to set a global user agent
 * Ability to control cookies
 * Ability to control background image parsing
+* Certificate/SSL pinning
 
 ## Installation
 
@@ -220,14 +221,14 @@ You can also combine this with ABI splitting.
 
 ## Comparison with other NativeScript HTTP Clients
 
-| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
-| --- | --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - |
-| nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
-| nativescript-http-formdata | Yes, using Java OkHttp4 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
-| nativescript-okhttp | Yes, using Java OkHttp2 | No | No | No | No, bad okhttp3 implementation | No |
-| nativescript-https | Yes, using Java OkHttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
-| @klippa/nativescript-http | Yes, using Java OkHttp4 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
+| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| @nativescript/core/http | :heavy_check_mark: using Java HttpURLConnection | :heavy_check_mark: using NSMutableURLRequest | :heavy_check_mark: | :x: | :x: bad Android implementation | - | :x: |
+| nativescript-background-http | :heavy_check_mark: using gotev/android-upload-service | :heavy_check_mark: using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: |
+| nativescript-http-formdata | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x: bad OkHttp implementation | :x: | :x: |
+| nativescript-okhttp | :heavy_check_mark: using OkHttp2 | :x: | :x: | :x: | :x: bad OkHttp implementation | :x: | :x: |
+| nativescript-https | :heavy_check_mark: using OkHttp3 | :heavy_check_mark: using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark: shared client | :white_check_mark: by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: |
+| @klippa/nativescript-http | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: shared client | :heavy_check_mark: automatically and manually | :heavy_check_mark: |
 
 ## Implementation differences with NativeScript Core HTTP
  
@@ -282,8 +283,33 @@ import { setUserAgent } from "@klippa/nativescript-http";
 setUserAgent("MyCoolApp");
 ```
 
+### Certificate pinning
+
+Please read about certificate pinning before you enable it.
+It can have serious consequences. Good articles are [here](https://square.github.io/okhttp/4.x/okhttp/okhttp3/-certificate-pinner/) and [here](https://infinum.com/the-capsized-eight/how-to-make-your-ios-apps-more-secure-with-ssl-pinning).
+
+You can use this [question on Stack Overflow](https://stackoverflow.com/questions/40404963/how-do-i-get-public-key-hash-for-ssl-pinning) to learn how to get the certificate hashes.
+
+#### Always provide at least one backup pin
+In order to prevent accidentally locking users out of your site, make sure you have at least one backup pin and that you have procedures in place to transition to using the backup pin if your primary pin can no longer be used. For example, if you pin to the public key of your server's certificate, you should generate a backup key that is stored somewhere safe. If you pin to an intermediate CA or a root CA, then you should also select an alternative CA that you are willing to switch to if your current CA (or their intermediate CA) becomes invalid for some reason.
+
+If you do not have a backup pin, you could inadvertently prevent your app from working until you released a new version of your app, and your users updated it. One such incident led to a bank having to ask their CA to issue a new certificate using a deprecated intermediate CA in order to allow their users to use the app, or face weeks of the app being unusable.
+
+```typescript
+import { certificatePinningAdd, certificatePinningClear } from "@klippa/nativescript-http";
+
+// Add this line where you want to pin the certificate to a specific domain. The second argument is the certificate hash chain.
+// You can use *.mydomain.com to also use this for direct subdomains, and **.mydomain.com for any subdomain.
+// Note: for iOS, *.publicobject.com also behaves as **.publicobject.com due to limitation in TrustKit.
+// Note 2: for Android, if you use the older version of OkHttp, the **. prefix does not work.
+certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "Lh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+
+// Use this to clear all certificate pins.
+certificatePinningClear();
+```
+
+
 ## Roadmap
- * SSL Pinning
  * Websockets
  * NativeScript ImageCache support
 
