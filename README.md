@@ -150,8 +150,24 @@ request({
 ## Important note for apps with support for < Android 5 (SDK 21)
 The default minSdk of NativeScript is 17, this is Android 4.2. We use OkHttp version 4, which [does not have support for Android 4](https://developer.squareup.com/blog/okhttp-3-13-requires-android-5/).
 
-Luckily, OkHtpp has a [special support branch](https://github.com/square/okhttp/tree/okhttp_3.12.x) for older devices, and because OkHttp is binary safe, which means all the methods have the same signature, we can just replace the version.
-So if you don't mind everyone having an older OkHttp version, you can do the following easy™ fix:
+### If you do not care about Android 4 users
+If you do not care about Android 4 users, edit the file `App_Resources/Android/app.gradle` and change the minSdk to 21:
+```gradle
+android {
+  defaultConfig {
+    minSdkVersion 21
+    // ... other config.
+  }
+  // ... other config.
+}
+```
+This let's the play store know the app can't be installed on anything lower than Android 5.
+
+### If you do care about Android 4 users
+Luckily, OkHtpp has a [special support branch called okhttp_3.12.x](https://github.com/square/okhttp/tree/okhttp_3.12.x) for older devices, and because OkHttp is binary safe, which means all the methods have the same signature, we can just replace the version.
+
+#### I don't mind using an older OkHttp version
+If you don't mind everyone having an older OkHttp version, you can do the following easy™ fix:
 
 Edit the file `App_Resources/Android/app.gradle`, add the following lines:
 
@@ -159,10 +175,48 @@ Edit the file `App_Resources/Android/app.gradle`, add the following lines:
 android {
   // ... other config.
   configurations.all {
-    resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.10"
+    resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
   }
 }
 ```
+
+This will force your build to use the support version of OkHttp.
+
+Please note that this `okhttp_3.12.x` branch is support through December 31, 2020, and it will only get fixes for severe bugs or security issues.
+
+This means you won't get any [cool features](https://github.com/square/okhttp/blob/master/CHANGELOG.md) from version 4.
+
+#### I want to use the latest version for Android 5, and version 3.12 for Android 4
+Luckily, this is also a possibility, but a little bit more difficult because you have to split your builds.
+
+Edit the file `App_Resources/Android/app.gradle`, add the following lines:
+
+```gradle
+android {
+  // ... other config.
+  flavorDimensions "api"
+
+  productFlavors {
+    minApi21 {
+      dimension "api"
+      minSdkVersion 21
+      versionCode 20000 + android.defaultConfig.versionCode
+      versionNameSuffix "-minApi21"
+    }
+
+    minApi17 {
+      dimension "api"
+      minSdkVersion 17
+      versionCode 10000  + android.defaultConfig.versionCode
+      versionNameSuffix "-minApi17"
+      resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
+    }
+  }
+}
+```
+
+This will create 2 APK's when you build a release, 1 for Android 4 (app-minApi17-release.apk), and 1 for Android 5 (app-minApi21-release.apk).
+You can also combine this with ABI splitting.
 
 ## Comparison with other NativeScript HTTP Clients
 
@@ -170,10 +224,10 @@ android {
 | --- | --- | --- | --- | --- | --- | --- |
 | @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - |
 | nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
-| nativescript-http-formdata | Yes, using Java okhttp3 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
-| nativescript-okhttp | Yes, using Java okhttp3 | No | No | No | No, bad okhttp3 implementation | No |
-| nativescript-https | Yes, using Java okhttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
-| @klippa/nativescript-http | Yes, using Java okhttp3 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
+| nativescript-http-formdata | Yes, using Java OkHttp | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
+| nativescript-okhttp | Yes, using Java OkHttp2 | No | No | No | No, bad okhttp3 implementation | No |
+| nativescript-https | Yes, using Java OkHttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
+| @klippa/nativescript-http | Yes, using Java OkHttp4 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
 
 ## Implementation differences with NativeScript Core HTTP
  
