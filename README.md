@@ -147,6 +147,23 @@ request({
 
 **Note: this does not work with the Angular HTTPClient, because it tries to transform the HTTPFormData to json. Use the request() method for Multipart posting.**
 
+## Important note for apps with support for < Android 5 (SDK 21)
+The default minSdk of NativeScript is 17, this is Android 4.2. We use OkHttp version 4, which [does not have support for Android 4](https://developer.squareup.com/blog/okhttp-3-13-requires-android-5/).
+
+Luckily, OkHtpp has a [special support branch](https://github.com/square/okhttp/tree/okhttp_3.12.x) for older devices, and because OkHttp is binary safe, which means all the methods have the same signature, we can just replace the version.
+So if you don't mind everyone having an older OkHttp version, you can do the following easy™ fix:
+
+Edit the file `App_Resources/Android/app.gradle`, add the following lines:
+
+```gradle
+android {
+  // ... other config.
+  configurations.all {
+    resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.10"
+  }
+}
+```
+
 ## Comparison with other NativeScript HTTP Clients
 
 | Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http
