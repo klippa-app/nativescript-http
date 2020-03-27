@@ -502,4 +502,7 @@ export function certificatePinningClear() {
     certificatePinningConfig = null;
     certificatePinningInstance = null;
     certificatePinningDomainList = null;
+    if (sessionConfig.URLCache) {
+        sessionConfig.URLCache.removeAllCachedResponses();
+    }
 }
