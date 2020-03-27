@@ -12,13 +12,19 @@
                 <Button col="3" text="Connect WebSocket" @tap="startWebSocket"></Button>
             </GridLayout>
 
-            <GridLayout row="0" rows="auto" columns="*, *, *" v-show="websocket && !isLoading">
+            <GridLayout row="1" rows="auto" columns="*, *, *" v-show="!websocket">
+                <Button col="0" text="Pin fake cert" @tap="pinFake"></Button>
+                <Button col="1" text="Pin good cert" @tap="pinGood"></Button>
+                <Button col="2" text="Clear pins" @tap="clearPins"></Button>
+            </GridLayout>
+
+            <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" v-show="websocket && !isLoading">
                 <Button col="0" text="Send text" @tap="sendMessage"></Button>
                 <Button col="1" text="Send binary" @tap="sendBinary"></Button>
                 <Button col="2" text="Disconnect" @tap="disconnectWebsocket"></Button>
             </GridLayout>
 
-            <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
+            <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
                 <ActivityIndicator :visibility="isLoading ? 'visible' : 'collapse'" :busy="isLoading"></ActivityIndicator>
                 <Label :visibility="!hasContent && !isLoading ? 'visible' : 'collapse'" text="Content comes here" horizontalAlignment="center" verticalAlignment="center"></Label>
                 <Label :visibility="hasContent && !isLoading && contentType == 'text' ? 'visible' : 'collapse'" :text="contentText" textWrap="true" horizontalAlignment="center" verticalAlignment="center"></Label>
@@ -29,9 +35,18 @@
 </template>
 
 <script>
-    import { request, setImageParseMethod, ImageParseMethod, clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
-    import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
     import * as dialogs from "tns-core-modules/ui/dialogs";
+    import {
+        request,
+        setImageParseMethod,
+        ImageParseMethod,
+        clearCookies,
+        setUserAgent,
+        setConcurrencyLimits,
+        certificatePinningAdd,
+        certificatePinningClear
+    } from "@klippa/nativescript-http";
+    import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
 
     export default {
         data() {
@@ -186,6 +201,35 @@
                 if (this.websocket) {
                     this.websocket.close(1000, "Goodbye");
                 }
+            },
+            pinFake() {
+                certificatePinningClear();
+                // We add 2 fake certificate because Trustkit (iOS) requires a backup cert.
+                certificatePinningAdd("*.placeholder.com", ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="]);
+                certificatePinningAdd("**.github.com", ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="]);
+                certificatePinningAdd("loripsum.net", ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="]);
+                this.contentType = "text";
+                this.contentText = "Fake certificates pinned, try to do a request";
+                this.hasContent = true;
+                this.isLoading = false;
+            },
+            pinGood() {
+                certificatePinningClear();
+                certificatePinningAdd("*.placeholder.com", ["CDCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+                certificatePinningAdd("**.github.com", ["ORH27mxcLwxnNpR7e0i6pdDPWLXdpeWgr5bEfFVbxW8=", "k2v657xBsOVe1PQRwOsHsw3bsGT2VzIqz5K+59sNQws=", "WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18="]);
+                certificatePinningAdd("loripsum.net", ["7ReOzYJ7YC1mMc2CWTuaMDuzynt8xZ+HDQ6K8o+4okk=", "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+
+                this.contentType = "text";
+                this.contentText = "Good certificates pinned, try to do a request";
+                this.hasContent = true;
+                this.isLoading = false;
+            },
+            clearPins() {
+                certificatePinningClear();
+                this.contentType = "text";
+                this.contentText = "Certificate pins cleared, try to do a request";
+                this.hasContent = true;
+                this.isLoading = false;
             }
         },
         computed: {

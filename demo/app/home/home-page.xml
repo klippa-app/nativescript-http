@@ -15,13 +15,19 @@
             <Button col="3" text="Connect WebSocket" tap="{{ startWebSocket }}"/>
         </GridLayout>
 
-        <GridLayout row="0" rows="auto" columns="*, *, *" visibility="{{ hasWebSocket && !isLoading ? 'visible' : 'collapse' }}">
+        <GridLayout row="1" rows="auto" columns="*, *, *" visibility="{{ !hasWebSocket ? 'visible' : 'collapse' }}">
+            <Button col="0" text="Pin fake cert" tap="{{ pinFake }}"/>
+            <Button col="1" text="Pin good cert" tap="{{ pinGood }}"/>
+            <Button col="2" text="Clear pins" tap="{{ clearPins }}"/>
+        </GridLayout>
+
+        <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" visibility="{{ hasWebSocket && !isLoading ? 'visible' : 'collapse' }}">
             <Button col="0" text="Send text" tap="{{ sendMessage }}"/>
             <Button col="1" text="Send binary" tap="{{ sendBinary }}"/>
             <Button col="2" text="Disconnect" tap="{{ disconnectWebsocket }}"/>
         </GridLayout>
 
-        <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
+        <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
             <ActivityIndicator visibility="{{ isLoading ? 'visible' : 'collapse' }}" busy="{{ isLoading }}"></ActivityIndicator>
             <Label visibility="{{ !hasContent && !isLoading ? 'visible' : 'collapse'}}" text="Content comes here" horizontalAlignment="center" verticalAlignment="center"></Label>
             <Label visibility="{{ hasContent && !isLoading && contentType == 'text' ? 'visible' : 'collapse' }}" text="{{ contentText }}" textWrap="true" horizontalAlignment="center" verticalAlignment="center"></Label>

@@ -480,3 +480,13 @@ export function clearCookies() {
 export function setUserAgent(userAgent?: string) {
     customUserAgent = userAgent;
 }
+
+export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
+    // Prefix all with sha256.
+    const newHashes = hashes.map(value => "sha256/" + value);
+    com.klippa.NativeScriptHTTP.Async.Http.PinCertificate(pattern, newHashes);
+}
+
+export function certificatePinningClear() {
+    com.klippa.NativeScriptHTTP.Async.Http.RemoveCertificatePins();
+}

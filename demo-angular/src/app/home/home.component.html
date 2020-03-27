@@ -2,7 +2,7 @@
     <Label text="Home"></Label>
 </ActionBar>
 
-<GridLayout rows="auto, *" columns="*">
+<GridLayout rows="auto, auto, *" columns="*">
     <GridLayout row="0" rows="auto" columns="*, *, *, auto" *ngIf="!websocket">
         <Button col="0" text="Text" (tap)="getText()"></Button>
         <Button col="1" text="JSON" (tap)="getJson()"></Button>
@@ -10,13 +10,19 @@
         <Button col="3" text="Connect WebSocket" (tap)="startWebSocket()"></Button>
     </GridLayout>
 
-    <GridLayout row="0" rows="auto" columns="*, *, *" *ngIf="websocket && !isLoading">
+    <GridLayout row="1" rows="auto" columns="*, *, *" *ngIf="!websocket">
+        <Button col="0" text="Pin fake cert" (tap)="pinFake()"></Button>
+        <Button col="1" text="Pin good cert" (tap)="pinGood()"></Button>
+        <Button col="2" text="Clear pins" (tap)="clearPins()"></Button>
+    </GridLayout>
+
+    <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" *ngIf="websocket && !isLoading">
         <Button col="0" text="Send text" (tap)="sendMessage()"></Button>
         <Button col="1" text="Send binary" (tap)="sendBinary()"></Button>
         <Button col="2" text="Disconnect" (tap)="disconnectWebsocket()"></Button>
     </GridLayout>
 
-    <GridLayout row="1" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
+    <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
         <ActivityIndicator [visibility]="isLoading ? 'visible' : 'collapse'" [busy]="isLoading"></ActivityIndicator>
         <Label [visibility]="!hasContent && !isLoading ? 'visible' : 'collapse'" text="Content comes here" horizontalAlignment="center" verticalAlignment="center"></Label>
         <Label [visibility]="hasContent && !isLoading && contentType == 'text' ? 'visible' : 'collapse'" [text]="contentText" textWrap="true" horizontalAlignment="center" verticalAlignment="center"></Label>

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.CertificatePinner;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -86,6 +87,7 @@ public class Async {
         private static final String HEAD_METHOD = "HEAD";
         private static OkHttpClient client;
         private static MemoryCookieJar cookieJar;
+        private static CertificatePinner.Builder certificatePinnerBuilder;
         private static ImageParseMethod imageParseMethod = ImageParseMethod.CONTENTTYPE;
 
         public static void InitClient() {
@@ -193,8 +195,34 @@ public class Async {
         public static void SetConcurrencyLimits(int maxRequests, int maxRequestsPerHost) {
             // Make sure we have a client.
             InitClient();
+
             client.dispatcher().setMaxRequests(maxRequests);
             client.dispatcher().setMaxRequestsPerHost(maxRequestsPerHost);
+        }
+
+        public static void PinCertificate(String pattern, String[] hashes) {
+            // Make sure we have a client.
+            InitClient();
+
+            // Make sure we have a pinner.
+            if (certificatePinnerBuilder == null) {
+                certificatePinnerBuilder = new CertificatePinner.Builder();
+            }
+
+            // Add the pin.
+            certificatePinnerBuilder.add(pattern, hashes);
+
+            // Override the certificate pinner of the client.
+            client = client.newBuilder().certificatePinner(certificatePinnerBuilder.build()).build();
+        }
+
+        public static void RemoveCertificatePins() {
+            certificatePinnerBuilder = null;
+
+            // If we had a client, reset the pinner to the default.
+            if (client != null) {
+                client = client.newBuilder().certificatePinner(CertificatePinner.DEFAULT).build();
+            }
         }
 
         public enum ImageParseMethod {

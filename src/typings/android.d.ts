@@ -29,7 +29,9 @@ declare module com {
 					public constructor();
 					public static InitClient(): void;
 					public static GetWebSocketConnection(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: okhttp3.WebSocketListener): okhttp3.WebSocket;
+					public static PinCertificate(param0: string, param1: native.Array<string>): void;
 					public static SetImageParseMethod(param0: com.klippa.NativeScriptHTTP.Async.Http.ImageParseMethod): void;
+					public static RemoveCertificatePins(): void;
 				}
 				export module Http {
 					export class HttpRequestTask {

@@ -1,3 +1,26 @@
+## 1.1.1
+
+### Changed
+
+- Changed package description
+
+## 1.1.0
+
+### Added
+
+- SSL/Certificate pinning support
+- Information about OkHttp versions and Android API versions
+
+### Changed
+
+- Improved the readme
+
+## 1.0.2
+
+### Added
+
+- Added Vue demo.
+
 ## 1.0.1
 
 ### Fixed
