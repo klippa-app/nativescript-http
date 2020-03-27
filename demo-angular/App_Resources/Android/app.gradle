@@ -17,23 +17,4 @@ android {
   aaptOptions {
     additionalParameters "--no-version-vectors"
   }
-
-  flavorDimensions "api"
-
-  productFlavors {
-    minApi21 {
-      dimension "api"
-      minSdkVersion 21
-      versionCode 20000 + android.defaultConfig.versionCode
-      versionNameSuffix "-minApi21"
-    }
-
-    minApi17 {
-      dimension "api"
-      minSdkVersion 17
-      versionCode 10000  + android.defaultConfig.versionCode
-      versionNameSuffix "-minApi17"
-      resolutionStrategy.force "com.squareup.okhttp3:okhttp:3.12.+"
-    }
-  }
 }
