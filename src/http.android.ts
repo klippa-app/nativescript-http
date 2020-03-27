@@ -482,7 +482,9 @@ export function setUserAgent(userAgent?: string) {
 }
 
 export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
-    com.klippa.NativeScriptHTTP.Async.Http.PinCertificate(pattern, hashes);
+    // Prefix all with sha256.
+    const newHashes = hashes.map(value => "sha256/" + value);
+    com.klippa.NativeScriptHTTP.Async.Http.PinCertificate(pattern, newHashes);
 }
 
 export function certificatePinningClear() {
