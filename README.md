@@ -224,7 +224,7 @@ You can also combine this with ABI splitting.
 | --- | --- | --- | --- | --- | --- | --- |
 | @nativescript/core/http | Yes, using Java HttpURLConnection | Yes, using NSMutableURLRequest | Yes | No | No, bad Android implementation | - |
 | nativescript-background-http | Yes, using Java  gotev/android-upload-service library | Yes, using NSURLSession | Yes (with a service) | No | Unknown | No |
-| nativescript-http-formdata | Yes, using Java OkHttp | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
+| nativescript-http-formdata | Yes, using Java OkHttp4 | Yes, using OMGHTTPURLRQ | No | Yes | No, bad okhttp3 implementation | No |
 | nativescript-okhttp | Yes, using Java OkHttp2 | No | No | No | No, bad okhttp3 implementation | No |
 | nativescript-https | Yes, using Java OkHttp3 | Yes, using AFNetworking | Yes | No | Yes, shared client | Yes, by manually replacing calls, data structures are the same |
 | @klippa/nativescript-http | Yes, using Java OkHttp4 | Yes, using NSURLSession | Yes | Yes | Yes, shared client | Yes, automatically and manually |
