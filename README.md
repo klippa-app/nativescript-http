@@ -224,7 +224,9 @@ import { certificatePinningAdd, certificatePinningClear } from "@klippa/nativesc
 
 // Add this line where you want to pin the certificate to a specific domain. The second argument is the certificate hash chain.
 // You can use *.mydomain.com to also use this for direct subdomains, and **.mydomain.com for any subdomain.
-certificatePinningAdd("mydomain.com", ["sha256/CDCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+// Note: for iOS, *.publicobject.com also behaves as **.publicobject.com due to limitation in TrustKit.
+// Note 2: for Android, if you use the older version of OkHttp, the **. prefix does not work.
+certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "Lh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
 
 // Use this to clear all certificate pins.
 certificatePinningClear();
