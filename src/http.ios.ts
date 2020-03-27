@@ -61,8 +61,27 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
 
 const sessionTaskDelegateInstance: NSURLSessionTaskDelegateImpl = <NSURLSessionTaskDelegateImpl>NSURLSessionTaskDelegateImpl.new();
 
-class NoRedirectNSURLSessionTaskDelegateImpl extends NSURLSessionTaskDelegateImpl implements NSURLSessionTaskDelegate {
+// Sadly we can't extend our own native class.
+class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
+
+    public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        // Default behaviour when we don't want certificate pinning.
+        if (certificatePinningInstance == null) {
+            completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
+            return;
+        }
+
+        const pinningValidator = certificatePinningInstance.pinningValidator;
+
+        // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
+        if (!pinningValidator.handleChallengeCompletionHandler(challenge, completionHandler)) {
+            // TrustKit did not handle this challenge: perhaps it was not for server trust
+            // or the domain was not pinned. Fall back to the default behavior
+            completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
+        }
+    }
+
     public URLSessionTaskWillPerformHTTPRedirectionNewRequestCompletionHandler(session: NSURLSession, task: NSURLSessionTask, response: NSHTTPURLResponse, request: NSURLRequest, completionHandler: (p1: NSURLRequest) => void): void {
         completionHandler(null);
     }
