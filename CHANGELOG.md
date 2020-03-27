@@ -1,3 +1,9 @@
+## 1.1.1
+
+### Changed
+
+- Changed package description
+
 ## 1.1.0
 
 ### Added
