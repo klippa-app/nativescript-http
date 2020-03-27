@@ -1,2 +1,2 @@
 pod 'OMGHTTPURLRQ', '~> 3.2.4'
-pod 'TrustKit'
+pod 'TrustKit', '~> 1.6.0'
