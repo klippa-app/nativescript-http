@@ -3,12 +3,15 @@ import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
-    getFilenameFromUrl, ImageParseMethod, completeSelfCheck,
+    getFilenameFromUrl,
+    ImageParseMethod,
+    completeSelfCheck,
+    domainAllowSelfSignedCertificate
 } from "./http.common";
 import * as types from "@nativescript/core/utils/types";
 import * as domainDebugger from "tns-core-modules/debugger";
 import * as fs from "tns-core-modules/file-system";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod, selfSignedAllow, selfSignedClear } from "./http.common";
 
 export enum HttpResponseEncoding {
     UTF8,
@@ -42,6 +45,15 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        // Check for allowing self signed domains.
+        if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowSelfSignedCertificate(challenge.protectionSpace.host)) {
+                const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                return;
+            }
+        }
+
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
@@ -66,6 +78,15 @@ class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSe
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        // Check for allowing self signed domains.
+        if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowSelfSignedCertificate(challenge.protectionSpace.host)) {
+                const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                return;
+            }
+        }
+
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);

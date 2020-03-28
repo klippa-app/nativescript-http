@@ -183,3 +183,45 @@ export function completeSelfCheck(options: HttpRequestOptions): Promise<HttpResp
         headers: options.headers
     });
 }
+
+const allowedSelfSignedDomains: Array<string> = new Array<string>();
+
+/**
+ * Internal function to detect whether a domain should allow self signed certificates.
+ */
+export function domainAllowSelfSignedCertificate(domain: string): boolean {
+    const allowedSelfSignedDomainsLength = allowedSelfSignedDomains.length;
+    if (allowedSelfSignedDomainsLength > 0) {
+        for (let i = 0; i < allowedSelfSignedDomainsLength; i++) {
+            if (allowedSelfSignedDomains[i] === "allow-all") {
+                return true;
+            }
+
+            if (allowedSelfSignedDomains[i] === domain) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Add a domain that allows self signed certificates.
+ * Please be aware this disable any security checks and SSL pinning. Please only activate on development environments.
+ * @param domain The domain to allow, if not given, all domains are allowed.
+ */
+export function selfSignedAllow(domain?: string) {
+    if (typeof (domain) === "string") {
+        allowedSelfSignedDomains.push(domain);
+    } else {
+        allowedSelfSignedDomains.push("allow-all");
+    }
+}
+
+/**
+ * Clear all the records that allow self signed certificates
+ */
+export function selfSignedClear() {
+    allowedSelfSignedDomains.splice(0);
+}

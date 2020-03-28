@@ -4,12 +4,14 @@ import {
     completeSelfCheck,
     getFilenameFromUrl,
     HTTPFormData,
-    HTTPFormDataEntry, ImageParseMethod,
+    HTTPFormDataEntry,
+    ImageParseMethod,
+    domainAllowSelfSignedCertificate
 } from "./http.common";
 import * as fs from "tns-core-modules/file-system";
 import { screen } from "tns-core-modules/platform";
 import { NetworkAgent } from "tns-core-modules/debugger";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod, selfSignedAllow, selfSignedClear } from "./http.common";
 
 declare var global: any;
 
