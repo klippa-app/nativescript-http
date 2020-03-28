@@ -397,7 +397,7 @@ certificatePinningClear();
  * Websockets (WIP in feature/websockets branch)
  * NativeScript ImageCache support
  * Cache control
- * Allowing self signed certificates
+ * Allowing self signed certificates (WIP in feature/self-signed)
 
 ## About Klippa
 
