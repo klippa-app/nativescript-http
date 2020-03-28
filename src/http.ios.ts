@@ -517,3 +517,7 @@ export function certificatePinningClear() {
 export function getCurrentUserAgent() {
     return customUserAgent;
 }
+
+export function getCurrentCertificatePinningInstance(): TrustKit | null {
+    return certificatePinningInstance;
+}

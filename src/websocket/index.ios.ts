@@ -1,6 +1,6 @@
 import {HttpRequestOptions} from "@nativescript/core/http";
 import {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
-import {getCurrentUserAgent, USER_AGENT, USER_AGENT_HEADER} from "../http.ios";
+import {getCurrentCertificatePinningInstance, getCurrentUserAgent, USER_AGENT, USER_AGENT_HEADER} from "../http.ios";
 import * as types from "@nativescript/core/utils/types";
 export {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 
@@ -31,6 +31,41 @@ export class WebsocketConnection implements IWebsocketConnection {
         this.nativeConnection.forceDisconnect();
     }
 }
+
+// @todo: we can pass allowSelfSigned here for websockets on iOS.
+// FoundationSecurity is the default SSL checker.
+const foundationSecurityInstance: FoundationSecurity = <FoundationSecurity>FoundationSecurity.new();
+
+class TrustkitSSLTrustValidatorImpl extends NSObject implements CertificatePinning {
+    public static ObjCProtocols = [CertificatePinning];
+
+    public evaluateTrust(trust: SecTrust, domain: string, completion: (p1: PinningState) => void) {
+        const certificatePinningInstance = getCurrentCertificatePinningInstance();
+
+        // Default behaviour when we don't want certificate pinning.
+        if (certificatePinningInstance == null) {
+            foundationSecurityInstance.evaluateTrust(trust, domain, completion);
+            return;
+        }
+
+        const pinningValidator = certificatePinningInstance.pinningValidator;
+        const trustDecision = pinningValidator.evaluateTrustForHostname(trust, domain);
+
+        // Default behaviour when not pinned or allowed.
+        if (trustDecision === TSKTrustDecision.DomainNotPinned || trustDecision === TSKTrustDecision.ShouldAllowConnection) {
+            foundationSecurityInstance.evaluateTrust(trust, domain, completion);
+            return;
+        }
+
+        // Should block connection.
+        const errorUserInfo = NSMutableDictionary.new<string, any>().init();
+        errorUserInfo.setValueForKey("Domain is pinned and certificate does not match!", "Message");
+        const error = NSError.new().initWithDomainCodeUserInfo("TrustkitSSLTrustValidatorImpl", 0, errorUserInfo);
+        completion(PinningState.failed(error));
+    }
+}
+
+const trustkitSSLTrustValidatorInstance: TrustkitSSLTrustValidatorImpl = <TrustkitSSLTrustValidatorImpl>TrustkitSSLTrustValidatorImpl.new();
 
 export function newWebsocketConnection(options: HttpRequestOptions, callbacks: WebsocketCallbacks): Promise<IWebsocketConnection> {
     return new Promise<IWebsocketConnection>((resolve, reject) => {
@@ -65,7 +100,7 @@ export function newWebsocketConnection(options: HttpRequestOptions, callbacks: W
         }
 
         // @todo: add certificate pinner.
-        const socket = WebSocket.alloc().initWithRequest(urlRequest);
+        const socket = WebSocket.alloc().initWithRequestCertPinnerCompressionHandler(urlRequest, trustkitSSLTrustValidatorInstance, null);
         socket.onEvent = (event) => {
             // @todo: implement handlers.
         };
