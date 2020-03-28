@@ -393,17 +393,19 @@ certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJ
 certificatePinningClear();
 ```
 
-### Allowing self signed certificates
-This plugin allows you to allow self signed certificates for specific domains or for any domain. Please be cautious with this and only do it on development environments.
+### Allowing invalid / self signed certificates
+
+This plugin allows you to allow invalid / self signed certificates for specific domains or for any domain.
+Please be cautious with this and only do it on development environments.
 
 ```typescript
-import { selfSignedAllow, selfSignedClear } from "@klippa/nativescript-http";
+import { invalidCertificateAllow, invalidCertificateClear } from "@klippa/nativescript-http";
 
-// Add a domain that allows self signed certificates. When you give no domain, all domains allow self signed certificates.
-selfSignedAllow("google.com");
+// Add a domain that allows invalid certificates. When you give no domain, all domains allow invalid certificates.
+invalidCertificateAllow("google.com");
 
-// Use this to clear all domains that were allowed for self signed certificates.
-selfSignedClear();
+// Use this to clear all domains that were allowed for invalid certificates.
+invalidCertificateClear();
 ```
 
 ## Roadmap

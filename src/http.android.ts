@@ -5,13 +5,12 @@ import {
     getFilenameFromUrl,
     HTTPFormData,
     HTTPFormDataEntry,
-    ImageParseMethod,
-    domainAllowSelfSignedCertificate
+    ImageParseMethod
 } from "./http.common";
 import * as fs from "tns-core-modules/file-system";
 import { screen } from "tns-core-modules/platform";
 import { NetworkAgent } from "tns-core-modules/debugger";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod, selfSignedAllow, selfSignedClear } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 declare var global: any;
 
@@ -496,4 +495,12 @@ export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
 
 export function certificatePinningClear() {
     com.klippa.NativeScriptHTTP.Async.Http.RemoveCertificatePins();
+}
+
+export function invalidCertificateAllow(domain?: string) {
+    // @todo: implement me.
+}
+
+export function invalidCertificateClear() {
+    // @todo: implement me.
 }

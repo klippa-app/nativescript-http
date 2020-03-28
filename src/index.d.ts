@@ -149,14 +149,13 @@ export declare function certificatePinningAdd(pattern: string, hashes: Array<str
 export declare function certificatePinningClear(): void;
 
 /**
- * Add a domain that allows self signed certificates.
- * Please be aware this disable any security checks and SSL pinning. Please only activate on development environments.
+ * Add a domain that allows invalid certificates.
+ * Please be aware this disable any SSL security checks and certificate/SSL pinning. Please only activate on development environments.
  * @param domain The domain to allow, if not given, all domains are allowed.
  */
-export declare function selfSignedAllow(domain?: string): void;
-
+export function invalidCertificateAllow(domain?: string): void;
 
 /**
- * Clear all the records that allow self signed certificates
+ * Clear all the records that allow invalid certificates
  */
-export declare function selfSignedClear(): void;
+export function invalidCertificateClear(): void;

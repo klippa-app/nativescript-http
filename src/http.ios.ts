@@ -6,12 +6,11 @@ import {
     getFilenameFromUrl,
     ImageParseMethod,
     completeSelfCheck,
-    domainAllowSelfSignedCertificate
 } from "./http.common";
 import * as types from "@nativescript/core/utils/types";
 import * as domainDebugger from "tns-core-modules/debugger";
 import * as fs from "tns-core-modules/file-system";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod, selfSignedAllow, selfSignedClear } from "./http.common";
+export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 export enum HttpResponseEncoding {
     UTF8,
@@ -31,6 +30,7 @@ const queue = NSOperationQueue.mainQueue;
 let certificatePinningInstance: TrustKit = null;
 let certificatePinningConfig: NSDictionary<string, any> = null;
 let certificatePinningDomainList: NSDictionary<string, any> = null;
+const allowedInvalidCertificateDomains: Array<string> = new Array<string>();
 
 function parseJSON(source: string): any {
     const src = source.trim();
@@ -47,7 +47,7 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
         // Check for allowing self signed domains.
         if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
-            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowSelfSignedCertificate(challenge.protectionSpace.host)) {
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
                 const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
                 completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
                 return;
@@ -80,7 +80,7 @@ class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSe
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
         // Check for allowing self signed domains.
         if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
-            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowSelfSignedCertificate(challenge.protectionSpace.host)) {
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
                 const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
                 completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
                 return;
@@ -542,4 +542,36 @@ export function certificatePinningClear() {
     certificatePinningConfig = null;
     certificatePinningInstance = null;
     certificatePinningDomainList = null;
+}
+
+/**
+ * Internal function to detect whether a domain should allow invalid certificates.
+ */
+function domainAllowInvalidCertificate(domain: string): boolean {
+    const allowedInvalidCertificateDomainsLength = allowedInvalidCertificateDomains.length;
+    if (allowedInvalidCertificateDomainsLength > 0) {
+        for (let i = 0; i < allowedInvalidCertificateDomainsLength; i++) {
+            if (allowedInvalidCertificateDomains[i] === "allow-all") {
+                return true;
+            }
+
+            if (allowedInvalidCertificateDomains[i] === domain) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+export function invalidCertificateAllow(domain?: string) {
+    if (typeof (domain) === "string") {
+        allowedInvalidCertificateDomains.push(domain);
+    } else {
+        allowedInvalidCertificateDomains.push("allow-all");
+    }
+}
+
+export function invalidCertificateClear() {
+    allowedInvalidCertificateDomains.splice(0);
 }
