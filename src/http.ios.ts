@@ -3,7 +3,7 @@ import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
-    getFilenameFromUrl, ImageParseMethod,
+    getFilenameFromUrl, ImageParseMethod, completeSelfCheck,
 } from "./http.common";
 import * as types from "@nativescript/core/utils/types";
 import * as domainDebugger from "tns-core-modules/debugger";
@@ -103,6 +103,15 @@ function ensureSessionNotFollowingRedirects() {
 }
 
 export function request(options: HttpRequestOptions): Promise<HttpResponse> {
+    if (options === undefined || options === null) {
+        // TODO: Shouldn't we throw an error here - defensive programming
+        return Promise.reject("No options given");
+    }
+
+    if (options.url === "https://nativescript-http-integration-check.local") {
+        return completeSelfCheck(options);
+    }
+
     return new Promise<HttpResponse>((resolve, reject) => {
 
         if (!options.url) {

@@ -78,6 +78,53 @@ plugins: [
 
 **Note 2: please pay attention when upgrading the webpack file after an update to NativeScript, don't forget to re-add it**
 
+#### Validate whether the automatic integration works by adding a self-check
+
+If you are dependant on new functionality in this plugin, like handling form data or certificate pinning and you want to make sure the automatic integration always works, or you just want to play it safe, you can add the following self-check to your code:
+
+*For core NativeScript / Vue / Angular:*
+
+```typescript
+import * as dialogs from "tns-core-modules/ui/dialogs";
+import { request }from "@nativescript/core/http";
+
+request({
+    method: "GET",
+    url: "https://nativescript-http-integration-check.local",
+}).then((res) => {
+    const jsonContent = res.content.toJSON();
+    if (!jsonContent || !jsonContent.SelfCheck || jsonContent.SelfCheck !== "OK!") {
+        dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+    }
+}).catch((e) => {
+    dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+});
+```
+
+*For Angular HttpClient:*
+
+```typescript
+import * as dialogs from "tns-core-modules/ui/dialogs";
+
+// Don't forget to inject HttpClient into your component.
+
+// Add the following code in a place where you want to do the self-check in Angular.
+this.http.get("https://nativescript-http-integration-check.local", {
+    responseType: "json",
+}).toPromise().then((res) => {
+    // @ts-ignore
+    if (!res || !res.SelfCheck || res.SelfCheck !== "OK!") {
+        dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+    }
+}).catch((e) => {
+    dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+});
+```
+
+The URL `https://nativescript-http-integration-check.local` is hardcoded internally in this plugin to always return the same result.
+
+If the request fails, or the content isn't the same as what we expect, we know something is wrong and we will get a dialog message that the automatic integration failed.
+
 ### Integration in code
 
 Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http), you can execute the requests in the same way as with the Core HTTP, the only thing different is the import:
@@ -347,8 +394,10 @@ certificatePinningClear();
 ```
 
 ## Roadmap
- * Websockets
+ * Websockets (WIP in feature/websockets branch)
  * NativeScript ImageCache support
+ * Cache control
+ * Allowing self signed certificates
 
 ## About Klippa
 

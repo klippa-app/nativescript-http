@@ -1,6 +1,7 @@
 import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
+    completeSelfCheck,
     getFilenameFromUrl,
     HTTPFormData,
     HTTPFormDataEntry, ImageParseMethod,
@@ -335,6 +336,10 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
     if (options === undefined || options === null) {
         // TODO: Shouldn't we throw an error here - defensive programming
         return Promise.reject("No options given");
+    }
+
+    if (options.url === "https://nativescript-http-integration-check.local") {
+        return completeSelfCheck(options);
     }
 
     return new Promise<HttpResponse>((resolve, reject) => {
