@@ -1,3 +1,9 @@
+## 1.1.2
+
+### Added
+
+- Automatic integration self-check functionality
+
 ## 1.1.1
 
 ### Changed
