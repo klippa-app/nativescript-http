@@ -558,6 +558,21 @@ function domainAllowInvalidCertificate(domain: string): boolean {
             if (allowedInvalidCertificateDomains[i] === domain) {
                 return true;
             }
+
+            let allowSubdomains = false;
+            if (allowedInvalidCertificateDomains[i].indexOf("**.") === 0) {
+                allowedInvalidCertificateDomains[i] = allowedInvalidCertificateDomains[i].slice("**".length);
+                allowSubdomains = true;
+            }
+
+            if (allowedInvalidCertificateDomains[i].indexOf("*.") === 0) {
+                allowedInvalidCertificateDomains[i] = allowedInvalidCertificateDomains[i].slice("*".length);
+                allowSubdomains = true;
+            }
+
+            if (allowSubdomains && domain.endsWith(allowedInvalidCertificateDomains[i])) {
+                return true;
+            }
         }
     }
 
