@@ -499,12 +499,12 @@ export function certificatePinningClear() {
 
 export function invalidCertificateAllow(domain?: string) {
     if (typeof (domain) === "string") {
-        //allowedInvalidCertificateDomains.push(domain);
+        // allowedInvalidCertificateDomains.push(domain);
     } else {
-        //allowedInvalidCertificateDomains.push("allow-all");
+        // allowedInvalidCertificateDomains.push("allow-all");
     }
 }
 
 export function invalidCertificateClear() {
-    //allowedInvalidCertificateDomains.splice(0);
+    // allowedInvalidCertificateDomains.splice(0);
 }
