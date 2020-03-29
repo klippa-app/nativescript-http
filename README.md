@@ -402,11 +402,29 @@ Please be cautious with this and only do it on development environments.
 import { invalidCertificateAllow, invalidCertificateClear } from "@klippa/nativescript-http";
 
 // Add a domain that allows invalid certificates. When you give no domain, all domains allow invalid certificates.
-invalidCertificateAllow("google.com");
+// You can use *.mydomain.com to also use this for direct subdomains, and **.mydomain.com for any subdomain.
+// Note: for iOS, *.publicobject.com also behaves as **.publicobject.com.
+invalidCertificateAllow("mydomain.com");
 
 // Use this to clear all domains that were allowed for invalid certificates.
 invalidCertificateClear();
 ```
+
+#### I want invalid certificates to work, but only MY (self-signed) invalid certificate
+
+This is also a possibility, to do this, you can combine invalid certificates with certificate pinning.
+
+```typescript
+import { invalidCertificateAllow, certificatePinningAdd } from "@klippa/nativescript-http";
+
+// Allow invalid certs
+invalidCertificateAllow("mydomain.com");
+
+// Allow specific invalid certs.
+// Please note that iOS needs at least 2 certs, so either create a backup certificate or give a fake one like `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`.
+certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "Lh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+```
+
 
 ## Roadmap
  * Websockets (WIP in feature/websockets branch)
