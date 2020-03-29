@@ -45,17 +45,17 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
-        // Check for allowing self signed domains.
-        if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
-            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
-                const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
-                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
-                return;
-            }
-        }
-
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
+            // Check for allowing self signed domains.
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+                if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
+                    const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                    completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                    return;
+                }
+            }
+
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
             return;
         }
@@ -64,6 +64,15 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
 
         // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
         if (!pinningValidator.handleChallengeCompletionHandler(challenge, completionHandler)) {
+            // Check for allowing self signed domains.
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+                if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
+                    const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                    completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                    return;
+                }
+            }
+
             // TrustKit did not handle this challenge: perhaps it was not for server trust
             // or the domain was not pinned. Fall back to the default behavior
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
@@ -78,17 +87,17 @@ class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSe
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
-        // Check for allowing self signed domains.
-        if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
-            if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
-                const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
-                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
-                return;
-            }
-        }
-
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
+            // Check for allowing self signed domains.
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+                if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
+                    const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                    completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                    return;
+                }
+            }
+
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
             return;
         }
@@ -97,6 +106,15 @@ class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSe
 
         // Pass the authentication challenge to the validator; if the validation fails, the connection will be blocked
         if (!pinningValidator.handleChallengeCompletionHandler(challenge, completionHandler)) {
+            // Check for allowing self signed domains.
+            if (challenge && challenge.protectionSpace && challenge.protectionSpace.authenticationMethod && challenge.protectionSpace.authenticationMethod === NSURLAuthenticationMethodServerTrust) {
+                if (challenge && challenge.protectionSpace && challenge.protectionSpace.serverTrust && challenge.protectionSpace.host && domainAllowInvalidCertificate(challenge.protectionSpace.host)) {
+                    const credential = NSURLCredential.credentialForTrust(challenge.protectionSpace.serverTrust);
+                    completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                    return;
+                }
+            }
+
             // TrustKit did not handle this challenge: perhaps it was not for server trust
             // or the domain was not pinned. Fall back to the default behavior
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);

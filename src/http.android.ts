@@ -498,9 +498,13 @@ export function certificatePinningClear() {
 }
 
 export function invalidCertificateAllow(domain?: string) {
-    // @todo: implement me.
+    if (typeof (domain) === "string") {
+        //allowedInvalidCertificateDomains.push(domain);
+    } else {
+        //allowedInvalidCertificateDomains.push("allow-all");
+    }
 }
 
 export function invalidCertificateClear() {
-    // @todo: implement me.
+    //allowedInvalidCertificateDomains.splice(0);
 }
