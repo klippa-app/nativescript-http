@@ -27,6 +27,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 public class Async {
     static final String TAG = "Async";
@@ -155,6 +157,31 @@ public class Async {
             });
         }
 
+        public static WebSocket GetWebSocketConnection(final RequestOptions options, final WebSocketListener listener)  {
+            InitClient();
+            OkHttpClient.Builder clientBuilder = client.newBuilder();
+
+            // don't follow redirect (30x) responses; by default, HttpURLConnection follows them.
+            if (options.dontFollowRedirects) {
+                clientBuilder.followRedirects(false);
+            }
+
+            OkHttpClient client = clientBuilder.build();
+
+            Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.url(options.url);
+
+            if (options.headers != null) {
+                for (KeyValuePair pair : options.headers) {
+                    String key = pair.key.toString();
+                    requestBuilder.addHeader(key, pair.value.toString());
+                }
+            }
+
+            Request request = requestBuilder.build();
+            return client.newWebSocket(request, listener);
+        }
+
         public static void ClearCookies() {
             if (cookieJar != null) {
                 cookieJar.clear();
@@ -223,6 +250,7 @@ public class Async {
             public int screenWidth = -1;
             public int screenHeight = -1;
             public boolean dontFollowRedirects = false;
+            public boolean forceImageParsing = false;
 
             public void addHeaders(Request.Builder requestBuilder) {
                 if (this.headers == null) {
@@ -291,7 +319,7 @@ public class Async {
                 buff = null;
 
                 MediaType contentType = responseBody.contentType();
-                if (imageParseMethod == ImageParseMethod.ALWAYS || (imageParseMethod == ImageParseMethod.CONTENTTYPE && contentType != null && contentType.toString().startsWith("image/"))) {
+                if (options.forceImageParsing || imageParseMethod == ImageParseMethod.ALWAYS || (imageParseMethod == ImageParseMethod.CONTENTTYPE && contentType != null && contentType.toString().startsWith("image/"))) {
                     // make the byte array conversion here, not in the JavaScript
                     // world for better performance
                     try {

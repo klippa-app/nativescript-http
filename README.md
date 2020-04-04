@@ -18,7 +18,7 @@
 
 ## Features
 * Ability to use without any code change
-* Ability to make all http requests go through this plugin
+* Ability to make all http and image-cache requests go through this plugin
 * Backwards compatible (behaves the same as core HTTP)
 * Modern TLS & SSL security features
 * Shared connection pooling reduces request latency
@@ -33,6 +33,8 @@
 * Ability to control cookies
 * Ability to control background image parsing
 * Certificate/SSL pinning
+* WebSockets
+* ImageCache
 
 ## Installation
 
@@ -54,7 +56,7 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
    * request
    * fetch
    * getString, getJSON, getImage, getFile, getBinary
-   * **Not** NativeScript ImageCache
+ * NativeScript image-cache
  * Any NativeScript plugin that uses above methods internally
 
 The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
@@ -73,6 +75,8 @@ plugins: [
 
 // ... code
 ```
+
+The `NativeScriptHTTPPlugin` can be given an object with the following properties: `replaceHTTP` (true/false) and `replaceImageCache` (true/false). This way you can control what the plugin replaces. If you don't give this options object we will replace both.
 
 **Note: if you do this, you don't have to do the other integrations.**
 
@@ -164,6 +168,12 @@ From now on you can make requests using Angular's HttpClient service like explai
 Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (core HTTP does the same).
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
 
+## ImageCache
+
+If you use the WebPack plugin, you don't have to do anything to use our ImageCache. It behaves the same as core so you don't have to change anything.
+
+If you don't use the plugin. You can import the `ImageCache` or `Cache` class from `@klippa/nativescript-http/image-cache`. It has the same API as the core ImageCache.
+
 ## Important note for apps with support for < Android 5 (SDK 21)
 
 The default minSdk of NativeScript is 17, this is Android 4.2. We use OkHttp version 4, which [does not have support for Android 4](https://developer.squareup.com/blog/okhttp-3-13-requires-android-5/).
@@ -209,6 +219,8 @@ Please note that this `okhttp_3.12.x` branch is support through December 31, 202
 This means you won't get any [cool features](https://github.com/square/okhttp/blob/master/CHANGELOG.md) from version 4.
 
 #### I want to use the latest version for Android 5, and version 3.12 for Android 4
+
+**NOTE: there is currently an [open issue](https://github.com/NativeScript/android-runtime/issues/1597) in the Android runtime that makes it impossible for the configuration below to work**
 
 Luckily, this is also a possibility, but a little bit more difficult because you have to split your builds.
 
@@ -264,14 +276,14 @@ When you upload both APK's to the Playstore, Google will make sure the proper AP
 
 ## Comparison with other NativeScript HTTP Clients
 
-| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | :heavy_check_mark: using Java HttpURLConnection | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :x: | :x: bad Android implementation | - | :x: |
-| nativescript-background-http | :heavy_check_mark: using gotev/android-upload-service | :heavy_check_mark: using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: |
-| nativescript-http-formdata | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x: bad OkHttp implementation | :x: | :x: |
-| nativescript-okhttp | :heavy_check_mark: using OkHttp2 | :x: | :x: | :x: | :x: bad OkHttp implementation | :x: | :x: |
-| nativescript-https | :heavy_check_mark: using OkHttp3 | :heavy_check_mark: using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark: shared client | :white_check_mark: by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: |
-| @klippa/nativescript-http | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: shared client | :heavy_check_mark: automatically and manually | :heavy_check_mark: |
+| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning | WebSockets | ImageCache |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| @nativescript/core/http | :heavy_check_mark: using Java HttpURLConnection | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :x: | :x: bad Android implementation | - | :x: | :x: | - |
+| nativescript-background-http | :heavy_check_mark: using gotev/android-upload-service | :heavy_check_mark: using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: | :x: | :x: |
+| nativescript-http-formdata | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x: bad OkHttp implementation | :x: | :x: | :x: | :x: |
+| nativescript-okhttp | :heavy_check_mark: using OkHttp2 | :x: | :x: | :x: | :x: bad OkHttp implementation | :x: | :x: | :x: | :x: |
+| nativescript-https | :heavy_check_mark: using OkHttp3 | :heavy_check_mark: using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark: shared client | :white_check_mark: by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: | :x: | :x: |
+| @klippa/nativescript-http | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: shared client | :heavy_check_mark: automatically and manually | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 
 ## Implementation differences with NativeScript Core HTTP
  
@@ -367,6 +379,54 @@ import { setUserAgent } from "@klippa/nativescript-http";
 setUserAgent("MyCoolApp");
 ```
 
+### WebSockets
+
+Note: certificate pinning is not available for websockets on iOS. Sadly [SocketRocket removed support](https://github.com/facebook/SocketRocket/pull/534) for that.
+
+Creating a WebSocket is quite simple in this plugin:
+
+```typescript
+import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
+
+newWebsocketConnection({
+    url: "wss://echo.websocket.org",
+    method: "GET",
+}, {
+    // It's important to wrap callbacks in ngZone for Angular when you do anything binding related.
+    // If you don't do this, Angular won't update the views.
+    onClosed: (code: number, reason: string) => {
+        // Invoked when both peers have indicated that no more messages will be transmitted and the connection has been successfully released.
+        // No further calls to this callback will be made.
+        console.log("onClosed", code, reason);
+    },
+    onFailure: (error) => {
+        // Invoked when a web socket has been closed due to an error reading from or writing to the network.
+        // Both outgoing and incoming messages may have been lost. No further calls to this callback will be made.
+        console.log("onFailure", error);
+    },
+    onOpen: () => {
+        // Invoked when a web socket has been accepted by the remote peer and may begin transmitting messages.
+        console.log("onOpen");
+    },
+    onClosing: (code: number, reason: string) => {
+        // Invoked when the remote peer has indicated that no more incoming messages will be transmitted.
+        // This method will not be called on iOS.
+        console.log("onClosing", code, reason);
+    },
+    onMessage: (text: string) => {
+        // Invoked when a text (type 0x1) message has been received.
+        console.log("onMessage", text);
+    },
+    onBinaryMessage: (data: ArrayBuffer) => {
+        // Invoked when a binary (type 0x2) message has been received.
+        console.log("onBinaryMessage", data);
+    }
+}).then((webSocket) => {
+    // With the webSocket object you can send messages and close the connection.
+    // Receiving a WebSocket here does not mean the connection worked, you have to check onFailure and onOpen for that.
+});
+```
+
 ### Certificate pinning
 
 Please read about certificate pinning before you enable it.
@@ -427,8 +487,6 @@ certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJ
 
 
 ## Roadmap
- * Websockets (WIP in feature/websockets branch)
- * NativeScript ImageCache support
  * Cache control
 
 ## About Klippa

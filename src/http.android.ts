@@ -151,7 +151,7 @@ function onRequestError(error: string, requestId: number) {
     }
 }
 
-function buildJavaOptions(options: HttpRequestOptions) {
+export function buildJavaOptions(options: HttpRequestOptions) {
     if (typeof options.url !== "string") {
         throw new Error("Http request must provide a valid url.");
     }
@@ -199,7 +199,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
             if (!mediaType) {
                 mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
             }
-            javaOptions.content = okhttp3.RequestBody.create(options.content.toString(), mediaType);
+            javaOptions.content = okhttp3.RequestBody.create(mediaType, options.content.toString());
         } else if (options.content instanceof ArrayBuffer) {
             // Make sure we behave the same as the core http.
             if (!mediaType) {
@@ -207,7 +207,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
             }
             const typedArray = new Uint8Array(options.content as ArrayBuffer);
             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-            javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+            javaOptions.content = okhttp3.RequestBody.create(mediaType, nativeBuffer.array());
         } else {
             let matched = false;
 
@@ -230,7 +230,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
                 // @ts-ignore
                 const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
                 const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, nativeBuffer.array());
 
                 matched = true;
             }
@@ -267,7 +267,7 @@ function buildJavaOptions(options: HttpRequestOptions) {
                         // @ts-ignore
                         const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                        builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                        builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                     } else if (value instanceof HTTPFormDataEntry) {
                         let formDataPartMediaType = null;
                         if (value.type) {
@@ -277,20 +277,20 @@ function buildJavaOptions(options: HttpRequestOptions) {
                         if (value.data instanceof ArrayBuffer) {
                             const typedArray = new Uint8Array(value.data as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else if (value.data instanceof Blob) {
                             // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                             // @ts-ignore
                             const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else {
                             // Support for native file objects.
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(value.data, formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, value.data));
                         }
                     } else {
                         // Support for native file objects.
-                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(value, null));
+                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(null, value));
                     }
                 }));
 
@@ -299,10 +299,10 @@ function buildJavaOptions(options: HttpRequestOptions) {
 
             if (!matched && options.content) {
                 // Assume options.content is a native object.
-                javaOptions.content = okhttp3.RequestBody.create(options.content, mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, options.content);
             } else if (!matched) {
                 // Fall back to empty string, okhttp must have a request body.
-                javaOptions.content = okhttp3.RequestBody.create("", mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, "");
             }
         }
     }
@@ -329,6 +329,12 @@ function buildJavaOptions(options: HttpRequestOptions) {
     const ourScreen = screen.mainScreen;
     javaOptions.screenWidth = ourScreen.widthPixels;
     javaOptions.screenHeight = ourScreen.heightPixels;
+
+    // @ts-ignore
+    if (typeof(options.forceImageParsing) !== "undefined") {
+        // @ts-ignore
+        javaOptions.forceImageParsing = options.forceImageParsing;
+    }
 
     return javaOptions;
 }

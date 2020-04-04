@@ -23,8 +23,8 @@ const osVersion = currentDevice.systemVersion;
 
 let customUserAgent: string;
 const GET = "GET";
-const USER_AGENT_HEADER = "User-Agent";
-const USER_AGENT = `Mozilla/5.0 (i${device}; CPU OS ${osVersion.replace(".", "_")} like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/${osVersion} Mobile/10A5355d Safari/8536.25`;
+export const USER_AGENT_HEADER = "User-Agent";
+export const USER_AGENT = `Mozilla/5.0 (i${device}; CPU OS ${osVersion.replace(".", "_")} like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/${osVersion} Mobile/10A5355d Safari/8536.25`;
 const sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration;
 const queue = NSOperationQueue.mainQueue;
 let certificatePinningInstance: TrustKit = null;
@@ -562,6 +562,10 @@ export function certificatePinningClear() {
     certificatePinningDomainList = null;
 }
 
+export function getCurrentCertificatePinningInstance(): TrustKit | null {
+    return certificatePinningInstance;
+}
+
 /**
  * Internal function to detect whether a domain should allow invalid certificates.
  */
@@ -608,3 +612,8 @@ export function invalidCertificateAllow(domain?: string) {
 export function invalidCertificateClear() {
     allowedInvalidCertificateDomains.splice(0);
 }
+
+export function getCurrentUserAgent() {
+    return customUserAgent;
+}
+

@@ -1,3 +1,21 @@
+## 1.3.0
+
+### Added
+
+- Ability to replace image-cache from core.
+
+## 1.2.0
+
+### Added
+
+- WebSockets
+
+## 1.1.3
+
+### Fixed
+
+- Program against okhttp3 typings, so everything still works when using the older okhttp3 and also with okhttp4.
+
 ## 1.1.2
 
 ### Added

@@ -104,7 +104,7 @@ export declare function setImageParseMethod(imageParseMethod: ImageParseMethod):
 /**
  * Sets the concurrency limit.
  * @param maxRequests how many requests the http client should do at the same time (Only has affect on Android, iOS allows no control over this).
- * @param maxRequestsPerHost How many requests the http client should do at the same time for the same host.
+ * @param maxRequestsPerHost How many requests the http client should do at the same time for the same host. WebSocket connections to hosts do not count against this limit.
  */
 export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number): void;
 

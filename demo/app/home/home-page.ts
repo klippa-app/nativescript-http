@@ -24,3 +24,12 @@ export function onNavigatingTo(args: NavigatedData) {
     // Setting concurrency limits, 20 at the same time, 2 to the same host.
     setConcurrencyLimits(20, 2);
 }
+
+export function onNavigatingFrom(args: NavigatedData) {
+    const page = <Page>args.object;
+    const bindingContext = <HomeViewModel>page.bindingContext;
+
+    if (bindingContext.websocket) {
+        bindingContext.websocket.cancel();
+    }
+}
