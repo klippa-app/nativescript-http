@@ -1,3 +1,9 @@
+## 1.3.0
+
+### Added
+
+- Ability to replace image-cache from core.
+
 ## 1.2.0
 
 ### Added
