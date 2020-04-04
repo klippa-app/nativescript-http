@@ -265,14 +265,14 @@ When you upload both APK's to the Playstore, Google will make sure the proper AP
 
 ## Comparison with other NativeScript HTTP Clients
 
-| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| @nativescript/core/http | :heavy_check_mark: using Java HttpURLConnection | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :x: | :x: bad Android implementation | - | :x: |
-| nativescript-background-http | :heavy_check_mark: using gotev/android-upload-service | :heavy_check_mark: using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: |
-| nativescript-http-formdata | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x: bad OkHttp implementation | :x: | :x: |
-| nativescript-okhttp | :heavy_check_mark: using OkHttp2 | :x: | :x: | :x: | :x: bad OkHttp implementation | :x: | :x: |
-| nativescript-https | :heavy_check_mark: using OkHttp3 | :heavy_check_mark: using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark: shared client | :white_check_mark: by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: |
-| @klippa/nativescript-http | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: shared client | :heavy_check_mark: automatically and manually | :heavy_check_mark: |
+| Plugin | Android | iOS | Background threads | Supports form data | Proper connection pooling | Can replace core http | Certificate / SSL Pinning | WebSockets |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| @nativescript/core/http | :heavy_check_mark: using Java HttpURLConnection | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :x: | :x: bad Android implementation | - | :x: | :x: |
+| nativescript-background-http | :heavy_check_mark: using gotev/android-upload-service | :heavy_check_mark: using NSURLSession | :heavy_check_mark: (with a service) | :x: | Unknown | :x: | :x: | :x: |
+| nativescript-http-formdata | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using OMGHTTPURLRQ | :x: | :heavy_check_mark: | :x: bad OkHttp implementation | :x: | :x: | :x: |
+| nativescript-okhttp | :heavy_check_mark: using OkHttp2 | :x: | :x: | :x: | :x: bad OkHttp implementation | :x: | :x: | :x: |
+| nativescript-https | :heavy_check_mark: using OkHttp3 | :heavy_check_mark: using AFNetworking | :heavy_check_mark: | :x: | :heavy_check_mark: shared client | :white_check_mark: by manually replacing calls, data structures are (almost) the same | :heavy_check_mark: | :x: |
+| @klippa/nativescript-http | :heavy_check_mark: using OkHttp4 | :heavy_check_mark: using NSURLSession | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: shared client | :heavy_check_mark: automatically and manually | :heavy_check_mark: | :heavy_check_mark: |
 
 ## Implementation differences with NativeScript Core HTTP
  
