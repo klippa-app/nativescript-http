@@ -220,6 +220,8 @@ This means you won't get any [cool features](https://github.com/square/okhttp/bl
 
 #### I want to use the latest version for Android 5, and version 3.12 for Android 4
 
+**NOTE: there is currently an [open issue](https://github.com/NativeScript/android-runtime/issues/1597) in the Android runtime that makes it impossible for the configuration below to work**
+
 Luckily, this is also a possibility, but a little bit more difficult because you have to split your builds.
 
 Edit the file `App_Resources/Android/app.gradle`, add the following lines:

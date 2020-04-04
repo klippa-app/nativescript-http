@@ -329,6 +329,12 @@ export function buildJavaOptions(options: HttpRequestOptions) {
     javaOptions.screenWidth = ourScreen.widthPixels;
     javaOptions.screenHeight = ourScreen.heightPixels;
 
+    // @ts-ignore
+    if (typeof(options.forceImageParsing) !== "undefined") {
+        // @ts-ignore
+        javaOptions.forceImageParsing = options.forceImageParsing;
+    }
+
     return javaOptions;
 }
 

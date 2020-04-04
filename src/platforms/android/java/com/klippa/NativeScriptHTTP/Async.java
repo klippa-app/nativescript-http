@@ -250,6 +250,7 @@ public class Async {
             public int screenWidth = -1;
             public int screenHeight = -1;
             public boolean dontFollowRedirects = false;
+            public boolean forceImageParsing = false;
 
             public void addHeaders(Request.Builder requestBuilder) {
                 if (this.headers == null) {
@@ -318,7 +319,7 @@ public class Async {
                 buff = null;
 
                 MediaType contentType = responseBody.contentType();
-                if (imageParseMethod == ImageParseMethod.ALWAYS || (imageParseMethod == ImageParseMethod.CONTENTTYPE && contentType != null && contentType.toString().startsWith("image/"))) {
+                if (options.forceImageParsing || imageParseMethod == ImageParseMethod.ALWAYS || (imageParseMethod == ImageParseMethod.CONTENTTYPE && contentType != null && contentType.toString().startsWith("image/"))) {
                     // make the byte array conversion here, not in the JavaScript
                     // world for better performance
                     try {

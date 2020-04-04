@@ -66,6 +66,7 @@ declare module com {
 						public screenWidth: number;
 						public screenHeight: number;
 						public dontFollowRedirects: boolean;
+						public forceImageParsing: boolean;
 						public constructor();
 						public addHeaders(param0: okhttp3.Request.Builder): void;
 					}
