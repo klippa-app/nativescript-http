@@ -1,7 +1,5 @@
 package com.klippa.NativeScriptHTTP;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,13 +16,12 @@ class MemoryCookieJar implements CookieJar {
     }
 
     @Override
-    synchronized public void saveFromResponse(@NotNull HttpUrl url, @NotNull List<Cookie> cookies) {
+    synchronized public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
         cache.addAll(cookies);
     }
 
-    @NotNull
     @Override
-    synchronized public List<Cookie> loadForRequest(@NotNull HttpUrl url) {
+    synchronized public List<Cookie> loadForRequest(HttpUrl url) {
         List<Cookie> cookiesToRemove = new ArrayList<>();
         List<Cookie> validCookies = new ArrayList<>();
 

@@ -1,3 +1,15 @@
+## 1.1.3
+
+### Fixed
+
+- Program against okhttp3 typings, so everything still works when using the older okhttp3 and also with okhttp4.
+
+## 1.1.2
+
+### Added
+
+- Automatic integration self-check functionality
+
 ## 1.1.1
 
 ### Changed

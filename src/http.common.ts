@@ -152,3 +152,34 @@ export enum ImageParseMethod {
     CONTENTTYPE,
     ALWAYS
 }
+
+export function completeSelfCheck(options: HttpRequestOptions): Promise<HttpResponse> {
+    const response = new Blob(["{ \"SelfCheck\": \"OK!\" }"], {
+        type: "application/json",
+    });
+
+    return Promise.resolve({
+        content: {
+            raw: response,
+
+            // @ts-ignore
+            toArrayBuffer: () => Blob.InternalAccessor.getBuffer(response).buffer.slice(0),
+            toString: (encoding) => {
+                return "{ \"SelfCheck\": \"OK!\" }";
+            },
+            toJSON: (encoding) => {
+                return {
+                    "SelfCheck": "OK!",
+                };
+            },
+            toImage: () => {
+                throw new Error(`toImage Not implemented for self-check.`);
+            },
+            toFile: (destinationFilePath: string) => {
+                throw new Error(`toFile Not implemented for self-check.`);
+            }
+        },
+        statusCode: 200,
+        headers: options.headers
+    });
+}

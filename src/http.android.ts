@@ -1,6 +1,7 @@
 import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
 import { ImageSource } from "@nativescript/core/image-source/image-source";
 import {
+    completeSelfCheck,
     getFilenameFromUrl,
     HTTPFormData,
     HTTPFormDataEntry, ImageParseMethod,
@@ -197,7 +198,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
             if (!mediaType) {
                 mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
             }
-            javaOptions.content = okhttp3.RequestBody.create(options.content.toString(), mediaType);
+            javaOptions.content = okhttp3.RequestBody.create(mediaType, options.content.toString());
         } else if (options.content instanceof ArrayBuffer) {
             // Make sure we behave the same as the core http.
             if (!mediaType) {
@@ -205,7 +206,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
             }
             const typedArray = new Uint8Array(options.content as ArrayBuffer);
             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-            javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+            javaOptions.content = okhttp3.RequestBody.create(mediaType, nativeBuffer.array());
         } else {
             let matched = false;
 
@@ -228,7 +229,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
                 // @ts-ignore
                 const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(options.content).buffer.slice(0) as ArrayBuffer);
                 const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                javaOptions.content = okhttp3.RequestBody.create(nativeBuffer.array(), mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, nativeBuffer.array());
 
                 matched = true;
             }
@@ -265,7 +266,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
                         // @ts-ignore
                         const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value).buffer.slice(0) as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                        builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                        builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                     } else if (value instanceof HTTPFormDataEntry) {
                         let formDataPartMediaType = null;
                         if (value.type) {
@@ -275,20 +276,20 @@ export function buildJavaOptions(options: HttpRequestOptions) {
                         if (value.data instanceof ArrayBuffer) {
                             const typedArray = new Uint8Array(value.data as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else if (value.data instanceof Blob) {
                             // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                             // @ts-ignore
                             const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(nativeBuffer.array(), formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else {
                             // Support for native file objects.
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(value.data, formDataPartMediaType));
+                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, value.data));
                         }
                     } else {
                         // Support for native file objects.
-                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(value, null));
+                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(null, value));
                     }
                 }));
 
@@ -297,10 +298,10 @@ export function buildJavaOptions(options: HttpRequestOptions) {
 
             if (!matched && options.content) {
                 // Assume options.content is a native object.
-                javaOptions.content = okhttp3.RequestBody.create(options.content, mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, options.content);
             } else if (!matched) {
                 // Fall back to empty string, okhttp must have a request body.
-                javaOptions.content = okhttp3.RequestBody.create("", mediaType);
+                javaOptions.content = okhttp3.RequestBody.create(mediaType, "");
             }
         }
     }
@@ -335,6 +336,10 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
     if (options === undefined || options === null) {
         // TODO: Shouldn't we throw an error here - defensive programming
         return Promise.reject("No options given");
+    }
+
+    if (options.url === "https://nativescript-http-integration-check.local") {
+        return completeSelfCheck(options);
     }
 
     return new Promise<HttpResponse>((resolve, reject) => {
