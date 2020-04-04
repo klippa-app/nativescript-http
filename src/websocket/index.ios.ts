@@ -4,10 +4,11 @@ import {getCurrentCertificatePinningInstance, getCurrentUserAgent, USER_AGENT, U
 import * as types from "@nativescript/core/utils/types";
 export {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 
-const connections: Array<WebSocket> = new Array<WebSocket>();
+const connections: Array<SRWebSocket> = new Array<SRWebSocket>();
+const delegates: Array<SRWebSocketDelegateImpl> = new Array<SRWebSocketDelegateImpl>();
 
 export class WebsocketConnection implements IWebsocketConnection {
-    constructor(private nativeConnection: WebSocketClient) {
+    constructor(private nativeConnection: SRWebSocket) {
     }
 
     queueSize(): number {
@@ -15,57 +16,47 @@ export class WebsocketConnection implements IWebsocketConnection {
     }
 
     send(text: string) {
-        this.nativeConnection.write(text);
+        this.nativeConnection.send(text);
     }
 
     sendBinary(bytes: ArrayBuffer) {
         const buffer = bytes as ArrayBuffer;
-        this.nativeConnection.write(NSData.dataWithData(buffer as any));
+        this.nativeConnection.send(NSData.dataWithData(buffer as any));
     }
 
     close(code: number, reason: string) {
-        return this.nativeConnection.disconnect(code);
+        return this.nativeConnection.closeWithCodeReason(code, reason);
     }
 
     cancel() {
-        this.nativeConnection.forceDisconnect();
+        this.nativeConnection.close();
     }
 }
 
-// @todo: we can pass allowSelfSigned here for websockets on iOS.
-// FoundationSecurity is the default SSL checker.
-const foundationSecurityInstance: FoundationSecurity = <FoundationSecurity>FoundationSecurity.new();
+class SRWebSocketDelegateImpl extends NSObject implements SRWebSocketDelegate {
+    public static ObjCProtocols = [SRWebSocketDelegate];
+    public callbacks: WebsocketCallbacks;
 
-class TrustkitSSLTrustValidatorImpl extends NSObject implements CertificatePinning {
-    public static ObjCProtocols = [CertificatePinning];
+    webSocketDidCloseWithCodeReasonWasClean(webSocket: SRWebSocket, code: number, reason: string, wasClean: boolean) {
+        this.callbacks.onClosed(code, reason);
+    }
 
-    public evaluateTrust(trust: SecTrust, domain: string, completion: (p1: PinningState) => void) {
-        const certificatePinningInstance = getCurrentCertificatePinningInstance();
+    webSocketDidFailWithError(webSocket: SRWebSocket, error: NSError) {
+        this.callbacks.onFailure(error.localizedDescription);
+    }
 
-        // Default behaviour when we don't want certificate pinning.
-        if (certificatePinningInstance == null) {
-            foundationSecurityInstance.evaluateTrust(trust, domain, completion);
-            return;
+    webSocketDidOpen(webSocket: SRWebSocket) {
+        this.callbacks.onOpen();
+    }
+
+    webSocketDidReceiveMessage(webSocket: SRWebSocket, message: any) {
+        if (message && message.bytes) {
+            this.callbacks.onBinaryMessage(interop.bufferFromData(message));
+        } else {
+            this.callbacks.onMessage(message);
         }
-
-        const pinningValidator = certificatePinningInstance.pinningValidator;
-        const trustDecision = pinningValidator.evaluateTrustForHostname(trust, domain);
-
-        // Default behaviour when not pinned or allowed.
-        if (trustDecision === TSKTrustDecision.DomainNotPinned || trustDecision === TSKTrustDecision.ShouldAllowConnection) {
-            foundationSecurityInstance.evaluateTrust(trust, domain, completion);
-            return;
-        }
-
-        // Should block connection.
-        const errorUserInfo = NSMutableDictionary.new<string, any>().init();
-        errorUserInfo.setValueForKey("Domain is pinned and certificate does not match!", "Message");
-        const error = NSError.new().initWithDomainCodeUserInfo("TrustkitSSLTrustValidatorImpl", 0, errorUserInfo);
-        completion(PinningState.failed(error));
     }
 }
-
-const trustkitSSLTrustValidatorInstance: TrustkitSSLTrustValidatorImpl = <TrustkitSSLTrustValidatorImpl>TrustkitSSLTrustValidatorImpl.new();
 
 export function newWebsocketConnection(options: HttpRequestOptions, callbacks: WebsocketCallbacks): Promise<IWebsocketConnection> {
     return new Promise<IWebsocketConnection>((resolve, reject) => {
@@ -99,14 +90,15 @@ export function newWebsocketConnection(options: HttpRequestOptions, callbacks: W
             urlRequest.timeoutInterval = options.timeout / 1000;
         }
 
-        // @todo: add certificate pinner.
-        const socket = WebSocket.alloc().initWithRequestCertPinnerCompressionHandler(urlRequest, trustkitSSLTrustValidatorInstance, null);
-        socket.onEvent = (event) => {
-            // @todo: implement handlers.
-        };
+        const delegate: SRWebSocketDelegateImpl = <SRWebSocketDelegateImpl>SRWebSocketDelegateImpl.new();
+        delegate.callbacks = callbacks;
+        const socket = SRWebSocket.alloc().initWithURLRequest(urlRequest);
+        socket.delegate = delegate;
+        socket.open();
 
-        socket.connect();
         connections.push(socket);
+        delegates.push(delegate);
+
         const websocketConnection = new WebsocketConnection(socket);
         resolve(websocketConnection);
     });

@@ -322,6 +322,8 @@ setUserAgent("MyCoolApp");
 
 ### WebSockets
 
+Note: certificate pinning is not available for websockets on iOS. Sadly [SocketRocket removed support](https://github.com/facebook/SocketRocket/pull/534) for that.
+
 Creating a WebSocket is quite simple in this plugin:
 
 ```typescript
@@ -349,6 +351,7 @@ newWebsocketConnection({
     },
     onClosing: (code: number, reason: string) => {
         // Invoked when the remote peer has indicated that no more incoming messages will be transmitted.
+        // This method will not be called on iOS.
         console.log("onClosing", code, reason);
     },
     onMessage: (text: string) => {
