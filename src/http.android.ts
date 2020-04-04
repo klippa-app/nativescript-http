@@ -150,7 +150,7 @@ function onRequestError(error: string, requestId: number) {
     }
 }
 
-function buildJavaOptions(options: HttpRequestOptions) {
+export function buildJavaOptions(options: HttpRequestOptions) {
     if (typeof options.url !== "string") {
         throw new Error("Http request must provide a valid url.");
     }

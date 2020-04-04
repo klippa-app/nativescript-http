@@ -1,22 +1,30 @@
 <Page
     navigatingTo="onNavigatingTo"
+    navigatingFrom="onNavigatingFrom"
     xmlns="http://schemas.nativescript.org/tns.xsd">
 
     <ActionBar>
         <Label text="Home"></Label>
     </ActionBar>
 
-    <GridLayout rows="auto, auto, *" columns="*">
-        <GridLayout row="0" rows="auto" columns="*, *, *">
-            <Button col="0" text="Get text" tap="{{ getText }}"/>
-            <Button col="1" text="Get JSON" tap="{{ getJson }}"/>
-            <Button col="2" text="Get Image" tap="{{ getImage }}"/>
+    <GridLayout rows="auto, *" columns="*">
+        <GridLayout row="0" rows="auto" columns="*, *, *, auto" visibility="{{ !hasWebSocket ? 'visible' : 'collapse' }}">
+            <Button col="0" text="Text" tap="{{ getText }}"/>
+            <Button col="1" text="JSON" tap="{{ getJson }}"/>
+            <Button col="2" text="Image" tap="{{ getImage }}"/>
+            <Button col="3" text="Connect WebSocket" tap="{{ startWebSocket }}"/>
         </GridLayout>
 
-        <GridLayout row="1" rows="auto" columns="*, *, *">
+        <GridLayout row="1" rows="auto" columns="*, *, *" visibility="{{ !hasWebSocket ? 'visible' : 'collapse' }}">
             <Button col="0" text="Pin fake cert" tap="{{ pinFake }}"/>
             <Button col="1" text="Pin good cert" tap="{{ pinGood }}"/>
             <Button col="2" text="Clear pins" tap="{{ clearPins }}"/>
+        </GridLayout>
+
+        <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" visibility="{{ hasWebSocket && !isLoading ? 'visible' : 'collapse' }}">
+            <Button col="0" text="Send text" tap="{{ sendMessage }}"/>
+            <Button col="1" text="Send binary" tap="{{ sendBinary }}"/>
+            <Button col="2" text="Disconnect" tap="{{ disconnectWebsocket }}"/>
         </GridLayout>
 
         <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">

@@ -27,6 +27,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 public class Async {
     static final String TAG = "Async";
@@ -153,6 +155,31 @@ public class Async {
                     }
                 }
             });
+        }
+
+        public static WebSocket GetWebSocketConnection(final RequestOptions options, final WebSocketListener listener)  {
+            InitClient();
+            OkHttpClient.Builder clientBuilder = client.newBuilder();
+
+            // don't follow redirect (30x) responses; by default, HttpURLConnection follows them.
+            if (options.dontFollowRedirects) {
+                clientBuilder.followRedirects(false);
+            }
+
+            OkHttpClient client = clientBuilder.build();
+
+            Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.url(options.url);
+
+            if (options.headers != null) {
+                for (KeyValuePair pair : options.headers) {
+                    String key = pair.key.toString();
+                    requestBuilder.addHeader(key, pair.value.toString());
+                }
+            }
+
+            Request request = requestBuilder.build();
+            return client.newWebSocket(request, listener);
         }
 
         public static void ClearCookies() {

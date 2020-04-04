@@ -33,6 +33,7 @@
 * Ability to control cookies
 * Ability to control background image parsing
 * Certificate/SSL pinning
+* WebSockets
 
 ## Installation
 
@@ -367,6 +368,54 @@ import { setUserAgent } from "@klippa/nativescript-http";
 setUserAgent("MyCoolApp");
 ```
 
+### WebSockets
+
+Note: certificate pinning is not available for websockets on iOS. Sadly [SocketRocket removed support](https://github.com/facebook/SocketRocket/pull/534) for that.
+
+Creating a WebSocket is quite simple in this plugin:
+
+```typescript
+import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
+
+newWebsocketConnection({
+    url: "wss://echo.websocket.org",
+    method: "GET",
+}, {
+    // It's important to wrap callbacks in ngZone for Angular when you do anything binding related.
+    // If you don't do this, Angular won't update the views.
+    onClosed: (code: number, reason: string) => {
+        // Invoked when both peers have indicated that no more messages will be transmitted and the connection has been successfully released.
+        // No further calls to this callback will be made.
+        console.log("onClosed", code, reason);
+    },
+    onFailure: (error) => {
+        // Invoked when a web socket has been closed due to an error reading from or writing to the network.
+        // Both outgoing and incoming messages may have been lost. No further calls to this callback will be made.
+        console.log("onFailure", error);
+    },
+    onOpen: () => {
+        // Invoked when a web socket has been accepted by the remote peer and may begin transmitting messages.
+        console.log("onOpen");
+    },
+    onClosing: (code: number, reason: string) => {
+        // Invoked when the remote peer has indicated that no more incoming messages will be transmitted.
+        // This method will not be called on iOS.
+        console.log("onClosing", code, reason);
+    },
+    onMessage: (text: string) => {
+        // Invoked when a text (type 0x1) message has been received.
+        console.log("onMessage", text);
+    },
+    onBinaryMessage: (data: ArrayBuffer) => {
+        // Invoked when a binary (type 0x2) message has been received.
+        console.log("onBinaryMessage", data);
+    }
+}).then((webSocket) => {
+    // With the webSocket object you can send messages and close the connection.
+    // Receiving a WebSocket here does not mean the connection worked, you have to check onFailure and onOpen for that.
+});
+```
+
 ### Certificate pinning
 
 Please read about certificate pinning before you enable it.
@@ -394,7 +443,6 @@ certificatePinningClear();
 ```
 
 ## Roadmap
- * Websockets (WIP in feature/websockets branch)
  * NativeScript ImageCache support
  * Cache control
  * Allowing self signed certificates (WIP in feature/self-signed)
