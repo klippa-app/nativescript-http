@@ -18,7 +18,7 @@
 
 ## Features
 * Ability to use without any code change
-* Ability to make all http requests go through this plugin
+* Ability to make all http and image-cache requests go through this plugin
 * Backwards compatible (behaves the same as core HTTP)
 * Modern TLS & SSL security features
 * Shared connection pooling reduces request latency
@@ -34,6 +34,7 @@
 * Ability to control background image parsing
 * Certificate/SSL pinning
 * WebSockets
+* ImageCache
 
 ## Installation
 
@@ -55,7 +56,7 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
    * request
    * fetch
    * getString, getJSON, getImage, getFile, getBinary
-   * **Not** NativeScript ImageCache
+ * NativeScript image-cache
  * Any NativeScript plugin that uses above methods internally
 
 The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
@@ -74,6 +75,8 @@ plugins: [
 
 // ... code
 ```
+
+The `NativeScriptHTTPPlugin` can be given an object with the following properties: `replaceHTTP` (true/false) and `replaceImageCache` (true/false). This way you can control what the plugin replaces. If you don't give this options object we will replace both.
 
 **Note: if you do this, you don't have to do the other integrations.**
 
@@ -164,6 +167,12 @@ From now on you can make requests using Angular's HttpClient service like explai
 
 Be aware that this plugin tries to parse your image in the background so you won't have to do this in javascript (core HTTP does the same).
 This value is not reachable from the Angular HTTP client, only through response.content.toImage(), so I would advice to use the HTTP client directly (so without the Angular HTTP client) if you are going to download images and display them directly.
+
+## ImageCache
+
+If you use the WebPack plugin, you don't have to do anything to use our ImageCache. It behaves the same as core so you don't have to change anything.
+
+If you don't use the plugin. You can import the `ImageCache` or `Cache` class from `@klippa/nativescript-http/image-cache`. It has the same API as the core ImageCache.
 
 ## Important note for apps with support for < Android 5 (SDK 21)
 
@@ -443,7 +452,6 @@ certificatePinningClear();
 ```
 
 ## Roadmap
- * NativeScript ImageCache support
  * Cache control
  * Allowing self signed certificates (WIP in feature/self-signed)
 
