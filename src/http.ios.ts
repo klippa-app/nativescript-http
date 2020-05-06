@@ -463,7 +463,10 @@ export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: nu
 export function clearCookies() {
     if (sessionConfig.HTTPCookieStorage && sessionConfig.HTTPCookieStorage.cookies) {
         const cookieSize = sessionConfig.HTTPCookieStorage.cookies.count;
-        for (let i = 0; i < cookieSize; i++) {
+        if (cookieSize <= 0) {
+            return; 
+        }
+        for (let i = cookieSize - 1; i >= 0; i--) {
             const cookie = sessionConfig.HTTPCookieStorage.cookies.objectAtIndex(i);
             sessionConfig.HTTPCookieStorage.deleteCookie(cookie);
         }
