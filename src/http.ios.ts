@@ -462,10 +462,16 @@ export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: nu
 
 export function clearCookies() {
     if (sessionConfig.HTTPCookieStorage && sessionConfig.HTTPCookieStorage.cookies) {
-        const cookieSize = sessionConfig.HTTPCookieStorage.cookies.count;
-        for (let i = 0; i < cookieSize; i++) {
-            const cookie = sessionConfig.HTTPCookieStorage.cookies.objectAtIndex(i);
-            sessionConfig.HTTPCookieStorage.deleteCookie(cookie);
+        const cookieCount = sessionConfig.HTTPCookieStorage.cookies.count;
+        if (cookieCount <= 0) {
+            return;
+        }
+
+        for (let i = 0; i < cookieCount; i++) {
+            const cookie = sessionConfig.HTTPCookieStorage.cookies.objectAtIndex(0);
+            if (cookie) {
+                sessionConfig.HTTPCookieStorage.deleteCookie(cookie);
+            }
         }
     }
 }
