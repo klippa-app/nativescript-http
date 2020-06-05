@@ -310,12 +310,8 @@ form.append("value", "Test");
 // You can also append ArrayBuffer/File/Blob/native(such as java.io.File and NSData.dataWithContentsOfFile) objects directly to form here, but please keep in mind that only the File object has the ability to set a filename. And only Blob/File objects have the ability to set a content type.
 // Use HTTPFormDataEntry if you want more control.
 
-const formFile = new HTTPFormDataEntry();
-formFile.fileName = "test.png";
-formFile.contentType = "image/png";
-
-// formFile.data can be a JavaScript ArrayBuffer but also native file objects like java.io.File and NSData.dataWithContentsOfFile.
-formFile.data = new java.io.File(fileLocation);
+// formFile data can be a JavaScript ArrayBuffer but also native file objects like java.io.File and NSData.dataWithContentsOfFile.
+const formFile = new HTTPFormDataEntry(new java.io.File(fileLocation), "test.png", "image/png");
 form.append("file", formFile);
 
 request({
