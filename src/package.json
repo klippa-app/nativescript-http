@@ -55,6 +55,7 @@
 		"@nativescript/angular": "^10.0.0",
 		"@nativescript/core": "~7.0.0",
 		"@nativescript/types": "~7.0.0",
+		"@nativescript/webpack": "~3.0.0",
 		"prompt": "^1.0.0",
 		"rimraf": "^2.6.3",
 		"rxjs": "~6.5.5",
@@ -63,6 +64,8 @@
 		"tslint": "^6.1.2",
 		"typescript": "3.9.7"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"ts-node": "^9.0.0"
+	},
 	"bootstrapper": "nativescript-plugin-seed"
 }
