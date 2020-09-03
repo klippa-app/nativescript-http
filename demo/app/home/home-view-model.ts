@@ -1,4 +1,8 @@
-import { Observable } from "tns-core-modules/data/observable";
+import {
+    Observable,
+    Dialogs,
+    ImageSource
+} from '@nativescript/core';
 
 import {
     request,
@@ -8,8 +12,6 @@ import {
     certificatePinningClear
 } from "@klippa/nativescript-http";
 
-import { ImageSource } from "@nativescript/core/image-source";
-import * as dialogs from "tns-core-modules/ui/dialogs";
 import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
 
 export class HomeViewModel extends Observable {
@@ -135,7 +137,7 @@ export class HomeViewModel extends Observable {
     }
 
     sendMessage() {
-        dialogs.prompt({
+        Dialogs.prompt({
             title: "Enter message",
             message: "Enter the message you want to send. The websocket server will echo the message back to you.",
             okButtonText: "Send message"

@@ -1,4 +1,4 @@
-import { NSFileSystem } from "nativescript-angular/file-system/ns-file-system";
+import { NSFileSystem } from "@nativescript/angular/file-system/ns-file-system";
 import { Observable } from "rxjs";
 export declare type httpResponseFactory<T> = (url: string, body: any, status: number) => T;
 export declare type httpErrorFactory = (url: string, body: any, status: number) => any;

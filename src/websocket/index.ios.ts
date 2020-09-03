@@ -33,6 +33,7 @@ export class WebsocketConnection implements IWebsocketConnection {
     }
 }
 
+@NativeClass()
 class SRWebSocketDelegateImpl extends NSObject implements SRWebSocketDelegate {
     public static ObjCProtocols = [SRWebSocketDelegate];
     public callbacks: WebsocketCallbacks;

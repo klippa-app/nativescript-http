@@ -1,14 +1,20 @@
-import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
-import { ImageSource } from "@nativescript/core/image-source/image-source";
+import {
+    ImageSource,
+    HttpRequestOptions,
+    HttpResponse,
+    Headers,
+    File,
+    Screen,
+} from '@nativescript/core';
+
 import {
     completeSelfCheck,
     getFilenameFromUrl,
     HTTPFormData,
     HTTPFormDataEntry, ImageParseMethod,
 } from "./http.common";
-import * as fs from "tns-core-modules/file-system";
-import { screen } from "tns-core-modules/platform";
-import { NetworkAgent } from "tns-core-modules/debugger";
+
+import { NetworkAgent } from "@nativescript/core/debugger";
 export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 declare var global: any;
@@ -72,7 +78,7 @@ function onRequestComplete(requestId: number, result: com.klippa.NativeScriptHTT
 
     // send response data (for requestId) to network debugger
     if (global.__inspector && global.__inspector.isConnected) {
-        NetworkAgent.responseReceived("okhttp3_" + requestId, result, headers);
+        NetworkAgent.responseReceived(requestId, result, headers);
     }
 
     callbacks.resolveCallback({
@@ -119,7 +125,7 @@ function onRequestComplete(requestId: number, result: com.klippa.NativeScriptHTT
                 let stream: java.io.FileOutputStream;
                 try {
                     // ensure destination path exists by creating any missing parent directories
-                    const file = fs.File.fromPath(destinationFilePath);
+                    const file = File.fromPath(destinationFilePath);
 
                     const javaFile = new java.io.File(destinationFilePath);
                     stream = new java.io.FileOutputStream(javaFile);
@@ -325,7 +331,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
     }
 
     // pass the maximum available image size to the request options in case we need a bitmap conversion
-    const ourScreen = screen.mainScreen;
+    const ourScreen = Screen.mainScreen;
     javaOptions.screenWidth = ourScreen.widthPixels;
     javaOptions.screenHeight = ourScreen.heightPixels;
 
@@ -355,7 +361,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
 
             // send request data to network debugger
             if (global.__inspector && global.__inspector.isConnected) {
-                NetworkAgent.requestWillBeSent("okhttp3_" + requestIdCounter, options);
+                NetworkAgent.requestWillBeSent(requestIdCounter, options);
             }
 
             // remember the callbacks so that we can use them when the CompleteCallback is called

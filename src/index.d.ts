@@ -1,5 +1,4 @@
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http";
-import { ImageSource } from "@nativescript/core/image-source";
+import { ImageSource, HttpRequestOptions, HttpResponse } from "@nativescript/core";
 
 /**
  * Downloads the content from the specified URL as a string.

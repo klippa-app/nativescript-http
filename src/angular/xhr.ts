@@ -2,7 +2,7 @@ import {XhrFactory } from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import * as types from "@nativescript/core/utils/types";
 import { request } from "..";
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http/http";
+import { HttpRequestOptions, HttpResponse } from "@nativescript/core";
 
 namespace XMLHttpRequestResponseType {
     export const empty = "";

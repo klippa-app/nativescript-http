@@ -1,4 +1,4 @@
-import {HttpRequestOptions} from "@nativescript/core/http";
+import {HttpRequestOptions} from "@nativescript/core";
 import {buildJavaOptions} from "../http.android";
 import {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 export {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
@@ -37,6 +37,7 @@ export function newWebsocketConnection(options: HttpRequestOptions, callbacks: W
             // initialize the options
             const javaOptions = buildJavaOptions(options);
 
+            @NativeClass()
             class OurListener extends okhttp3.WebSocketListener {
                 onClosed(ws: okhttp3.WebSocket, code: number, reason: string) {
                     callbacks.onClosed(code, reason);
