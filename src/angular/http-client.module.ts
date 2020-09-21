@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 
 import { HttpClientModule, HttpBackend } from '@angular/common/http';
 
-import { NSFileSystem } from "@nativescript/angular/file-system/ns-file-system";
+import { NSFileSystem } from "@nativescript/angular";
 import { NsHttpBackEnd } from "./ns-http-backend";
 import {NSHTTPXhr} from "./xhr";
 

@@ -13,8 +13,8 @@ import {
 import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
 
 import {HttpClient} from "@angular/common/http";
-import {ImageSource} from "@nativescript/core/image-source";
-import * as dialogs from "tns-core-modules/ui/dialogs";
+import {ImageSource} from "@nativescript/core";
+import {Dialogs} from "@nativescript/core";
 
 @Component({
     selector: "Home",
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     getText() {
         this.isLoading = true;
 
-        this.http.get("https://loripsum.net/api", {
+        this.http.get("https://5e1abf03f737076004bdc7e92a7f2096.m.pipedream.net/text", {
             responseType: "text",
         }).toPromise().then((res) => {
             this.contentType = "text";
@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // The core HTTP request already decodes the image for you into an ImageSource on the background.
         // This makes image downloading way more efficient.
         request({
-            url: "https://via.placeholder.com/500",
+            url: "https://5e1abf03f737076004bdc7e92a7f2096.m.pipedream.net/image",
             method: "GET",
         }).then((res) => {
             res.content.toImage().then((image) => {
@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     sendMessage() {
-        dialogs.prompt({
+        Dialogs.prompt({
             title: "Enter message",
             message: "Enter the message you want to send. The websocket server will echo the message back to you.",
             okButtonText: "Send message"

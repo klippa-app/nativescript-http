@@ -1,4 +1,4 @@
-import { NSFileSystem } from "@nativescript/angular/file-system/ns-file-system";
+import { NSFileSystem } from "@nativescript/angular";
 import { Observable, Observer } from "rxjs";
 import { path } from "@nativescript/core";
 

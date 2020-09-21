@@ -8,12 +8,12 @@
   "repository": "<fill-your-repository-here>",
   "dependencies": {
     "@klippa/nativescript-http": "file:../src",
-    "@nativescript/core": "7.0.0",
+    "@nativescript/core": "7.0.3",
     "@nativescript/theme": "^2.3.3"
   },
   "devDependencies": {
     "@nativescript/android": "7.0.0",
-    "@nativescript/webpack": "3.0.0",
+    "@nativescript/webpack": "3.0.4",
     "tslint": "~5.14.0",
     "typescript": "3.9.7"
   },
