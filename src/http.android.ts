@@ -11,7 +11,8 @@ import {
     completeSelfCheck,
     getFilenameFromUrl,
     HTTPFormData,
-    HTTPFormDataEntry, ImageParseMethod,
+    HTTPFormDataEntry,
+    ImageParseMethod,
 } from "./http.common";
 
 import { NetworkAgent } from "@nativescript/core/debugger";
@@ -507,3 +508,11 @@ export function certificatePinningAdd(pattern: string, hashes: Array<string>) {
 export function certificatePinningClear() {
     com.klippa.NativeScriptHTTP.Async.Http.RemoveCertificatePins();
 }
+
+export const Http = {
+    getFile,
+    getImage,
+    getJSON,
+    getString,
+    request,
+};

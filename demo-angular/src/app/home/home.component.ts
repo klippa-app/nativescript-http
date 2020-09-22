@@ -1,6 +1,6 @@
 import {Component, NgZone, OnDestroy, OnInit} from "@angular/core";
 import {
-    request,
+    Http,
     setImageParseMethod,
     ImageParseMethod,
     clearCookies,
@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     getText() {
         this.isLoading = true;
 
-        this.http.get("https://5e1abf03f737076004bdc7e92a7f2096.m.pipedream.net/text", {
+        this.http.get("https://loripsum.net/api", {
             responseType: "text",
         }).toPromise().then((res) => {
             this.contentType = "text";
@@ -95,8 +95,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         // Please don't download images using the Angular HTTP client.
         // The core HTTP request already decodes the image for you into an ImageSource on the background.
         // This makes image downloading way more efficient.
-        request({
-            url: "https://5e1abf03f737076004bdc7e92a7f2096.m.pipedream.net/image",
+        Http.request({
+            url: "https://via.placeholder.com/500",
             method: "GET",
         }).then((res) => {
             res.content.toImage().then((image) => {

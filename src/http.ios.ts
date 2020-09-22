@@ -2,7 +2,9 @@ import { ImageSource, HttpRequestOptions, HttpResponse, Headers, File, Utils } f
 import {
     HTTPFormData,
     HTTPFormDataEntry,
-    getFilenameFromUrl, ImageParseMethod, completeSelfCheck,
+    getFilenameFromUrl,
+    ImageParseMethod,
+    completeSelfCheck,
 } from "./http.common";
 import * as domainDebugger from "@nativescript/core/debugger";
 export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
@@ -535,3 +537,11 @@ export function getCurrentUserAgent() {
 export function getCurrentCertificatePinningInstance(): TrustKit | null {
     return certificatePinningInstance;
 }
+
+export const Http = {
+    getFile,
+    getImage,
+    getJSON,
+    getString,
+    request,
+};
