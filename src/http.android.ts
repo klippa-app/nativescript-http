@@ -516,3 +516,5 @@ export const Http = {
     getString,
     request,
 };
+
+export { ImageCache } from './image-cache';

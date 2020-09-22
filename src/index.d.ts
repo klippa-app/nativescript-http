@@ -154,3 +154,5 @@ export declare const Http: {
     getString: typeof getString;
     request: (options: HttpRequestOptions) => Promise<HttpResponse>;
 };
+
+export { ImageCache } from './image-cache';
