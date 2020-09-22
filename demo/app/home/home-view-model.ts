@@ -5,7 +5,7 @@ import {
 } from '@nativescript/core';
 
 import {
-    request,
+    Http,
     setImageParseMethod,
     ImageParseMethod,
     certificatePinningAdd,
@@ -30,7 +30,7 @@ export class HomeViewModel extends Observable {
     getText() {
         this.set("isLoading", true);
 
-        request({
+        Http.request({
             url: "https://loripsum.net/api",
             method: "GET",
         }).then((res) => {
@@ -49,7 +49,7 @@ export class HomeViewModel extends Observable {
     getJson() {
         this.set("isLoading", true);
 
-        request({
+        Http.request({
             url: "https://api.github.com/repos/klippa-app/nativescript-http",
             method: "GET",
         }).then((res) => {
@@ -72,7 +72,7 @@ export class HomeViewModel extends Observable {
         // Use this method when you want to use toImage() and the endpoint does not return a proper content type.
         setImageParseMethod(ImageParseMethod.ALWAYS);
 
-        request({
+        Http.request({
             url: "https://via.placeholder.com/500",
             method: "GET",
         }).then((res) => {

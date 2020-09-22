@@ -7,7 +7,7 @@
         <Label text="Home"></Label>
     </ActionBar>
 
-    <GridLayout rows="auto, *" columns="*">
+    <GridLayout rows="auto, auto, *" columns="*">
         <GridLayout row="0" rows="auto" columns="*, *, *, auto" visibility="{{ !hasWebSocket ? 'visible' : 'collapse' }}">
             <Button col="0" text="Text" tap="{{ getText }}"/>
             <Button col="1" text="JSON" tap="{{ getJson }}"/>

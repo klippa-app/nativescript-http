@@ -4,7 +4,7 @@
             <Label text="Home"></Label>
         </ActionBar>
 
-        <GridLayout rows="auto, *" columns="*">
+        <GridLayout rows="auto, auto, *" columns="*">
             <GridLayout row="0" rows="auto" columns="*, *, *, auto" v-show="!websocket">
                 <Button col="0" text="Text" @tap="getText"></Button>
                 <Button col="1" text="JSON" @tap="getJson"></Button>
@@ -35,17 +35,19 @@
 </template>
 
 <script>
-    import * as dialogs from "tns-core-modules/ui/dialogs";
+    import {Dialogs} from "@nativescript/core";
     import {
-        request,
+        Http,
         setImageParseMethod,
         ImageParseMethod,
         clearCookies,
         setUserAgent,
         setConcurrencyLimits,
         certificatePinningAdd,
-        certificatePinningClear
+        certificatePinningClear,
+        ImageCache
     } from "@klippa/nativescript-http";
+
     import { newWebsocketConnection } from "@klippa/nativescript-http/websocket";
 
     export default {
@@ -74,7 +76,7 @@
             getText() {
                 this.isLoading = true;
 
-                request({
+                Http.request({
                     url: "https://loripsum.net/api",
                     method: "GET",
                 }).then((res) => {
@@ -92,7 +94,7 @@
             getJson() {
                 this.isLoading = true;
 
-                request({
+                Http.request({
                     url: "https://api.github.com/repos/klippa-app/nativescript-http",
                     method: "GET",
                 }).then((res) => {
@@ -114,10 +116,7 @@
                 // Use this method when you want to use toImage() and the endpoint does not return a proper content type.
                 setImageParseMethod(ImageParseMethod.ALWAYS);
 
-                // Please don't download images using the Angular HTTP client.
-                // The core HTTP request already decodes the image for you into an ImageSource on the background.
-                // This makes image downloading way more efficient.
-                request({
+                Http.request({
                     url: "https://via.placeholder.com/500",
                     method: "GET",
                 }).then((res) => {
@@ -175,7 +174,7 @@
                 });
             },
             sendMessage() {
-                dialogs.prompt({
+                Dialogs.prompt({
                     title: "Enter message",
                     message: "Enter the message you want to send. The websocket server will echo the message back to you.",
                     okButtonText: "Send message"
