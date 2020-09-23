@@ -36,13 +36,13 @@
 * WebSockets
 * ImageCache
 
-## Installation
+## Installation (NS 6)
 
 ```
 tns plugin add @klippa/nativescript-http
 ```
 
-## Usage 
+## Usage (NS 6)
 
 ### Automatically use this plugin for all HTTP calls
 
