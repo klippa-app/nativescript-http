@@ -39,7 +39,7 @@
 ## Installation (NS 6)
 
 ```
-tns plugin add @klippa/nativescript-http
+tns plugin add @klippa/nativescript-http@^1.0.0
 ```
 
 ## Usage (NS 6)
