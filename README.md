@@ -36,13 +36,19 @@
 * WebSockets
 * ImageCache
 
-## Installation
+## NativeScript Version Support
+| NS Version | nativescript-http version | Install command | Docs |
+| ---        | ---                       | ---             | --- |
+| ^7.0.0 | ^2.0.0 | ns plugin add @klippa/nativescript-http | This page |
+| ^6.0.0 | ^1.0.0 | tns plugin add @klippa/nativescript-http@^1.0.0 | [Here](https://github.com/klippa-app/nativescript-http/blob/ns-version/6/README.md) |
+
+## Installation (NS 7)
 
 ```
-tns plugin add @klippa/nativescript-http
+ns plugin add @klippa/nativescript-http
 ```
 
-## Usage 
+## Usage (NS 7)
 
 ### Automatically use this plugin for all HTTP calls
 
@@ -89,26 +95,25 @@ If you are dependant on new functionality in this plugin, like handling form dat
 *For core NativeScript / Vue / Angular:*
 
 ```typescript
-import * as dialogs from "tns-core-modules/ui/dialogs";
-import { request }from "@nativescript/core/http";
+import { Http, Dialogs } from "@nativescript/core";
 
-request({
+Http.request({
     method: "GET",
     url: "https://nativescript-http-integration-check.local",
 }).then((res) => {
     const jsonContent = res.content.toJSON();
     if (!jsonContent || !jsonContent.SelfCheck || jsonContent.SelfCheck !== "OK!") {
-        dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+        Dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
     }
 }).catch((e) => {
-    dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+    Dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
 });
 ```
 
 *For Angular HttpClient:*
 
 ```typescript
-import * as dialogs from "tns-core-modules/ui/dialogs";
+import { Dialogs } from "@nativescript/core";
 
 // Don't forget to inject HttpClient into your component.
 
@@ -118,10 +123,10 @@ this.http.get("https://nativescript-http-integration-check.local", {
 }).toPromise().then((res) => {
     // @ts-ignore
     if (!res || !res.SelfCheck || res.SelfCheck !== "OK!") {
-        dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+        Dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
     }
 }).catch((e) => {
-    dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
+    Dialogs.alert("nativescript-http automatic integration failed! Request to https://nativescript-http-integration-check.local failed");
 });
 ```
 
@@ -136,10 +141,10 @@ Since this is a drop-in replacement for the [core HTTP](https://docs.nativescrip
 The format of options and the output of the request are the same as in core HTTP.
 
 ```typescript
-import { HttpResponse } from "tns-core-modules/http";
-import { request } from "@klippa/nativescript-http";
+import { HttpResponse } from "@nativescript/core";
+import { Http } from "@klippa/nativescript-http";
 
-request({
+Http.request({
    url: "https://httpbin.org/get",
    method: "GET"
 }).then((response: HttpResponse) => {
@@ -172,7 +177,7 @@ This value is not reachable from the Angular HTTP client, only through response.
 
 If you use the WebPack plugin, you don't have to do anything to use our ImageCache. It behaves the same as core so you don't have to change anything.
 
-If you don't use the plugin. You can import the `ImageCache` or `Cache` class from `@klippa/nativescript-http/image-cache`. It has the same API as the core ImageCache.
+If you don't use the plugin. You can import the `ImageCache` class from `@klippa/nativescript-http`. It has the same API as the core ImageCache.
 
 ## Important note for apps with support for < Android 5 (SDK 21)
 
@@ -302,8 +307,8 @@ If you want to create multipart form data (multipart/form-data) requests, you ca
 You can create form data requests like this:
 
 ```typescript
-import { HttpResponse } from "tns-core-modules/http";
-import { request, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-http";
+import { HttpResponse } from "@nativescript/core";
+import { Http, HTTPFormData, HTTPFormDataEntry } from "@klippa/nativescript-http";
 
 const form = new HTTPFormData();
 form.append("value", "Test");
@@ -314,7 +319,7 @@ form.append("value", "Test");
 const formFile = new HTTPFormDataEntry(new java.io.File(fileLocation), "test.png", "image/png");
 form.append("file", formFile);
 
-request({
+Http.request({
     url: "https://httpbin.org/post",
     method: "POST",
     content: form
