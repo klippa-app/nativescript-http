@@ -39,35 +39,35 @@ jobs:
       - name: Setup NativeScript CLI
         run: |
           echo no | npm i -g nativescript@^7.0.0
-          tns usage-reporting disable
-          tns error-reporting disable
+          ns usage-reporting disable
+          ns error-reporting disable
 
       - name: Build Android Demo App
         run: |
           cd demo
-          tns build android --env.uglify
+          ns build android --env.uglify
 
       - name: Build iOS Demo App
         run: |
           cd demo
-          tns build ios --env.uglify
+          ns build ios --env.uglify
 
       - name: Build Android Angular Demo App
         run: |
           cd demo-angular
-          tns build android --env.uglify
+          ns build android --env.uglify
 
       - name: Build iOS Demo Angular App
         run: |
           cd demo-angular
-          tns build ios --env.uglify
+          ns build ios --env.uglify
 
       - name: Build Android Vue Demo App
         run: |
           cd demo-vue
-          tns build android --env.uglify
+          ns build android --env.uglify
 
       - name: Build iOS Demo Vue App
         run: |
           cd demo-vue
-          tns build ios --env.uglify
+          ns build ios --env.uglify

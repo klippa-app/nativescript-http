@@ -1,3 +1,10 @@
+
+## 2.0.1
+
+### Fixed
+
+- Fixed a bug related to the Angular module.
+
 ## 2.0.0
 
 ### Added

@@ -1,6 +1,6 @@
 {
 	"name": "@klippa/nativescript-http",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "The best way to do HTTP requests in NativeScript, a drop-in replacement for the core HTTP with important improvements and additions like proper connection pooling, form data support and certificate pinning",
 	"main": "http",
 	"typings": "index.d.ts",

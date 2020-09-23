@@ -28,7 +28,9 @@ pack() {
     # compile package and copy files required by npm
     echo 'Building /src...'
     cd "$TO_SOURCE_DIR"
-    node_modules/.bin/tsc
+    ./node_modules/.bin/ts-patch install
+    node --max-old-space-size=8192 ./node_modules/.bin/ngcc -p es2015
+    node --max-old-space-size=8192 ./node_modules/.bin/ngc
     cd ..
 
     echo 'Creating package...'
