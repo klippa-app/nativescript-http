@@ -1,13 +1,4 @@
 {
-  "nativescript": {
-    "id": "org.nativescript.demo",
-    "tns-android": {
-      "version": "6.5.0"
-    },
-    "tns-ios": {
-      "version": "6.5.0"
-    }
-  },
   "description": "NativeScript Application",
   "scripts": {
     "build.plugin": "cd ../src && npm run build",
@@ -16,15 +7,18 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
-    "@nativescript/theme": "~2.3.0",
     "@klippa/nativescript-http": "file:../src",
-    "tns-core-modules": "~6.5.0"
+    "@nativescript/core": "7.0.3",
+    "@nativescript/theme": "^2.3.3"
   },
   "devDependencies": {
-    "nativescript-dev-webpack": "~1.5.0",
-    "typescript": "~3.5.3",
-    "tslint": "~5.14.0"
+    "@nativescript/android": "7.0.0",
+    "@nativescript/ios": "7.0.0",
+    "@nativescript/webpack": "3.0.4",
+    "tslint": "^6.1.2",
+    "typescript": "3.9.7"
   },
   "gitHead": "d8bdf0799a219051f28f8abd7c258d2bf2fce6e1",
-  "readme": "NativeScript Application"
+  "readme": "NativeScript Application",
+  "main": "app.js"
 }

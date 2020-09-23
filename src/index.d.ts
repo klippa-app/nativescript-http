@@ -1,5 +1,4 @@
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http";
-import { ImageSource } from "@nativescript/core/image-source";
+import { ImageSource, HttpRequestOptions, HttpResponse } from "@nativescript/core";
 
 /**
  * Downloads the content from the specified URL as a string.
@@ -147,3 +146,13 @@ export declare function certificatePinningAdd(pattern: string, hashes: Array<str
  * Clear all the certificate pins that were added by certificatePinningAdd().
  */
 export declare function certificatePinningClear(): void;
+
+export declare const Http: {
+    getFile: typeof getFile;
+    getImage: typeof getImage;
+    getJSON: typeof getJSON;
+    getString: typeof getString;
+    request: (options: HttpRequestOptions) => Promise<HttpResponse>;
+};
+
+export { ImageCache } from './image-cache';

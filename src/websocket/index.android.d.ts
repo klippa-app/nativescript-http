@@ -1,4 +1,4 @@
-import { HttpRequestOptions } from "@nativescript/core/http";
+import { HttpRequestOptions } from "@nativescript/core";
 import { IWebsocketConnection, WebsocketCallbacks } from "./websocket.common";
 export { IWebsocketConnection, WebsocketCallbacks } from "./websocket.common";
 export declare class WebsocketConnection implements IWebsocketConnection {

@@ -1,12 +1,8 @@
-import { request } from "../http.android";
+import { request } from "..";
 export { DownloadRequest, DownloadedData, DownloadError } from "@nativescript/core/ui/image-cache";
 import * as common from "@nativescript/core/ui/image-cache";
 
 export class Cache extends common.Cache {
-    constructor() {
-        super();
-    }
-
     public _downloadCore(imageRequest: common.DownloadRequest) {
         request({
             url: imageRequest.url,

@@ -1,15 +1,17 @@
-import { Observable } from "tns-core-modules/data/observable";
+import {
+    Observable,
+    Dialogs,
+    ImageSource
+} from '@nativescript/core';
 
 import {
-    request,
+    Http,
     setImageParseMethod,
     ImageParseMethod,
     certificatePinningAdd,
     certificatePinningClear
 } from "@klippa/nativescript-http";
 
-import { ImageSource } from "@nativescript/core/image-source";
-import * as dialogs from "tns-core-modules/ui/dialogs";
 import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
 
 export class HomeViewModel extends Observable {
@@ -28,7 +30,7 @@ export class HomeViewModel extends Observable {
     getText() {
         this.set("isLoading", true);
 
-        request({
+        Http.request({
             url: "https://loripsum.net/api",
             method: "GET",
         }).then((res) => {
@@ -47,7 +49,7 @@ export class HomeViewModel extends Observable {
     getJson() {
         this.set("isLoading", true);
 
-        request({
+        Http.request({
             url: "https://api.github.com/repos/klippa-app/nativescript-http",
             method: "GET",
         }).then((res) => {
@@ -70,7 +72,7 @@ export class HomeViewModel extends Observable {
         // Use this method when you want to use toImage() and the endpoint does not return a proper content type.
         setImageParseMethod(ImageParseMethod.ALWAYS);
 
-        request({
+        Http.request({
             url: "https://via.placeholder.com/500",
             method: "GET",
         }).then((res) => {
@@ -135,7 +137,7 @@ export class HomeViewModel extends Observable {
     }
 
     sendMessage() {
-        dialogs.prompt({
+        Dialogs.prompt({
             title: "Enter message",
             message: "Enter the message you want to send. The websocket server will echo the message back to you.",
             okButtonText: "Send message"

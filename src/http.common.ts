@@ -1,6 +1,4 @@
-import { knownFolders, path } from "tns-core-modules/file-system";
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http/http";
-import { ImageSource } from "@nativescript/core/image-source/image-source";
+import { ImageSource, HttpRequestOptions, HttpResponse, File, knownFolders, path } from "@nativescript/core";
 
 /**
  * Downloads the content from the specified URL as a string.

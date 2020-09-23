@@ -1,4 +1,5 @@
 import { XhrFactory } from "@angular/common/http";
+import * as i0 from "@angular/core";
 export declare class NSHTTPXMLHttpRequest {
     UNSENT: number;
     OPENED: number;
@@ -23,13 +24,14 @@ export declare class NSHTTPXMLHttpRequest {
     private _overrideMimeType;
     private _listeners;
     onreadystatechange: Function;
-    readonly upload: this;
-    readonly readyState: number;
-    responseType: string;
-    readonly responseText: string;
-    readonly response: any;
-    readonly status: number;
-    readonly statusText: string;
+    get upload(): this;
+    get readyState(): number;
+    get responseType(): string;
+    set responseType(value: string);
+    get responseText(): string;
+    get response(): any;
+    get status(): number;
+    get statusText(): string;
     constructor();
     private _loadResponse;
     private emitEvent;
@@ -48,4 +50,6 @@ export declare class NSHTTPXMLHttpRequest {
 export declare class NSHTTPXhr implements XhrFactory {
     constructor();
     build(): any;
+    static ɵfac: i0.ɵɵFactoryDef<NSHTTPXhr, never>;
+    static ɵprov: i0.ɵɵInjectableDef<NSHTTPXhr>;
 }

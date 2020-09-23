@@ -1,13 +1,12 @@
-import { HttpRequestOptions, HttpResponse, Headers } from "@nativescript/core/http";
-import { ImageSource } from "@nativescript/core/image-source/image-source";
+import { ImageSource, HttpRequestOptions, HttpResponse, Headers, File, Utils } from "@nativescript/core";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
-    getFilenameFromUrl, ImageParseMethod, completeSelfCheck,
+    getFilenameFromUrl,
+    ImageParseMethod,
+    completeSelfCheck,
 } from "./http.common";
-import * as types from "@nativescript/core/utils/types";
-import * as domainDebugger from "tns-core-modules/debugger";
-import * as fs from "tns-core-modules/file-system";
+import * as domainDebugger from "@nativescript/core/debugger";
 export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 export enum HttpResponseEncoding {
@@ -38,6 +37,7 @@ function parseJSON(source: string): any {
     return JSON.parse(src);
 }
 
+@NativeClass()
 class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
@@ -62,6 +62,7 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
 const sessionTaskDelegateInstance: NSURLSessionTaskDelegateImpl = <NSURLSessionTaskDelegateImpl>NSURLSessionTaskDelegateImpl.new();
 
 // Sadly we can't extend our own native class.
+@NativeClass()
 class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskDelegate {
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
@@ -127,7 +128,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
             const urlRequest = NSMutableURLRequest.requestWithURL(
                 NSURL.URLWithString(options.url));
 
-            urlRequest.HTTPMethod = types.isDefined(options.method) ? options.method : GET;
+            urlRequest.HTTPMethod = Utils.isDefined(options.method) ? options.method : GET;
 
             let contentType: string;
             let userAgent: string;
@@ -156,7 +157,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 }
             }
 
-            if (types.isString(options.content) || options.content instanceof FormData) {
+            if (Utils.isString(options.content) || options.content instanceof FormData) {
                 urlRequest.HTTPBody = NSString.stringWithString(options.content.toString()).dataUsingEncoding(4);
             } else if (options.content instanceof ArrayBuffer) {
                 const buffer = options.content as ArrayBuffer;
@@ -245,12 +246,12 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 }
             }
 
-            if (types.isNumber(options.timeout)) {
+            if (Utils.isNumber(options.timeout)) {
                 urlRequest.timeoutInterval = options.timeout / 1000;
             }
 
             let session;
-            if (types.isBoolean(options.dontFollowRedirects) && options.dontFollowRedirects) {
+            if (Utils.isBoolean(options.dontFollowRedirects) && options.dontFollowRedirects) {
                 ensureSessionNotFollowingRedirects();
                 session = sessionNotFollowingRedirects;
             } else {
@@ -317,7 +318,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                                     }
                                     if (data instanceof NSData) {
                                         // ensure destination path exists by creating any missing parent directories
-                                        const file = fs.File.fromPath(destinationFilePath);
+                                        const file = File.fromPath(destinationFilePath);
 
                                         data.writeToFileAtomically(destinationFilePath, true);
 
@@ -536,3 +537,13 @@ export function getCurrentUserAgent() {
 export function getCurrentCertificatePinningInstance(): TrustKit | null {
     return certificatePinningInstance;
 }
+
+export const Http = {
+    getFile,
+    getImage,
+    getJSON,
+    getString,
+    request,
+};
+
+export { ImageCache } from './image-cache';
