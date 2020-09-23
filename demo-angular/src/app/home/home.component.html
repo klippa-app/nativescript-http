@@ -3,14 +3,14 @@
 </ActionBar>
 
 <GridLayout rows="auto, auto, *" columns="*">
-    <GridLayout row="0" rows="auto" columns="*, *, *, auto" *ngIf="!websocket">
-        <Button col="0" text="Text" (tap)="getText()"></Button>
-        <Button col="1" text="JSON" (tap)="getJson()"></Button>
-        <Button col="2" text="Image" (tap)="getImage()"></Button>
-        <Button col="3" text="Connect WebSocket" (tap)="startWebSocket()"></Button>
+    <GridLayout row="0" rows="auto,auto" columns="*, *, *" *ngIf="!websocket">
+        <Button row="0" col="0" text="Text" (tap)="getText()"></Button>
+        <Button row="0" col="1" text="JSON" (tap)="getJson()"></Button>
+        <Button row="0" col="2" text="Image" (tap)="getImage()"></Button>
+        <Button row="1" col="0" colSpan="3" text="Connect WebSocket" (tap)="startWebSocket()"></Button>
     </GridLayout>
 
-    <GridLayout row="1" rows="auto" columns="*, *, *" *ngIf="!websocket">
+    <GridLayout row="1" rows="auto" columns="auto, auto, auto" *ngIf="!websocket">
         <Button col="0" text="Pin fake cert" (tap)="pinFake()"></Button>
         <Button col="1" text="Pin good cert" (tap)="pinGood()"></Button>
         <Button col="2" text="Clear pins" (tap)="clearPins()"></Button>

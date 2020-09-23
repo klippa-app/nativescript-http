@@ -24,6 +24,9 @@
 		"platforms",
 		"../src/node_modules"
 	],
+	"files": [
+	  "./references.d.ts"
+	],	
 	"include": [
 		"../src",
 		"**/*"
