@@ -1,3 +1,9 @@
+## 2.0.0
+
+### Added
+
+- Added NS7 and Angular 10 support. This version does not work on NS6, use major version 1 (^1.0.0) for that.
+
 ## 1.3.1
 
 ### Fixed
