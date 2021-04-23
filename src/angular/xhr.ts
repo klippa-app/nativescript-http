@@ -2,7 +2,7 @@ import {XhrFactory } from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import * as types from "@nativescript/core/utils/types";
 import { request } from "..";
-import { HttpRequestOptions, HttpResponse } from "@nativescript/core";
+import { HttpRequestOptions, HttpResponse, Trace } from "@nativescript/core";
 
 namespace XMLHttpRequestResponseType {
     export const empty = "";
@@ -182,8 +182,10 @@ export class NSHTTPXMLHttpRequest {
     }
 
     public addEventListener(eventName: string, handler: Function) {
-        if (["abort", "error", "load", "loadend", "loadstart", "progress", "readystatechange"].indexOf(eventName) === -1) {
-            throw new Error("Event not supported: " + eventName);
+        if (['abort', 'error', 'load', 'loadend', 'loadstart', 'progress', 'readystatechange'].indexOf(eventName) === -1) {
+            if (Trace.isEnabled()) {
+                Trace.write('XHR Event not supported: ' + eventName, Trace.categories.Debug, Trace.messageType.warn);
+            }
         }
 
         let handlers = this._listeners.get(eventName) || [];
