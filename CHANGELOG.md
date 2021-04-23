@@ -1,3 +1,8 @@
+## 2.0.2
+
+### Fixed
+
+- Fixed a bug related to Angular 11 and the XHR implementation.
 
 ## 2.0.1
 
