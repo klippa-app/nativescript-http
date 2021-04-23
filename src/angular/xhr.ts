@@ -182,6 +182,10 @@ export class NSHTTPXMLHttpRequest {
     }
 
     public addEventListener(eventName: string, handler: Function) {
+        if (eventName === "timeout") {
+            return;
+        }
+
         if (["abort", "error", "load", "loadend", "loadstart", "progress", "readystatechange"].indexOf(eventName) === -1) {
             throw new Error("Event not supported: " + eventName);
         }
