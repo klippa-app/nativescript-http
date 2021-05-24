@@ -1,4 +1,4 @@
-import { ImageSource, HttpRequestOptions, HttpResponse, Headers, File, Utils } from "@nativescript/core";
+import { ImageSource, HttpRequestOptions, HttpResponse, Headers, File as nsFile, Utils } from "@nativescript/core";
 import {
     HTTPFormData,
     HTTPFormDataEntry,
@@ -222,7 +222,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                                 // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                                 // @ts-ignore
                                 const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
-                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", formDataPartMediaType);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, value.name || "", formDataPartMediaType);
                             } else {
                                 // Support for native file objects.
                                 multipartFormData.addFileParameterNameFilenameContentType(value.data, key, value.name, formDataPartMediaType);
@@ -318,7 +318,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                                     }
                                     if (data instanceof NSData) {
                                         // ensure destination path exists by creating any missing parent directories
-                                        const file = File.fromPath(destinationFilePath);
+                                        const file = nsFile.fromPath(destinationFilePath);
 
                                         data.writeToFileAtomically(destinationFilePath, true);
 
