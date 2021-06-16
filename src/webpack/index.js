@@ -70,7 +70,7 @@ class NativeScriptHTTPPlugin {
                             }
                         }
                     }
-                    return result;
+                    return;
                 });
             }
         );
