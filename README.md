@@ -39,20 +39,21 @@
 ## NativeScript Version Support
 | NS Version | nativescript-http version | Install command | Docs |
 | ---        | ---                       | ---             | --- |
-| ^7.0.0 | ^2.0.0 | ns plugin add @klippa/nativescript-http | This page |
+| ^8.0.0 | ^3.0.0 | ns plugin add @klippa/nativescript-http | This page |
+| ^7.0.0 | ^2.0.0 | ns plugin add @klippa/nativescript-http | [Here](https://github.com/klippa-app/nativescript-http/blob/ns-version/7/README.md) |
 | ^6.0.0 | ^1.0.0 | tns plugin add @klippa/nativescript-http@^1.0.0 | [Here](https://github.com/klippa-app/nativescript-http/blob/ns-version/6/README.md) |
 
-## Installation (NS 7)
+## Installation (NS 8)
 
 ```
 ns plugin add @klippa/nativescript-http
 ```
 
-## Usage (NS 7)
+## Usage (NS 8)
 
 ### Automatically use this plugin for all HTTP calls
 
-Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http),
+Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/Http.html),
 we can automatically use this plugin for all HTTP calls in NativeScript that use the XHR framework to do HTTP calls, this includes:
  * Any JavaScript/Angular/Vue plugin that was created to be used in the browser
    * Axios
@@ -148,7 +149,7 @@ If the request fails, or the content isn't the same as what we expect, we know s
 
 ### Integration in code
 
-Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/ns-framework-modules/http), you can execute the requests in the same way as with the Core HTTP, the only thing different is the import:
+Since this is a drop-in replacement for the [core HTTP](https://docs.nativescript.org/Http.html), you can execute the requests in the same way as with the Core HTTP, the only thing different is the import:
 
 The format of options and the output of the request are the same as in core HTTP.
 
