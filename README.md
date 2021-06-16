@@ -65,28 +65,40 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
  * NativeScript image-cache
  * Any NativeScript plugin that uses above methods internally
 
-The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the `webpack.config.js` file:
+The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the webpack config. The easiest way to do this is by [using a custom webpack config](https://v7.docs.nativescript.org/tooling/custom-webpack-configuration):
+
+So if your custom webpack config looks like this:
+```javascript
+const webpackConfig = require("./webpack.config");
+module.exports = (env) => {
+    // Here you can modify env before passing them to the default config
+    const config = webpackConfig(env);
+
+    // Here you can modify everything created by the default configuration
+    return config;
+}
+```
+
+Import our webpack implementation and add a line in the place where it says you can modify the default configuration, like this:
 
 ```javascript
-// Add on top of page.
-const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack");
+const webpackConfig = require("./webpack.config");
+const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack"); // Import NativeScriptHTTPPlugin
 
-// ... code
+module.exports = (env) => {
+   // Here you can modify env before passing them to the default config
+   const config = webpackConfig(env);
 
-// Add our plugin to the webpack plugins array.
-plugins: [
-            // ... other plugins
-            new NativeScriptHTTPPlugin()
-]
+   config.plugins.push(new NativeScriptHTTPPlugin()); // Use NativeScriptHTTPPlugin
 
-// ... code
+   // Here you can modify everything created by the default configuration
+   return config;
+}
 ```
 
 The `NativeScriptHTTPPlugin` can be given an object with the following properties: `replaceHTTP` (true/false) and `replaceImageCache` (true/false). This way you can control what the plugin replaces. If you don't give this options object we will replace both.
 
 **Note: if you do this, you don't have to do the other integrations.**
-
-**Note 2: please pay attention when upgrading the webpack file after an update to NativeScript, don't forget to re-add it**
 
 #### Validate whether the automatic integration works by adding a self-check
 

@@ -1,3 +1,9 @@
+## 2.0.3
+
+### Fixed
+
+- Fix invalid File instance check (#44), thanks @triniwiz
+
 ## 2.0.2
 
 ### Fixed
