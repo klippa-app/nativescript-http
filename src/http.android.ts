@@ -3,7 +3,7 @@ import {
     HttpRequestOptions,
     HttpResponse,
     Headers,
-    File,
+    File as nsFile,
     Screen,
 } from '@nativescript/core';
 
@@ -126,7 +126,7 @@ function onRequestComplete(requestId: number, result: com.klippa.NativeScriptHTT
                 let stream: java.io.FileOutputStream;
                 try {
                     // ensure destination path exists by creating any missing parent directories
-                    const file = File.fromPath(destinationFilePath);
+                    const file = nsFile.fromPath(destinationFilePath);
 
                     const javaFile = new java.io.File(destinationFilePath);
                     stream = new java.io.FileOutputStream(javaFile);
