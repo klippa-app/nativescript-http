@@ -46,7 +46,7 @@
 ## Installation (NS 8)
 
 ```
-ns plugin add @klippa/nativescript-http
+ns plugin add @klippa/nativescript-http@^3.0.0
 ```
 
 ## Usage (NS 8)
