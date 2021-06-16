@@ -1,8 +1,14 @@
+## 3.0.0
+
+### Fixed
+
+- NS8 release, with documentation and webpack fix.
+
 ## 2.0.3
 
 ### Fixed
 
-- Fix invalid File instance check (#44), thanks @triniwiz
+- Fix invalid File instance check (#44), thanks @triniwiz.
 
 ## 2.0.2
 

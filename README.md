@@ -66,9 +66,25 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
  * NativeScript image-cache
  * Any NativeScript plugin that uses above methods internally
 
-The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the webpack config. The easiest way to do this is by [using a custom webpack config](https://v7.docs.nativescript.org/tooling/custom-webpack-configuration):
+The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the webpack config. The easiest way to do this is by using a custom webpack config:
 
-So if your custom webpack config looks like this:
+Open `nativescript.config.ts`, and make sure that you have `webpackConfigPath` option. If you don't have it, add it and also create the webpack config path. Your `nativescript.config.ts` may look like this afterwards:
+```typescript
+import { NativeScriptConfig } from '@nativescript/core';
+
+export default {
+   id: 'org.nativescript.nativescripthttptest',
+   appPath: 'src',
+   appResourcesPath: 'App_Resources',
+   android: {
+      v8Flags: '--expose_gc',
+      markingMode: 'none'
+   }
+   webpackConfigPath: './my-custom.webpack.config.js'
+} as NativeScriptConfig;
+```
+
+Open the file that `webpackConfigPath` points to, in this case `my-custom.webpack.config.js`, if this file is empty, make it look like this:
 ```javascript
 const webpackConfig = require("./webpack.config");
 module.exports = (env) => {
