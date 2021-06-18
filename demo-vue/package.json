@@ -1,33 +1,58 @@
 {
+  "name": "@nativescript/template-blank-vue-ts",
+  "main": "app/app.ts",
+  "displayName": "Blank Vue Typescript",
+  "version": "8.0.3",
   "description": "NativeScript Application",
-  "scripts": {
-    "build.plugin": "cd ../src && npm run build",
-    "ci.tslint": "npm i && tslint --config '../tslint.json' 'src/**/*.ts'"
-  },
+  "author": "NativeScript Team <oss@nativescript.org>",
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
+  "homepage": "https://github.com/NativeScript/nativescript-app-templates",
+  "bugs": {
+    "url": "https://github.com/NativeScript/NativeScript/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "app",
+    "App_Resources",
+    "hooks",
+    "tools",
+    "!tools/assets",
+    "types",
+    ".editorconfig",
+    "tsconfig.json"
+  ],
+  "keywords": [
+    "nstudio",
+    "nativescript",
+    "mobile",
+    "{N}",
+    "tns",
+    "vue",
+    "nativescript-vue",
+    "template",
+    "master-detail",
+    "detail",
+    "category-general"
+  ],
   "dependencies": {
-    "@nativescript/theme": "~2.3.3",
-    "nativescript-vue": "2.8.1",
-    "@klippa/nativescript-http": "file:../src",
-    "@nativescript/core": "7.0.3"
+    "@nativescript/core": "~8.0.0",
+    "@nativescript/theme": "~3.0.1",
+    "nativescript-vue": "~2.9.0",
+    "@klippa/nativescript-http": "file:../src"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@babel/preset-env": "7.11.5",
-    "@nativescript/android": "7.0.0",
-    "@nativescript/ios": "7.0.0",
-    "@nativescript/webpack": "~3.0.4",
-    "babel-loader": "^8.1.0",
-    "nativescript-vue-template-compiler": "2.8.1",
-    "nativescript-worker-loader": "~0.12.1",
-    "sass": "^1.26.10",
-    "tslint": "^6.1.2",
-    "typescript": "3.9.7",
-    "vue": "2.6.12",
-    "vue-loader": "^15.9.3"
+    "@nativescript/android": "8.0.0",
+    "@nativescript/ios": "8.0.0",
+    "@nativescript/types": "~8.0.0",
+    "@nativescript/webpack": "beta",
+    "@types/node": "~14.6.2",
+    "nativescript-vue-template-compiler": "~2.9.0",
+    "typescript": "~4.0.0",
+    "vue": "~2.6.12"
   },
-  "gitHead": "2250137db8c1e0bd0eb543e8e4563cb71480c00d",
-  "readme": "NativeScript Application",
-  "main": "app.js"
+  "private": "true",
+  "readme": "NativeScript Application"
 }

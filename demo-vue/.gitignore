@@ -1,13 +1,7 @@
 # NativeScript
 hooks/
-!hooks/after-createProject/*.js
 node_modules/
 platforms/
-
-# NativeScript Template
-*.js.map
-!webpack.config.js
-*.css
 
 # Logs
 logs
