@@ -8,6 +8,6 @@ export declare class NsHttpBackEnd extends HttpXhrBackend {
     constructor(xhrFactory: NSHTTPXhr, nsFileSystem: NSFileSystem);
     handle(req: HttpRequest<any>): Observable<HttpEvent<any>>;
     private handleLocalFileRequest;
-    static ɵfac: i0.ɵɵFactoryDef<NsHttpBackEnd, never>;
-    static ɵprov: i0.ɵɵInjectableDef<NsHttpBackEnd>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<NsHttpBackEnd, never>;
+    static ɵprov: i0.ɵɵInjectableDeclaration<NsHttpBackEnd>;
 }
