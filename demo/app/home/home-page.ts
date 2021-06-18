@@ -5,8 +5,8 @@ logic, and to set up your page’s data binding.
 */
 
 import {
-    NavigatedData,
-    Page
+  NavigatedData,
+  Page
 } from '@nativescript/core';
 
 import { HomeViewModel } from "./home-view-model";
@@ -14,25 +14,25 @@ import { HomeViewModel } from "./home-view-model";
 import { clearCookies, setUserAgent, setConcurrencyLimits } from "@klippa/nativescript-http";
 
 export function onNavigatingTo(args: NavigatedData) {
-    const page = <Page>args.object;
+  const page = <Page>args.object;
 
-    page.bindingContext = new HomeViewModel();
+  page.bindingContext = new HomeViewModel();
 
-    // Empty out the cookies whenever you want.
-    clearCookies();
+  // Empty out the cookies whenever you want.
+  clearCookies();
 
-    // Set a custom user agent.
-    setUserAgent("Klippa/HTTP Example App");
+  // Set a custom user agent.
+  setUserAgent("Klippa/HTTP Example App");
 
-    // Setting concurrency limits, 20 at the same time, 2 to the same host.
-    setConcurrencyLimits(20, 2);
+  // Setting concurrency limits, 20 at the same time, 2 to the same host.
+  setConcurrencyLimits(20, 2);
 }
 
 export function onNavigatingFrom(args: NavigatedData) {
-    const page = <Page>args.object;
-    const bindingContext = <HomeViewModel>page.bindingContext;
+  const page = <Page>args.object;
+  const bindingContext = <HomeViewModel>page.bindingContext;
 
-    if (bindingContext.websocket) {
-        bindingContext.websocket.cancel();
-    }
+  if (bindingContext.websocket) {
+    bindingContext.websocket.cancel();
+  }
 }

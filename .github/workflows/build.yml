@@ -38,7 +38,7 @@ jobs:
 
       - name: Setup NativeScript CLI
         run: |
-          echo no | npm i -g nativescript@^7.0.0
+          echo no | npm i -g nativescript@^8.0.0
           ns usage-reporting disable
           ns error-reporting disable
 
