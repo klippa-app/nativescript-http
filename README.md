@@ -66,54 +66,54 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
  * NativeScript image-cache
  * Any NativeScript plugin that uses above methods internally
 
-The way to do this is quite simple, we only have to import a plugin and add the plugin to the `plugins` array in the webpack config. The easiest way to do this is by using a custom webpack config:
+The way to do this is quite simple, we only have to import a plugin and add the plugin to the webpack config.
 
-Open `nativescript.config.ts`, and make sure that you have `webpackConfigPath` option. If you don't have it, add it and also create the webpack config path. Your `nativescript.config.ts` may look like this afterwards:
-```typescript
-import { NativeScriptConfig } from '@nativescript/core';
-
-export default {
-   id: 'org.nativescript.nativescripthttptest',
-   appPath: 'src',
-   appResourcesPath: 'App_Resources',
-   android: {
-      v8Flags: '--expose_gc',
-      markingMode: 'none'
-   }
-   webpackConfigPath: './my-custom.webpack.config.js'
-} as NativeScriptConfig;
-```
-
-Open the file that `webpackConfigPath` points to, in this case `my-custom.webpack.config.js`, if this file is empty, make it look like this:
+Open the file `webpack.config.js``, it may look like this:
 ```javascript
-const webpackConfig = require("./webpack.config");
+const webpack = require("@nativescript/webpack");
+
 module.exports = (env) => {
-    // Here you can modify env before passing them to the default config
-    const config = webpackConfig(env);
+   webpack.init(env);
 
-    // Here you can modify everything created by the default configuration
-    return config;
-}
+   // Learn how to customize:
+   // https://docs.nativescript.org/webpack
+
+   return webpack.resolveConfig();
+};
 ```
 
-Import our webpack implementation and add a line in the place where it says you can modify the default configuration, like this:
+Import our webpack implementation and add a line before `webpack.resolveConfig()`, like this:
 
 ```javascript
-const webpackConfig = require("./webpack.config");
+const webpack = require("@nativescript/webpack");
 const NativeScriptHTTPPlugin = require("@klippa/nativescript-http/webpack"); // Import NativeScriptHTTPPlugin
 
 module.exports = (env) => {
-   // Here you can modify env before passing them to the default config
-   const config = webpackConfig(env);
+   webpack.init(env);
 
-   config.plugins.push(new NativeScriptHTTPPlugin()); // Use NativeScriptHTTPPlugin
+   // Learn how to customize:
+   // https://docs.nativescript.org/webpack
 
-   // Here you can modify everything created by the default configuration
-   return config;
-}
+   webpack.chainWebpack(config => {
+      config.plugin('NativeScriptHTTPPlugin').use(NativeScriptHTTPPlugin)
+   });
+
+   return webpack.resolveConfig();
+};
 ```
 
 The `NativeScriptHTTPPlugin` can be given an object with the following properties: `replaceHTTP` (true/false) and `replaceImageCache` (true/false). This way you can control what the plugin replaces. If you don't give this options object we will replace both.
+The options can be passed like this:
+```javascript
+webpack.chainWebpack(config => {
+   config.plugin('NativeScriptHTTPPlugin').use(NativeScriptHTTPPlugin, [
+      {
+         replaceHTTP: true,
+         replaceImageCache: false
+      }
+   ])
+});
+```
 
 **Note: if you do this, you don't have to do the other integrations.**
 

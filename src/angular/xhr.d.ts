@@ -50,6 +50,6 @@ export declare class NSHTTPXMLHttpRequest {
 export declare class NSHTTPXhr implements XhrFactory {
     constructor();
     build(): any;
-    static ɵfac: i0.ɵɵFactoryDef<NSHTTPXhr, never>;
-    static ɵprov: i0.ɵɵInjectableDef<NSHTTPXhr>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<NSHTTPXhr, never>;
+    static ɵprov: i0.ɵɵInjectableDeclaration<NSHTTPXhr>;
 }

@@ -2,7 +2,7 @@ import {HttpRequestOptions} from "@nativescript/core/http";
 import {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 import {getCurrentCertificatePinningInstance, getCurrentUserAgent, USER_AGENT, USER_AGENT_HEADER} from "../http.ios";
 import * as types from "@nativescript/core/utils/types";
-export {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
+export type {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 
 const connections: Array<SRWebSocket> = new Array<SRWebSocket>();
 const delegates: Array<SRWebSocketDelegateImpl> = new Array<SRWebSocketDelegateImpl>();

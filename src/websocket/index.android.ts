@@ -1,7 +1,7 @@
 import {HttpRequestOptions} from "@nativescript/core";
 import {buildJavaOptions} from "../http.android";
 import {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
-export {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
+export type {IWebsocketConnection, WebsocketCallbacks} from "./websocket.common";
 
 export class WebsocketConnection implements IWebsocketConnection {
     constructor(private nativeConnection: okhttp3.WebSocket) {

@@ -257,7 +257,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
                     } else if (value instanceof ArrayBuffer) {
                         const typedArray = new Uint8Array(value as ArrayBuffer);
                         const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(nativeBuffer.array(), null));
+                        builder.addFormDataPart(key, null, okhttp3.RequestBody.create(null, nativeBuffer.array()));
                     } else if (value instanceof Blob) {
                         let formDataPartMediaType = null;
                         if (value.type) {
