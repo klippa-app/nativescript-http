@@ -1,3 +1,12 @@
+## 3.0.1
+
+### Changed
+
+- Complete NS8 support
+- Update Demo's
+- Angular 12 support
+- New Webpack documentation
+
 ## 3.0.0
 
 ### Fixed
