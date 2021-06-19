@@ -68,7 +68,7 @@ we can automatically use this plugin for all HTTP calls in NativeScript that use
 
 The way to do this is quite simple, we only have to import a plugin and add the plugin to the webpack config.
 
-Open the file `webpack.config.js``, it may look like this:
+Open the file `webpack.config.js`, it may look like this:
 ```javascript
 const webpack = require("@nativescript/webpack");
 
