@@ -1,5 +1,7 @@
 'use strict';
 
+const replacePathDelimiter = (str) => str.replace(/\\|\//g, "/") 
+
 // Based on the NormalModuleReplacementPlugin plugin.
 class NativeScriptHTTPPlugin {
     constructor() {
@@ -38,20 +40,20 @@ class NativeScriptHTTPPlugin {
 
                         // Replace the relative http-request import from core image-cache (for iOS).
                         if (this.replaceHTTP && result.request === "../../http/http-request") {
-                            if (result.context.endsWith("@nativescript/core/ui/image-cache")) {
+                            if (replacePathDelimiter(result.context).endsWith("@nativescript/core/ui/image-cache")) {
                                 result.request = "../../../../@klippa/nativescript-http";
                             }
-                            if (result.context.endsWith("tns-core-modules/ui/image-cache")) {
+                            if (replacePathDelimiter(result.context).endsWith("tns-core-modules/ui/image-cache")) {
                                 result.request = "../../../@klippa/nativescript-http";
                             }
                         }
 
                         // Replace the relative image-cache import from core ui.
                         if (this.replaceImageCache && result.request === "./image-cache") {
-                            if (result.context.endsWith("@nativescript/core/ui")) {
+                            if (replacePathDelimiter(result.context).endsWith("@nativescript/core/ui")) {
                                 result.request = "../../../@klippa/nativescript-http/image-cache";
                             }
-                            if (result.context.endsWith("tns-core-modules/ui")) {
+                            if (replacePathDelimiter(result.context).endsWith("tns-core-modules/ui")) {
                                 result.request = "../../@klippa/nativescript-http/image-cache";
                             }
                         }
@@ -65,7 +67,7 @@ class NativeScriptHTTPPlugin {
                         if (this.replaceImageCache && (result.request === "@nativescript/core/ui/image-cache" || result.request === "tns-core-modules/image-cache")) {
                             // Make sure we don't ruin our own import.
                             // We import image-cache for iOS because that implementation is fine.
-                            if (!result.context.endsWith("src/image-cache") && !(result.context.endsWith("@klippa/nativescript-http/image-cache"))) {
+                            if (!replacePathDelimiter(result.context).endsWith("src/image-cache") && !(replacePathDelimiter(result.context).endsWith("@klippa/nativescript-http/image-cache"))) {
                                 result.request = "@klippa/nativescript-http/image-cache";
                             }
                         }
