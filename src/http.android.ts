@@ -366,8 +366,8 @@ export function request(options: HttpsRequestOptions): Promise<HttpResponse> {
                 NetworkAgent.requestWillBeSent(requestIdCounter, options);
             }
 
+            let cacheControlBuilder = new okhttp3.CacheControl.Builder();
             if (options.cachePolicy) {
-                let cacheControlBuilder = new okhttp3.CacheControl.Builder();
                 switch (options.cachePolicy) {
                     case CachePolicy.ONLYCACHE:
                         console.log(options.cachePolicy);
@@ -381,9 +381,15 @@ export function request(options: HttpsRequestOptions): Promise<HttpResponse> {
                         console.log(options.cachePolicy);
                         cacheControlBuilder = cacheControlBuilder.noStore();
                         break;
+                    default:
+                        cacheControlBuilder = cacheControlBuilder.noTransform();
                 }
-                //Add this to request once cache is implemented in Klippa AAR File
+                
+            }else{
+                cacheControlBuilder = cacheControlBuilder.noCache();
             }
+            //Add this to request once cache is implemented in Klippa AAR File
+
 
             // remember the callbacks so that we can use them when the CompleteCallback is called
             const callbacks = {
