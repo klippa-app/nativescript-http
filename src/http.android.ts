@@ -388,6 +388,7 @@ export function request(options: HttpsRequestOptions): Promise<HttpResponse> {
             }else{
                 cacheControlBuilder = cacheControlBuilder.noCache();
             }
+            var cacheControl: okhttp3.CacheControl = cacheControlBuilder.build();
             //Add this to request once cache is implemented in Klippa AAR File
 
 
