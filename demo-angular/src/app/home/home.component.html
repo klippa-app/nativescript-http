@@ -3,17 +3,18 @@
 </ActionBar>
 
 <GridLayout rows="auto, auto, *" columns="*">
-  <GridLayout row="0" rows="auto" columns="*, *, *, auto" *ngIf="!websocket">
-    <Button col="0" text="Text" (tap)="getText()"></Button>
-    <Button col="1" text="JSON" (tap)="getJson()"></Button>
-    <Button col="2" text="Image" (tap)="getImage()"></Button>
-    <Button col="3" text="Connect WebSocket" (tap)="startWebSocket()"></Button>
+  <GridLayout row="0" rows="auto" columns="*, *, *, *" *ngIf="!websocket">
+    <Button col="0" text="Text" (tap)="getText()" textWrap="true"></Button>
+    <Button col="1" text="JSON" (tap)="getJson()" textWrap="true"></Button>
+    <Button col="2" text="Image" (tap)="getImage()" textWrap="true"></Button>
+    <Button col="3" text="Connect WebSocket" (tap)="startWebSocket()" textWrap="true"></Button>
   </GridLayout>
 
-  <GridLayout row="1" rows="auto" columns="*, *, *" *ngIf="!websocket">
-    <Button col="0" text="Pin fake cert" (tap)="pinFake()"></Button>
-    <Button col="1" text="Pin good cert" (tap)="pinGood()"></Button>
-    <Button col="2" text="Clear pins" (tap)="clearPins()"></Button>
+  <GridLayout row="1" rows="auto" columns="*, *, *, *" *ngIf="!websocket">
+    <Button col="0" text="Pin fake cert" (tap)="pinFake()" textWrap="true"></Button>
+    <Button col="1" text="Pin good cert" (tap)="pinGood()" textWrap="true"></Button>
+    <Button col="2" text="Clear pins" (tap)="clearPins()" textWrap="true"></Button>
+    <Button col="3" text="Clear Cache" (tap)="clearCache()" textWrap="true"></Button>
   </GridLayout>
 
   <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" *ngIf="websocket && !isLoading">

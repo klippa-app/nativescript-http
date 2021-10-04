@@ -10,7 +10,7 @@ export declare function getString(url: string): Promise<string>;
  * Downloads the content from the specified URL as a string.
  * @param options An object that specifies various request options.
  */
-export declare function getString(options: HttpRequestOptions): Promise<string>;
+export declare function getString(options: HttpsRequestOptions): Promise<string>;
 
 /**
  * Downloads the content from the specified URL as a string and returns its JSON.parse representation.
@@ -22,7 +22,7 @@ export declare function getJSON<T>(url: string): Promise<T>;
  * Downloads the content from the specified URL as a string and returns its JSON.parse representation.
  * @param options An object that specifies various request options.
  */
-export declare function getJSON<T>(options: HttpRequestOptions): Promise<T>;
+export declare function getJSON<T>(options: HttpsRequestOptions): Promise<T>;
 
 /**
  * Downloads the content from the specified URL and attempts to decode it as an image.
@@ -34,7 +34,7 @@ export declare function getImage(url: string): Promise<ImageSource>;
  * Downloads the content from the specified URL and attempts to decode it as an image.
  * @param options An object that specifies various request options.
  */
-export declare function getImage(options: HttpRequestOptions): Promise<ImageSource>;
+export declare function getImage(options: HttpsRequestOptions): Promise<ImageSource>;
 
 /**
  * Downloads the content from the specified URL and attempts to save it as file.
@@ -48,7 +48,7 @@ export declare function getFile(url: string, destinationFilePath?: string): Prom
  * @param options An object that specifies various request options.
  * @param destinationFilePath Optional. The downloaded file path.
  */
-export declare function getFile(options: HttpRequestOptions, destinationFilePath?: string): Promise<File>;
+export declare function getFile(options: HttpsRequestOptions, destinationFilePath?: string): Promise<File>;
 
 /**
  * Downloads the content from the specified URL as binary and returns an ArrayBuffer.
@@ -60,13 +60,13 @@ export declare function getBinary(url: string): Promise<ArrayBuffer>;
  * Downloads the content from the specified URL as binary and returns an ArrayBuffer.
  * @param options An object that specifies various request options.
  */
-export declare function getBinary(options: HttpRequestOptions): Promise<ArrayBuffer>;
+export declare function getBinary(options: HttpsRequestOptions): Promise<ArrayBuffer>;
 
 /**
  * Makes a generic http request using the provided options and returns a HttpResponse Object.
  * @param options An object that specifies various request options.
  */
-export declare function request(options: HttpRequestOptions): Promise<HttpResponse>;
+export declare function request(options: HttpsRequestOptions): Promise<HttpResponse>;
 export function getFilenameFromUrl(url: string): string {
     const slashPos = url.lastIndexOf("/") + 1;
     const questionMarkPos = url.lastIndexOf("?");
@@ -151,7 +151,7 @@ export enum ImageParseMethod {
     ALWAYS
 }
 
-export function completeSelfCheck(options: HttpRequestOptions): Promise<HttpResponse> {
+export function completeSelfCheck(options: HttpsRequestOptions): Promise<HttpResponse> {
     const response = new Blob(["{ \"SelfCheck\": \"OK!\" }"], {
         type: "application/json",
     });
@@ -180,4 +180,18 @@ export function completeSelfCheck(options: HttpRequestOptions): Promise<HttpResp
         statusCode: 200,
         headers: options.headers
     });
+}
+
+export enum CachePolicy {
+    NONE,
+    ONLYCACHE,
+    IGNORECACHE,
+    NOCACHE
+}
+
+export interface HttpsRequestOptions extends HttpRequestOptions {
+    /**
+	 * Sets the Cache Policy for the request.
+	 */
+    cachePolicy?: CachePolicy;
 }

@@ -56,7 +56,7 @@
 		"@nativescript/angular": "~12.0.0",
 		"@nativescript/core": "~8.0.0",
 		"@nativescript/types": "~8.0.0",
-		"@nativescript/webpack": "beta",
+		"@nativescript/webpack": "~5.0.0",
 		"@angular/router": "~12.0.0",
 		"@angular/animations": "~12.0.0",
 		"@angular/forms": "~12.0.0",

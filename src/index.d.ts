@@ -1,4 +1,8 @@
 import { ImageSource, HttpRequestOptions, HttpResponse } from "@nativescript/core";
+import {
+    HttpsRequestOptions,
+    CachePolicy
+} from "./http.common";
 
 /**
  * Downloads the content from the specified URL as a string.
@@ -10,7 +14,7 @@ export declare function getString(url: string): Promise<string>;
  * Downloads the content from the specified URL as a string.
  * @param options An object that specifies various request options.
  */
-export declare function getString(options: HttpRequestOptions): Promise<string>;
+export declare function getString(options: HttpsRequestOptions): Promise<string>;
 
 /**
  * Downloads the content from the specified URL as a string and returns its JSON.parse representation.
@@ -22,7 +26,7 @@ export declare function getJSON<T>(url: string): Promise<T>;
  * Downloads the content from the specified URL as a string and returns its JSON.parse representation.
  * @param options An object that specifies various request options.
  */
-export declare function getJSON<T>(options: HttpRequestOptions): Promise<T>;
+export declare function getJSON<T>(options: HttpsRequestOptions): Promise<T>;
 
 /**
  * Downloads the content from the specified URL and attempts to decode it as an image.
@@ -34,7 +38,7 @@ export declare function getImage(url: string): Promise<ImageSource>;
  * Downloads the content from the specified URL and attempts to decode it as an image.
  * @param options An object that specifies various request options.
  */
-export declare function getImage(options: HttpRequestOptions): Promise<ImageSource>;
+export declare function getImage(options: HttpsRequestOptions): Promise<ImageSource>;
 
 /**
  * Downloads the content from the specified URL and attempts to save it as file.
@@ -48,7 +52,7 @@ export declare function getFile(url: string, destinationFilePath?: string): Prom
  * @param options An object that specifies various request options.
  * @param destinationFilePath Optional. The downloaded file path.
  */
-export declare function getFile(options: HttpRequestOptions, destinationFilePath?: string): Promise<File>;
+export declare function getFile(options: HttpsRequestOptions, destinationFilePath?: string): Promise<File>;
 
 /**
  * Downloads the content from the specified URL as binary and returns an ArrayBuffer.
@@ -60,13 +64,13 @@ export declare function getBinary(url: string): Promise<ArrayBuffer>;
  * Downloads the content from the specified URL as binary and returns an ArrayBuffer.
  * @param options An object that specifies various request options.
  */
-export declare function getBinary(options: HttpRequestOptions): Promise<ArrayBuffer>;
+export declare function getBinary(options: HttpsRequestOptions): Promise<ArrayBuffer>;
 
 /**
  * Makes a generic http request using the provided options and returns a HttpResponse Object.
  * @param options An object that specifies various request options.
  */
-export declare function request(options: HttpRequestOptions): Promise<HttpResponse>;
+export declare function request(options: HttpsRequestOptions): Promise<HttpResponse>;
 export declare type HTTPFormDataEntryValue = HTTPFormDataEntry | FormDataEntryValue | ArrayBuffer | Blob | File | string | any;
 export declare class HTTPFormDataEntry {
     data: any;
@@ -152,7 +156,26 @@ export declare const Http: {
     getImage: typeof getImage;
     getJSON: typeof getJSON;
     getString: typeof getString;
-    request: (options: HttpRequestOptions) => Promise<HttpResponse>;
+    request: (options: HttpsRequestOptions) => Promise<HttpResponse>;
 };
 
 export { ImageCache } from './image-cache';
+
+/**
+ * Clear the Cache.
+ */
+export declare function clearCache(): void;
+
+/**
+* Set Cache Policy for HTTPS Requests.
+*/
+export declare function setCachePolicy(): void;
+
+export { CachePolicy };
+
+export interface HttpsRequestOptions extends HttpRequestOptions {
+    /**
+	 * Sets the Cache Policy for the request.
+	 */
+    cachePolicy?: CachePolicy;
+}

@@ -1,7 +1,7 @@
 import {XhrFactory } from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import * as types from "@nativescript/core/utils/types";
-import { request } from "..";
+import { HttpsRequestOptions, request } from "..";
 import { HttpRequestOptions, HttpResponse, Trace } from "@nativescript/core";
 
 namespace XMLHttpRequestResponseType {
@@ -28,7 +28,7 @@ export class NSHTTPXMLHttpRequest {
     public onloadstart: (...args: any[]) => void;
     public onprogress: (...args: any[]) => void;
 
-    private _options: HttpRequestOptions;
+    private _options: HttpsRequestOptions;
     private _readyState: number;
     private _status: number;
     private _response: any;

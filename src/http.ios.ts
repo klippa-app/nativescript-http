@@ -5,9 +5,11 @@ import {
     getFilenameFromUrl,
     ImageParseMethod,
     completeSelfCheck,
+    HttpsRequestOptions,
+    CachePolicy
 } from "./http.common";
 import * as domainDebugger from "@nativescript/core/debugger";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
+export { HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 export enum HttpResponseEncoding {
     UTF8,
@@ -103,7 +105,7 @@ function ensureSessionNotFollowingRedirects() {
     }
 }
 
-export function request(options: HttpRequestOptions): Promise<HttpResponse> {
+export function request(options: HttpsRequestOptions): Promise<HttpResponse> {
     if (options === undefined || options === null) {
         // TODO: Shouldn't we throw an error here - defensive programming
         return Promise.reject("No options given");
@@ -129,6 +131,29 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 NSURL.URLWithString(options.url));
 
             urlRequest.HTTPMethod = Utils.isDefined(options.method) ? options.method : GET;
+
+            if (options.cachePolicy) {
+                switch (options.cachePolicy) {
+                    case CachePolicy.ONLYCACHE:
+                        console.log(options.cachePolicy);
+                        urlRequest.cachePolicy = NSURLRequestCachePolicy.ReturnCacheDataDontLoad;
+                        break;
+                    case CachePolicy.IGNORECACHE:
+                        console.log(options.cachePolicy);
+                        urlRequest.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData;
+                        break;
+                    case CachePolicy.NOCACHE:
+                        console.log(options.cachePolicy);
+                        urlRequest.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData;
+                        break;
+                    default:
+                        console.log(options.cachePolicy);
+                        urlRequest.cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy;
+                        break;
+                }
+            } else {
+                urlRequest.cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy;
+            }
 
             let contentType: string;
             let userAgent: string;
@@ -547,3 +572,8 @@ export const Http = {
 };
 
 export { ImageCache } from './image-cache';
+
+export function clearCache() {
+    NSURLCache.sharedURLCache.removeAllCachedResponses();
+    console.info("Cache Cleared!");
+}

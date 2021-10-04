@@ -483,8 +483,32 @@ certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJ
 certificatePinningClear();
 ```
 
+### Cache Control
+
+#### Clear All Cache
+```typescript
+import { clearCache } from "@klippa/nativescript-http";
+// This will clear all cache from NSURL adn OkHttp
+clearCache();
+```
+
+#### Request Based Cache Control
+```typescript
+import { HttpResponse } from "@nativescript/core";
+import { Http, CachePolicy } from "@klippa/nativescript-http";
+// This will clear all cache from NSURL adn OkHttp
+Http.request({
+    url: "https://httpbin.org/post",
+    method: "POST",
+    content: form,
+    cachePolicy: CachePolicy.NOCACHE
+}).then((response: HttpResponse) => {
+    // Argument (response) is HttpResponse
+}, (e) => {
+});
+```
+
 ## Roadmap
- * Cache control
  * Allowing self signed certificates (WIP in feature/self-signed)
 
 ## About Klippa

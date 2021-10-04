@@ -7,7 +7,8 @@ import {
   setUserAgent,
   setConcurrencyLimits,
   certificatePinningAdd,
-  certificatePinningClear
+  certificatePinningClear,
+  clearCache
 } from "@klippa/nativescript-http";
 
 import { newWebsocketConnection, IWebsocketConnection } from "@klippa/nativescript-http/websocket";
@@ -227,6 +228,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     certificatePinningClear();
     this.contentType = "text";
     this.contentText = "Certificate pins cleared, try to do a request";
+    this.hasContent = true;
+    this.isLoading = false;
+  }
+
+  clearCache() {
+    clearCache();
+    this.contentType = "text";
+    this.contentText = "Cache Cleared";
     this.hasContent = true;
     this.isLoading = false;
   }

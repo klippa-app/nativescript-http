@@ -12,11 +12,12 @@ import {
     getFilenameFromUrl,
     HTTPFormData,
     HTTPFormDataEntry,
+    HttpsRequestOptions,
     ImageParseMethod,
 } from "./http.common";
-
 import { NetworkAgent } from "@nativescript/core/debugger";
-export {HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
+import { CachePolicy } from '.';
+export { HTTPFormData, HTTPFormDataEntry, ImageParseMethod } from "./http.common";
 
 declare var global: any;
 
@@ -157,7 +158,7 @@ function onRequestError(error: string, requestId: number) {
     }
 }
 
-export function buildJavaOptions(options: HttpRequestOptions) {
+export function buildJavaOptions(options: HttpsRequestOptions) {
     if (typeof options.url !== "string") {
         throw new Error("Http request must provide a valid url.");
     }
@@ -337,7 +338,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
     javaOptions.screenHeight = ourScreen.heightPixels;
 
     // @ts-ignore
-    if (typeof(options.forceImageParsing) !== "undefined") {
+    if (typeof (options.forceImageParsing) !== "undefined") {
         // @ts-ignore
         javaOptions.forceImageParsing = options.forceImageParsing;
     }
@@ -345,7 +346,7 @@ export function buildJavaOptions(options: HttpRequestOptions) {
     return javaOptions;
 }
 
-export function request(options: HttpRequestOptions): Promise<HttpResponse> {
+export function request(options: HttpsRequestOptions): Promise<HttpResponse> {
     if (options === undefined || options === null) {
         // TODO: Shouldn't we throw an error here - defensive programming
         return Promise.reject("No options given");
@@ -365,6 +366,25 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                 NetworkAgent.requestWillBeSent(requestIdCounter, options);
             }
 
+            if (options.cachePolicy) {
+                let cacheControlBuilder = new okhttp3.CacheControl.Builder();
+                switch (options.cachePolicy) {
+                    case CachePolicy.ONLYCACHE:
+                        console.log(options.cachePolicy);
+                        cacheControlBuilder = cacheControlBuilder.onlyIfCached();
+                        break;
+                    case CachePolicy.IGNORECACHE:
+                        console.log(options.cachePolicy);
+                        cacheControlBuilder = cacheControlBuilder.noCache();
+                        break;
+                    case CachePolicy.NOCACHE:
+                        console.log(options.cachePolicy);
+                        cacheControlBuilder = cacheControlBuilder.noStore();
+                        break;
+                }
+                //Add this to request once cache is implemented in Klippa AAR File
+            }
+
             // remember the callbacks so that we can use them when the CompleteCallback is called
             const callbacks = {
                 url: options.url,
@@ -376,6 +396,27 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
             ensureCompleteCallback();
             // make the actual async call
             com.klippa.NativeScriptHTTP.Async.Http.MakeRequest(javaOptions, completeCallback, new java.lang.Integer(requestIdCounter));
+
+
+            //Temporary - Replace with cacheControlBuilder
+            if (options.cachePolicy) {
+                let cache: okhttp3.Cache;
+                switch (options.cachePolicy) {
+                    case CachePolicy.ONLYCACHE:
+                        console.log(options.cachePolicy);
+                        break;
+                    case CachePolicy.IGNORECACHE:
+                        console.log(options.cachePolicy);
+                        cache.delete();
+                        break;
+                    case CachePolicy.NOCACHE:
+                        console.log(options.cachePolicy);
+                        cache.evictAll()
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             // increment the id counter
             requestIdCounter++;
@@ -518,3 +559,11 @@ export const Http = {
 };
 
 export { ImageCache } from './image-cache';
+
+export function clearCache() {
+    let cache: okhttp3.Cache;
+    if (cache) {
+        cache.evictAll();
+    }
+    console.info("Cache Cleared!");
+}
