@@ -217,7 +217,7 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
 
                             if (value.data instanceof ArrayBuffer) {
                                 const buffer = new Uint8Array(value.data as ArrayBuffer);
-                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", formDataPartMediaType);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, value.name || "", formDataPartMediaType);
                             } else if (value.data instanceof Blob) {
                                 // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                                 // @ts-ignore
