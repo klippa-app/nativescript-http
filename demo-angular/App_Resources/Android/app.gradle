@@ -10,6 +10,7 @@
 // create a file named before-plugins.gradle in the current directory and place it there
 
 android {
+  ndkVersion "22.0.7026061"
   defaultConfig {
     minSdkVersion 17
     generatedDensities = []

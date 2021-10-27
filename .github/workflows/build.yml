@@ -18,7 +18,10 @@ jobs:
 
       - name: Fix Android build-tools issue
         run: |
-          cd $ANDROID_HOME/build-tools/31.0.0; ln -s d8 dx; ln -s lib/d8.jar lib/dx.jar;
+          echo "Uninstalling build tools > 30"
+          echo "As a temporary workaround to fix builds"
+          SDKMANAGER=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          echo y | $SDKMANAGER --uninstall "build-tools;31.0.0"
           
       - name: Build Plugin Source
         run: cd src && npm run build
