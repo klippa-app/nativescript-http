@@ -30,10 +30,10 @@ class NativeScriptHTTPPlugin {
                     if (resourceRegExp.test(result.request)) {
                         // Replace the relative http-request import from core http.
                         if (this.replaceHTTP && result.request === "./http-request") {
-                            if (result.context.endsWith("@nativescript/core/http")) {
+                            if (replacePathDelimiter(result.context).endsWith("@nativescript/core/http")) {
                                 result.request = "../../../@klippa/nativescript-http";
                             }
-                            if (result.context.endsWith("tns-core-modules/http")) {
+                            if (replacePathDelimiter(result.context).endsWith("tns-core-modules/http")) {
                                 result.request = "../../@klippa/nativescript-http";
                             }
                         }
