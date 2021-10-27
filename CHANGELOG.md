@@ -1,3 +1,10 @@
+## 1.3.2
+
+### Fixed
+
+- Fixed a bug the webpack automatic import replace on Windows due to the path delimiter. (#51, #50 and #52 thanks @mayerlench)
+- Fixed a bug where the filename in multipart form data would not get send along in a specific case on iOS (#56 thanks @mayerlench)
+
 ## 1.3.1
 
 ### Fixed
