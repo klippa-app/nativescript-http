@@ -214,17 +214,18 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                                 formDataPartMediaType = value.type;
                             }
 
+                            const filename = value.name || "";
                             if (value.data instanceof ArrayBuffer) {
                                 const buffer = new Uint8Array(value.data as ArrayBuffer);
-                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, value.name || "", formDataPartMediaType);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, filename, formDataPartMediaType);
                             } else if (value.data instanceof Blob) {
                                 // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                                 // @ts-ignore
                                 const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
-                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, "", formDataPartMediaType);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, filename, formDataPartMediaType);
                             } else {
                                 // Support for native file objects.
-                                multipartFormData.addFileParameterNameFilenameContentType(value.data, key, value.name, formDataPartMediaType);
+                                multipartFormData.addFileParameterNameFilenameContentType(value.data, key, filename, formDataPartMediaType);
                             }
                         } else {
                             // Support for native file objects.
