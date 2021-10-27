@@ -280,19 +280,20 @@ export function buildJavaOptions(options: HttpRequestOptions) {
                             formDataPartMediaType = okhttp3.MediaType.parse(value.type);
                         }
 
+                        const filename = value.name || "";
                         if (value.data instanceof ArrayBuffer) {
                             const typedArray = new Uint8Array(value.data as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
+                            builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else if (value.data instanceof Blob) {
                             // Stolen from core xhr, not sure if we should use InternalAccessor, but it provides fast access.
                             // @ts-ignore
                             const typedArray = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
                             const nativeBuffer = java.nio.ByteBuffer.wrap(Array.from(typedArray));
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
+                            builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(formDataPartMediaType, nativeBuffer.array()));
                         } else {
                             // Support for native file objects.
-                            builder.addFormDataPart(key, value.name, okhttp3.RequestBody.create(formDataPartMediaType, value.data));
+                            builder.addFormDataPart(key, filename, okhttp3.RequestBody.create(formDataPartMediaType, value.data));
                         }
                     } else {
                         // Support for native file objects.
