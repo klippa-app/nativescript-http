@@ -1,7 +1,7 @@
 import {XhrFactory } from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import * as types from "@nativescript/core/utils/types";
-import { request } from "..";
+import { request, HTTPFormData } from "..";
 import { HttpRequestOptions, HttpResponse } from "@nativescript/core/http/http";
 
 namespace XMLHttpRequestResponseType {
@@ -259,7 +259,7 @@ export class NSHTTPXMLHttpRequest {
 
             // @ts-ignore
             this._options.content = Blob.InternalAccessor.getBuffer(data);
-        } else if (data instanceof ArrayBuffer) {
+        } else if (data instanceof ArrayBuffer || data instanceof HTTPFormData) {
             this._options.content = data;
         }
 
