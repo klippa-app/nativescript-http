@@ -223,6 +223,9 @@ export function request(options: HttpRequestOptions): Promise<HttpResponse> {
                                 // @ts-ignore
                                 const buffer = new Uint8Array(Blob.InternalAccessor.getBuffer(value.data).buffer.slice(0) as ArrayBuffer);
                                 multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, filename, formDataPartMediaType);
+                            } else if (typeof value.data === "string") {
+                                const buffer = new TextEncoder().encode(value.data);
+                                multipartFormData.addFileParameterNameFilenameContentType(NSData.dataWithData(buffer as any), key, filename, formDataPartMediaType);
                             } else {
                                 // Support for native file objects.
                                 multipartFormData.addFileParameterNameFilenameContentType(value.data, key, filename, formDataPartMediaType);
