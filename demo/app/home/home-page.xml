@@ -21,10 +21,9 @@
             <Button col="2" text="Clear pins" tap="{{ clearPins }}"/>
         </GridLayout>
 
-        <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" visibility="{{ hasWebSocket && !isLoading ? 'visible' : 'collapse' }}">
+        <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *" visibility="{{ hasWebSocket && !isLoading ? 'visible' : 'collapse' }}">
             <Button col="0" text="Send text" tap="{{ sendMessage }}"/>
-            <Button col="1" text="Send binary" tap="{{ sendBinary }}"/>
-            <Button col="2" text="Disconnect" tap="{{ disconnectWebsocket }}"/>
+            <Button col="1" text="Disconnect" tap="{{ disconnectWebsocket }}"/>
         </GridLayout>
 
         <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">

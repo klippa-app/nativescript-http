@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     newWebsocketConnection({
-      url: "wss://echo.websocket.org",
+      url: "wss://ws.postman-echo.com/raw",
       method: "GET",
     }, {
       // It's important to wrap callbacks in ngzone when you do anything binding related.
@@ -182,17 +182,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendBinary() {
-    if (this.websocket) {
-      const blob = new Blob(["binaryFileContent"], {
-        type: "image/png",
-      });
-
-      // @ts-ignore
-      this.websocket.sendBinary(Blob.InternalAccessor.getBuffer(blob).buffer.slice(0) as ArrayBuffer);
-    }
-  }
-
   disconnectWebsocket() {
     if (this.websocket) {
       this.websocket.close(1000, "Goodbye");
@@ -213,9 +202,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   pinGood() {
     certificatePinningClear();
-    certificatePinningAdd("*.placeholder.com", ["CDCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJV4=", "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
-    certificatePinningAdd("**.github.com", ["ORH27mxcLwxnNpR7e0i6pdDPWLXdpeWgr5bEfFVbxW8=", "k2v657xBsOVe1PQRwOsHsw3bsGT2VzIqz5K+59sNQws=", "WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18="]);
-    certificatePinningAdd("loripsum.net", ["7ReOzYJ7YC1mMc2CWTuaMDuzynt8xZ+HDQ6K8o+4okk=", "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys="]);
+    certificatePinningAdd("*.placeholder.com", ["DlYSp/cLxpoA6dBq3hszKK/r0p7Q/pnSRVQnAdQNf/o=", "FEzVOUp4dF3gI0ZVPRJhFbSJVXR+uQmMH65xhs1glH4=", "Y9mvm0exBk1JoQ57f9Vm28jKo5lFm/woKcVxrYxu80o="]);
+    certificatePinningAdd("**.github.com", ["uyPYgclc5Jt69vKu92vci6etcBDY8UNTyrHQZJpVoZY=", "e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=", "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="]);
+    certificatePinningAdd("loripsum.net", ["9lgc3b7Et90OtTYg2rJRAl18RhhQIuI/z9NCj27wSpc=", "jQJTbIh0grw0/1TkHSumWb+Fs0Ggogr621gT3PvPKG0=", "C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M="]);
 
     this.contentType = "text";
     this.contentText = "Good certificates pinned, try to do a request";
