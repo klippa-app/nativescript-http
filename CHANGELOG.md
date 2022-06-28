@@ -1,3 +1,10 @@
+## 2.0.5
+
+### Changed
+
+- Updated okhttp to 4.10.+
+- Fixed websockets demo
+
 ## 2.0.4
 
 ### Fixed
