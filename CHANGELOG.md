@@ -1,3 +1,9 @@
+## 1.3.3
+### Changed
+
+- Updated okhttp dependency requirement to 4.10.+
+- Fix demo websocket
+
 ## 1.3.2
 
 ### Fixed

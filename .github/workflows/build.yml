@@ -22,6 +22,7 @@ jobs:
           echo "As a temporary workaround to fix builds"
           SDKMANAGER=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
           echo y | $SDKMANAGER --uninstall "build-tools;31.0.0"
+          echo y | $SDKMANAGER --install "ndk;22.1.7171670"
 
       - name: Build Plugin Source
         run: cd src && npm run build
