@@ -16,10 +16,9 @@
         <Button col="2" text="Clear pins" (tap)="clearPins()"></Button>
     </GridLayout>
 
-    <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *, *" *ngIf="websocket && !isLoading">
+    <GridLayout row="0" rowSpan="2" rows="auto" columns="*, *" *ngIf="websocket && !isLoading">
         <Button col="0" text="Send text" (tap)="sendMessage()"></Button>
-        <Button col="1" text="Send binary" (tap)="sendBinary()"></Button>
-        <Button col="2" text="Disconnect" (tap)="disconnectWebsocket()"></Button>
+        <Button col="1" text="Disconnect" (tap)="disconnectWebsocket()"></Button>
     </GridLayout>
 
     <GridLayout row="2" rows="*" columns="*" style="border-width: 1; border-color: #e0e0e0; margin: 10; padding: 10;">
