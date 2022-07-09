@@ -8,6 +8,7 @@
 - Updated okhttp dependency requirement to 4.10.+
 - Fix demo websocket
 - Build for NS 8.2 & Angular 14
+- Allow using `HttpFormData` in Angular XHR (note: doesn't work by default, needs a custom `HttpInterceptor` and `HttpRequest`, see #74 for more info)
 
 ## 3.0.2
 
