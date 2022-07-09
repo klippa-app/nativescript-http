@@ -1,3 +1,8 @@
+## 2.0.6
+### Fixed
+
+- Allow using a string `HTTPFormDataEntry` on iOS
+
 ## 2.0.5
 
 ### Changed
