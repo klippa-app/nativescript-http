@@ -1,3 +1,13 @@
+## 3.0.3
+### Fixed
+
+- Allow using a string `HTTPFormDataEntry` on iOS
+
+### Changed
+
+- Updated okhttp dependency requirement to 4.10.+
+- Fix demo websocket
+
 ## 3.0.2
 
 ### Fixed
