@@ -1,3 +1,8 @@
+## 2.0.7
+### Changed
+
+- Allow using `HttpFormData` in Angular XHR (note: doesn't work by default, needs a custom `HttpInterceptor` and `HttpRequest`, see #74 for more info)
+
 ## 2.0.6
 ### Fixed
 
