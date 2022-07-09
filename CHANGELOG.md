@@ -7,6 +7,7 @@
 
 - Updated okhttp dependency requirement to 4.10.+
 - Fix demo websocket
+- Build for NS 8.2 & Angular 14
 
 ## 3.0.2
 
