@@ -1,6 +1,6 @@
 {
 	"name": "@klippa/nativescript-http",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"description": "The best way to do HTTP requests in NativeScript, a drop-in replacement for the core HTTP with important improvements and additions like proper connection pooling, form data support and certificate pinning",
 	"main": "http",
 	"typings": "index.d.ts",
@@ -17,11 +17,9 @@
 	"scripts": {
 		"tsc": "npm i && ts-patch install && tsc",
 		"build": "npm i && ts-patch install && npm run ngcc && npm run ngc",
-		"build.old": "npm i && ts-patch install && npm run ngcc && npm run ngc && npm run build.native",
-		"build.native": "node scripts/build-native.js",
+		"build.old": "npm i && ts-patch install && npm run ngcc && npm run ngc",
 		"tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\" --exclude \"**/typings/**\"",
 		"ci.tslint": "npm i && ts-patch install && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**' --exclude '**/platforms/**' --exclude '**/typings/**'",
-		"prepack": "npm run build.native",
 		"demo.ios": "npm i && ts-patch install && cd ../demo && ns run ios",
 		"demo.android": "npm i && ts-patch install && cd ../demo && ns run android",
 		"demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
